@@ -1,15 +1,19 @@
 import path from 'path'
 import { NodePlopAPI, ActionType } from 'plop'
 import { __DEV__ } from './env'
-import { downloadGitRepo, install } from './utils'
+import { downloadGitRepo, init } from './utils'
 
 module.exports = function(plop: NodePlopAPI) {
     plop.setActionType('initProject', async (answers: any, config) => {
         const name = answers.name as string
+        const author = answers.author as string
         const template = answers.template as string
         const projectPath = path.join(process.cwd(), name)
         await downloadGitRepo(`github:CaoMeiYouRen/${template}`, projectPath)
-        await install(projectPath)
+        await init(projectPath, {
+            name,
+            author,
+        })
         return '- 下载项目模板成功！'
     })
     plop.setGenerator('create', {
@@ -23,6 +27,16 @@ module.exports = function(plop: NodePlopAPI) {
                     return input.trim().length !== 0
                 },
                 default: __DEV__ ? 'temp' : '',
+                filter: (e: string) => e.trim(),
+            },
+            {
+                type: 'input',
+                name: 'author',
+                message: '请输入作者名称',
+                validate(input: string, answers){
+                    return input.trim().length !== 0
+                },
+                default: __DEV__ ? 'CaoMeiYouRen' : '',
                 filter: (e: string) => e.trim(),
             },
             {

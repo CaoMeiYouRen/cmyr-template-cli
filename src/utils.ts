@@ -1,4 +1,5 @@
 import fs from 'fs-extra'
+import path from 'path'
 import ora from 'ora'
 import download from 'download-git-repo'
 import { exec, ExecOptions, execSync } from 'child_process'
@@ -70,10 +71,17 @@ export async function asyncExec(cmd: string, options?: ExecOptions) {
     })
 }
 
-export async function install(projectPath: string) {
+export async function init(projectPath: string, pkgData: IPackage) {
     const loading = ora('正在安装依赖……')
     loading.start()
     try {
+        await asyncExec('git init', {
+            cwd: projectPath,
+        })
+        const pkgPath = path.join(projectPath, 'package.json')
+        const pkg: IPackage = await fs.readJSON(pkgPath)
+        const newPkg = Object.assign({}, pkg, pkgData)
+        await fs.writeFile(pkgPath, JSON.stringify(newPkg, null, 2))
         await asyncExec('npm i', {
             cwd: projectPath,
         })
