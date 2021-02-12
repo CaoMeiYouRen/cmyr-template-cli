@@ -82,9 +82,15 @@ export async function init(projectPath: string, pkgData: IPackage) {
         const pkg: IPackage = await fs.readJSON(pkgPath)
         const newPkg = Object.assign({}, pkg, pkgData)
         await fs.writeFile(pkgPath, JSON.stringify(newPkg, null, 2))
-        await asyncExec('npm i', {
+        await asyncExec('git add .', {
             cwd: projectPath,
         })
+        await asyncExec('git commit -m "chore: init"', {
+            cwd: projectPath,
+        })
+        await asyncExec('npm i', {
+            cwd: projectPath,
+        }) 
     } catch (error) {
         console.error(error)
     } finally {
