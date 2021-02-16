@@ -40,7 +40,7 @@ export async function downloadGitRepo(repository: string, destination: string, o
     return new Promise((resolve, reject) => {
         download(repository, destination, options, (err: any) => {
             loading.stop()
-            if (err){
+            if (err) {
                 return reject(err)
             }
             resolve(true)
@@ -60,10 +60,10 @@ export async function downloadGitRepo(repository: string, destination: string, o
 export async function asyncExec(cmd: string, options?: ExecOptions) {
     return new Promise((resolve, reject) => {
         exec(cmd, options, (err, stdout: string, stderr: string) => {
-            if (err){
+            if (err) {
                 return reject(err)
             }
-            if (stderr){
+            if (stderr) {
                 return reject(stderr)
             }
             resolve(stdout)
@@ -75,6 +75,12 @@ export async function init(projectPath: string, pkgData: IPackage) {
     const loading = ora('正在安装依赖……')
     loading.start()
     try {
+        await asyncExec('git --version', {
+            cwd: projectPath,
+        })
+        await asyncExec('npm -v', {
+            cwd: projectPath,
+        })
         await asyncExec('git init', {
             cwd: projectPath,
         })
@@ -85,12 +91,15 @@ export async function init(projectPath: string, pkgData: IPackage) {
         await asyncExec('git add .', {
             cwd: projectPath,
         })
+        await asyncExec('npm i', {
+            cwd: projectPath,
+        })
+        await asyncExec('git add .', {
+            cwd: projectPath,
+        })
         await asyncExec('git commit -m "chore: init"', {
             cwd: projectPath,
         })
-        await asyncExec('npm i', {
-            cwd: projectPath,
-        }) 
     } catch (error) {
         console.error(error)
     } finally {
@@ -103,12 +112,12 @@ const forEachSetVersion = (dep: Record<string, string>) => {
     const manager = 'npm'
     Object.keys(dep).forEach(key => {
         // TODO: 优化逻辑
-        if (/^[0-9]+/.test(dep[key])){ // 开头为 数字 直接跳过。
+        if (/^[0-9]+/.test(dep[key])) { // 开头为 数字 直接跳过。
             return
         }
         const newPromise = new Promise((resolve, reject) => {
             exec(`${manager} view ${key} version`, (err, stdout, stderr) => {
-                if (err){
+                if (err) {
                     return reject(err)
                 }
                 dep[key] = `^${stdout.slice(0, stdout.length - 1)}`
@@ -130,7 +139,7 @@ const forEachSetVersion = (dep: Record<string, string>) => {
  */
 export async function updateDependencies(pkg: IPackage) {
     const loading = ora('正在获取依赖最新版本……')
-    if (__DEV__){
+    if (__DEV__) {
         return pkg
     }
     loading.start()
