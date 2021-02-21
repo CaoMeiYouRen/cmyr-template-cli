@@ -48,6 +48,7 @@ module.exports = function(plop: NodePlopAPI) {
                         'vue',
                         'vue3',
                         'vite2',
+                        'vite2-vue2',
                         'electron-vue',
                         'nuxt',
                         'uni',
