@@ -91,13 +91,13 @@ export async function init(projectPath: string, pkgData: IPackage) {
         await asyncExec('git add .', {
             cwd: projectPath,
         })
+        await asyncExec('git commit -m "chore: init"', {
+            cwd: projectPath,
+        })
         await asyncExec('npm i', {
             cwd: projectPath,
         })
         await asyncExec('git add .', {
-            cwd: projectPath,
-        })
-        await asyncExec('git commit -m "chore: init"', {
             cwd: projectPath,
         })
     } catch (error) {
