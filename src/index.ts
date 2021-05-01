@@ -1,4 +1,4 @@
-#!/usr/bin/env node
+// #!/usr/bin/env node
 import { Plop, run } from 'plop'
 import { Command } from 'commander'
 import minimist from 'minimist'
@@ -18,7 +18,7 @@ const create = new Command('create')
             configPath: path.resolve(__dirname, './plopfile.js'),
             require: argv.require,
             completion: argv.completion,
-        }, env => run(env, undefined, true))
+        }, (env) => run(env, undefined, true))
     })
 program.addCommand(create)
 

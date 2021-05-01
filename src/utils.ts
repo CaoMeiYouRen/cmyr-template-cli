@@ -110,7 +110,7 @@ export async function init(projectPath: string, pkgData: IPackage) {
 const forEachSetVersion = (dep: Record<string, string>) => {
     const promises: Promise<unknown>[] = []
     const manager = 'npm'
-    Object.keys(dep).forEach(key => {
+    Object.keys(dep).forEach((key) => {
         // TODO: 优化逻辑
         if (/^[0-9]+/.test(dep[key])) { // 开头为 数字 直接跳过。
             return
@@ -154,7 +154,7 @@ export async function updateDependencies(pkg: IPackage) {
 export function sortKey(obj: Record<string, unknown>) {
     const keys = Object.keys(obj).sort((a, b) => a.localeCompare(b))
     const obj2: Record<string, unknown> = {}
-    keys.forEach(e => {
+    keys.forEach((e) => {
         obj2[e] = obj[e]
     })
     return obj2

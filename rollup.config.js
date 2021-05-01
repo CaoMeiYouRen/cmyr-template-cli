@@ -5,7 +5,7 @@ import typescript from '@rollup/plugin-typescript'
 import json from '@rollup/plugin-json'
 import _ from 'lodash'
 import { dependencies, name } from './package.json'
-const external = Object.keys(dependencies) // 默认不打包 dependencies
+const external = Object.keys({ ...dependencies }) // 默认不打包 dependencies
 const outputName = _.upperFirst(_.camelCase(name))// 导出的模块名称 PascalCase
 const env = process.env
 const IS_PROD = env.NODE_ENV === 'production'
@@ -22,6 +22,8 @@ function getPlugins({ isBrowser = false, isMin = false, isDeclaration = false })
             tsconfig: isDeclaration ? 'tsconfig.json' : 'tsconfig.build.json',
             esModuleInterop: true,
             allowSyntheticDefaultImports: true,
+            module: 'esnext',
+            target: 'esnext',
         }),
     )
     plugins.push(
@@ -72,26 +74,12 @@ export default [
         }),
     },
     {
-        input: 'src/index.ts',
+        input: 'src/plopfile.ts',
         external,
         output: {
-            file: 'dist/index.umd.js', // 生成 umd
-            format: 'umd',
-            name: outputName,
-        },
-        plugins: getPlugins({
-            isBrowser: false,
-            isDeclaration: false,
-            isMin: true,
-        }),
-    },
-    {
-        input: 'src/index.ts',
-        external,
-        output: {
-            file: 'dist/index.esm.js', // 生成 esm
-            format: 'esm',
-            name: outputName,
+            file: 'dist/plopfile.js', // 生成 cjs
+            format: 'cjs',
+            name: 'Plopfile',
         },
         plugins: getPlugins({
             isBrowser: false,
@@ -99,4 +87,32 @@ export default [
             isMin: false,
         }),
     },
+    // {
+    //     input: 'src/index.ts',
+    //     external,
+    //     output: {
+    //         file: 'dist/index.umd.js', // 生成 umd
+    //         format: 'umd',
+    //         name: outputName,
+    //     },
+    //     plugins: getPlugins({
+    //         isBrowser: false,
+    //         isDeclaration: false,
+    //         isMin: true,
+    //     }),
+    // },
+    // {
+    //     input: 'src/index.ts',
+    //     external,
+    //     output: {
+    //         file: 'dist/index.esm.js', // 生成 esm
+    //         format: 'esm',
+    //         name: outputName,
+    //     },
+    //     plugins: getPlugins({
+    //         isBrowser: false,
+    //         isDeclaration: false,
+    //         isMin: false,
+    //     }),
+    // },
 ]

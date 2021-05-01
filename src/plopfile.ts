@@ -3,7 +3,7 @@ import { NodePlopAPI, ActionType } from 'plop'
 import { __DEV__ } from './env'
 import { downloadGitRepo, init } from './utils'
 
-module.exports = function(plop: NodePlopAPI) {
+module.exports = function (plop: NodePlopAPI) {
     plop.setActionType('initProject', async (answers: any, config) => {
         const name = answers.name as string
         const author = answers.author as string
@@ -23,7 +23,7 @@ module.exports = function(plop: NodePlopAPI) {
                 type: 'input',
                 name: 'name',
                 message: '请输入项目名称',
-                validate(input: string, answers){
+                validate(input: string, answers) {
                     return input.trim().length !== 0
                 },
                 default: __DEV__ ? 'temp' : '',
@@ -33,10 +33,11 @@ module.exports = function(plop: NodePlopAPI) {
                 type: 'input',
                 name: 'author',
                 message: '请输入作者名称',
-                validate(input: string, answers){
+                validate(input: string, answers) {
                     return input.trim().length !== 0
                 },
-                default: __DEV__ ? 'CaoMeiYouRen' : '',
+                // default: __DEV__ ? 'CaoMeiYouRen' : '',
+                default: 'CaoMeiYouRen',
                 filter: (e: string) => e.trim(),
             },
             {
@@ -61,11 +62,12 @@ module.exports = function(plop: NodePlopAPI) {
                         'auto-release',
                         'rollup',
                         'webpack',
-                    ].map(e => `${e}-template`)
+                        'github-action',
+                    ].map((e) => `${e}-template`)
                 },
             },
         ],
-        actions(answers){
+        actions(answers) {
             const actions: ActionType[] = []
             actions.push({
                 type: 'initProject',
