@@ -36,8 +36,8 @@ module.exports = function (plop: NodePlopAPI) {
                 validate(input: string, answers) {
                     return input.trim().length !== 0
                 },
-                // default: __DEV__ ? 'CaoMeiYouRen' : '',
-                default: 'CaoMeiYouRen',
+                default: __DEV__ ? 'CaoMeiYouRen' : '',
+                // default: 'CaoMeiYouRen',
                 filter: (e: string) => e.trim(),
             },
             {

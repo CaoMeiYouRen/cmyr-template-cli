@@ -2,7 +2,7 @@ import fs from 'fs-extra'
 import path from 'path'
 import ora from 'ora'
 import download from 'download-git-repo'
-import { exec, ExecOptions, execSync } from 'child_process'
+import { exec, ExecOptions } from 'child_process'
 import { __DEV__ } from './env'
 interface Package {
     name: string

@@ -1,13 +1,10 @@
 {
   "name": "cmyr-template-cli",
   "version": "0.1.0",
-  "description": "",
+  "description": "草梅友仁自制的项目模板创建器",
   "author": "CaoMeiYouRen",
-  "private": true,
   "license": "MIT",
   "main": "dist/index.js",
-  "module": "dist/index.esm.js",
-  "types": "dist/index.d.ts",
   "files": [
     "dist"
   ],
@@ -21,9 +18,7 @@
   "scripts": {
     "lint": "cross-env NODE_ENV=production eslint src --fix --ext .ts,.js",
     "prebuild": "rimraf dist",
-    "prebuild2": "rimraf dist",
-    "build": "rimraf dist && tsc",
-    "build2": "cross-env NODE_ENV=production rollup -c",
+    "build": "cross-env NODE_ENV=production rollup -c",
     "dev": "cross-env NODE_ENV=development ts-node-dev src/index.ts",
     "dev:rollup": "cross-env NODE_ENV=development rollup -c",
     "rm": "rimraf node_modules",

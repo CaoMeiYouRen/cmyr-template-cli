@@ -45,20 +45,20 @@ function getPlugins({ isBrowser = false, isMin = false, isDeclaration = false })
 }
 
 export default [
-    {
-        input: 'src/index.ts', // 生成类型文件
-        external,
-        output: {
-            dir: 'dist',
-            format: 'cjs',
-            name: outputName,
-        },
-        plugins: getPlugins({
-            isBrowser: false,
-            isDeclaration: true,
-            isMin: false,
-        }),
-    },
+    // {
+    //     input: 'src/index.ts', // 生成类型文件
+    //     external,
+    //     output: {
+    //         dir: 'dist',
+    //         format: 'cjs',
+    //         name: outputName,
+    //     },
+    //     plugins: getPlugins({
+    //         isBrowser: false,
+    //         isDeclaration: true,
+    //         isMin: false,
+    //     }),
+    // },
     {
         input: 'src/index.ts',
         external,
