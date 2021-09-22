@@ -78,11 +78,5 @@
   },
   "changelog": {
     "language": "zh"
-  },
-  "husky": {
-    "hooks": {
-      "pre-commit": "npm run lint && git add .",
-      "commit-msg": "validate-commit-msg"
-    }
   }
 }
