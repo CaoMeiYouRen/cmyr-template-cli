@@ -1,5 +1,12 @@
 # cmyr-template-cli
 
+## [1.0.1](https://github.com/CaoMeiYouRen/cmyr-template-cli/compare/v1.0.0...v1.0.1) (2021-11-11)
+
+
+### 🐛 Bug 修复
+
+* 修复 缺失 #!/usr/bin/env node ([52bb81c](https://github.com/CaoMeiYouRen/cmyr-template-cli/commit/52bb81c))
+
 # 1.0.0 (2021-09-20)
 
 
