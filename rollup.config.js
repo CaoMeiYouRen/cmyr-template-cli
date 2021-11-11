@@ -66,6 +66,7 @@ export default [
             file: 'dist/index.js', // 生成 cjs
             format: 'cjs',
             name: outputName,
+            banner: '#!/usr/bin/env node',
         },
         plugins: getPlugins({
             isBrowser: false,
@@ -80,6 +81,7 @@ export default [
             file: 'dist/plopfile.js', // 生成 cjs
             format: 'cjs',
             name: 'Plopfile',
+            banner: '#!/usr/bin/env node',
         },
         plugins: getPlugins({
             isBrowser: false,

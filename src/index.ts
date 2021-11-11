@@ -1,4 +1,3 @@
-// #!/usr/bin/env node
 import { Plop, run } from 'plop'
 import { Command } from 'commander'
 import minimist from 'minimist'
