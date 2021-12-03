@@ -70,7 +70,7 @@
     "download-git-repo": "^3.0.2",
     "fs-extra": "^10.0.0",
     "minimist": "^1.2.5",
-    "ora": "^6.0.1",
+    "ora": "^5.4.1",
     "plop": "^2.7.6"
   },
   "config": {
