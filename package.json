@@ -51,7 +51,7 @@
     "eslint": "^7.14.0",
     "eslint-config-cmyr": "^1.1.13",
     "husky": "^7.0.2",
-    "lint-staged": "^11.1.2",
+    "lint-staged": "^12.0.2",
     "lodash": "^4.17.20",
     "rimraf": "^3.0.2",
     "rollup": "^2.33.3",
@@ -69,8 +69,8 @@
     "download-git-repo": "^3.0.2",
     "fs-extra": "^10.0.0",
     "minimist": "^1.2.5",
-    "ora": "^5.4.1",
-    "plop": "^2.7.4"
+    "ora": "^6.0.1",
+    "plop": "^3.0.0"
   },
   "config": {
     "commitizen": {
