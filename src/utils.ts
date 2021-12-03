@@ -3,7 +3,7 @@ import path from 'path'
 import ora from 'ora'
 import download from 'download-git-repo'
 import { exec, ExecOptions } from 'child_process'
-import { __DEV__ } from './env'
+import { PACKAGE_MANAGER, __DEV__ } from './env'
 interface Package {
     name: string
     version: string
@@ -73,12 +73,12 @@ export async function asyncExec(cmd: string, options?: ExecOptions) {
 
 export async function init(projectPath: string, pkgData: IPackage) {
     const loading = ora('正在安装依赖……')
-    loading.start()
+
     try {
         await asyncExec('git --version', {
             cwd: projectPath,
         })
-        await asyncExec('npm -v', {
+        await asyncExec(`${PACKAGE_MANAGER} -v`, {
             cwd: projectPath,
         })
         await asyncExec('git init', {
@@ -94,7 +94,8 @@ export async function init(projectPath: string, pkgData: IPackage) {
         await asyncExec('git commit -m "chore: init"', {
             cwd: projectPath,
         })
-        await asyncExec('npm i', {
+        loading.start()
+        await asyncExec(`${PACKAGE_MANAGER} i`, {
             cwd: projectPath,
         })
         await asyncExec('git add .', {
