@@ -13,7 +13,7 @@ program.option('-d, --debug', 'debug')
 
 const create = new Command('create')
     .description('创建项目')
-    .action((_source, _destination) => {
+    .action(() => {
         Plop.launch({
             cwd: argv.cwd,
             configPath: path.resolve(__dirname, './plopfile.js'),

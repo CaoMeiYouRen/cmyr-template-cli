@@ -1,10 +1,10 @@
 import path from 'path'
 import { NodePlopAPI, ActionType } from 'plop'
 import { __DEV__ } from './env'
-import { downloadGitRepo, init } from './utils'
+import { downloadGitRepo, getGitUserName, init } from './utils'
 
 module.exports = function (plop: NodePlopAPI) {
-    plop.setActionType('initProject', async (answers: any, config) => {
+    plop.setActionType('initProject', async (answers: any) => {
         const name = answers.name as string
         const author = answers.author as string
         const template = answers.template as string
@@ -18,56 +18,59 @@ module.exports = function (plop: NodePlopAPI) {
     })
     plop.setGenerator('create', {
         description: '草梅项目创建器',
-        prompts: [
-            {
-                type: 'input',
-                name: 'name',
-                message: '请输入项目名称',
-                validate(input: string, answers) {
-                    return input.trim().length !== 0
+        async prompts(inquirer) {
+            const questions = [
+                {
+                    type: 'input',
+                    name: 'name',
+                    message: '请输入项目名称',
+                    validate(input: string) {
+                        return input.trim().length !== 0
+                    },
+                    default: __DEV__ ? 'temp' : '',
+                    filter: (e: string) => e.trim(),
                 },
-                default: __DEV__ ? 'temp' : '',
-                filter: (e: string) => e.trim(),
-            },
-            {
-                type: 'input',
-                name: 'author',
-                message: '请输入作者名称',
-                validate(input: string, answers) {
-                    return input.trim().length !== 0
+                {
+                    type: 'input',
+                    name: 'author',
+                    message: '请输入作者名称',
+                    validate(input: string) {
+                        return input.trim().length !== 0
+                    },
+                    default: __DEV__ ? 'CaoMeiYouRen' : await getGitUserName(),
+                    // default: 'CaoMeiYouRen',
+                    filter: (e: string) => e.trim(),
                 },
-                default: __DEV__ ? 'CaoMeiYouRen' : '',
-                // default: 'CaoMeiYouRen',
-                filter: (e: string) => e.trim(),
-            },
-            {
-                type: 'list',
-                name: 'template',
-                message: '请选择项目模板',
-                choices({ projectType }) {
-                    return [
-                        'vue',
-                        'vue3',
-                        'vite2',
-                        'vite2-vue2',
-                        'electron-vue',
-                        'nuxt',
-                        'uni',
-                        'react',
-                        'react16',
-                        'ts',
-                        'express',
-                        'koa2',
-                        'nest',
-                        'auto-release',
-                        'rollup',
-                        'webpack',
-                        'github-action',
-                    ].map((e) => `${e}-template`)
+                {
+                    type: 'list',
+                    name: 'template',
+                    message: '请选择项目模板',
+                    choices() {
+                        return [
+                            'vue',
+                            'vue3',
+                            'vite2',
+                            'vite2-vue2',
+                            'electron-vue',
+                            'nuxt',
+                            'uni',
+                            'react',
+                            'react16',
+                            'ts',
+                            'express',
+                            'koa2',
+                            'nest',
+                            'auto-release',
+                            'rollup',
+                            'webpack',
+                            'github-action',
+                        ].map((e) => `${e}-template`)
+                    },
                 },
-            },
-        ],
-        actions(answers) {
+            ]
+            return inquirer.prompt(questions)
+        },
+        actions() {
             const actions: ActionType[] = []
             actions.push({
                 type: 'initProject',
@@ -76,3 +79,4 @@ module.exports = function (plop: NodePlopAPI) {
         },
     })
 }
+

@@ -107,6 +107,15 @@ export async function init(projectPath: string, pkgData: IPackage) {
     }
 }
 
+export async function getGitUserName() {
+    const username = (await asyncExec('git config user.name')) as string
+    return username.trim()
+}
+
+export async function sleep(time: number) {
+    return new Promise((resolve) => setTimeout(resolve, time))
+}
+
 const forEachSetVersion = (dep: Record<string, string>) => {
     const promises: Promise<unknown>[] = []
     const manager = 'npm'
@@ -119,6 +128,9 @@ const forEachSetVersion = (dep: Record<string, string>) => {
             exec(`${manager} view ${key} version`, (err, stdout, stderr) => {
                 if (err) {
                     return reject(err)
+                }
+                if (stderr) {
+                    return reject(stderr)
                 }
                 dep[key] = `^${stdout.slice(0, stdout.length - 1)}`
                 resolve(0)

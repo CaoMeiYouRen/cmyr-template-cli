@@ -19,11 +19,15 @@ function getPlugins({ isBrowser = false, isMin = false, isDeclaration = false })
     )
     plugins.push(
         typescript({
-            tsconfig: isDeclaration ? 'tsconfig.json' : 'tsconfig.build.json',
+            tsconfig: 'tsconfig.json',
+            module: 'esnext',
+            target: 'es2019', // node >= 12
             esModuleInterop: true,
             allowSyntheticDefaultImports: true,
-            module: 'esnext',
-            target: 'esnext',
+            declaration: isDeclaration,
+            sourceMap: false,
+            importHelpers: false,
+            removeComments: true,
         }),
     )
     plugins.push(
