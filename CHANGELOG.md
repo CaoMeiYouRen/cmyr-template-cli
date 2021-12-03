@@ -1,5 +1,12 @@
 # cmyr-template-cli
 
+# [1.1.0](https://github.com/CaoMeiYouRen/cmyr-template-cli/compare/v1.0.2...v1.1.0) (2021-12-03)
+
+
+### ✨ 新功能
+
+* 新增 git config user.name 作为 作者名称 默认值 ([6507073](https://github.com/CaoMeiYouRen/cmyr-template-cli/commit/6507073))
+
 ## [1.0.2](https://github.com/CaoMeiYouRen/cmyr-template-cli/compare/v1.0.1...v1.0.2) (2021-11-11)
 
 
