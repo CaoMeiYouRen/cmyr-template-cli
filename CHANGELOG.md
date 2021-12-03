@@ -1,5 +1,12 @@
 # cmyr-template-cli
 
+# [1.2.0](https://github.com/CaoMeiYouRen/cmyr-template-cli/compare/v1.1.1...v1.2.0) (2021-12-03)
+
+
+### ✨ 新功能
+
+* 更换包管理器为 pnpm ([e72b389](https://github.com/CaoMeiYouRen/cmyr-template-cli/commit/e72b389))
+
 ## [1.1.1](https://github.com/CaoMeiYouRen/cmyr-template-cli/compare/v1.1.0...v1.1.1) (2021-12-03)
 
 

@@ -8,5 +8,4 @@ const env = process.env
  */
 export const __DEV__ = env.NODE_ENV === 'development'
 
-
 export const PACKAGE_MANAGER = 'pnpm'
