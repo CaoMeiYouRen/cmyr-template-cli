@@ -27,13 +27,14 @@
     "release": "semantic-release",
     "commit": "git add . && git cz",
     "create": "ct create",
-    "build:dev": "npm run build && rimraf temp && cross-env NODE_ENV=development ct create",
+    "build:dev": "cross-env NODE_ENV=development rollup -c && rimraf temp && cross-env NODE_ENV=development ct create",
     "build:prod": "npm run build && rimraf temp && cross-env NODE_ENV=production ct create"
   },
   "devDependencies": {
     "@rollup/plugin-commonjs": "^21.0.0",
     "@rollup/plugin-json": "^4.1.0",
     "@rollup/plugin-node-resolve": "^13.0.5",
+    "@rollup/plugin-replace": "^3.0.0",
     "@rollup/plugin-typescript": "^8.0.0",
     "@semantic-release/changelog": "^6.0.0",
     "@semantic-release/git": "^10.0.0",

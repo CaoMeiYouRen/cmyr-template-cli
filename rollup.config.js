@@ -3,12 +3,12 @@ import { terser } from 'rollup-plugin-terser'
 import commonjs from '@rollup/plugin-commonjs'
 import typescript from '@rollup/plugin-typescript'
 import json from '@rollup/plugin-json'
+import replace from '@rollup/plugin-replace'
 import _ from 'lodash'
 import { dependencies, name } from './package.json'
 const external = Object.keys({ ...dependencies }) // 默认不打包 dependencies
 const outputName = _.upperFirst(_.camelCase(name))// 导出的模块名称 PascalCase
 const env = process.env
-const IS_PROD = env.NODE_ENV === 'production'
 function getPlugins({ isBrowser = false, isMin = false, isDeclaration = false }) {
     const plugins = []
     plugins.push(
@@ -37,6 +37,13 @@ function getPlugins({ isBrowser = false, isMin = false, isDeclaration = false })
     )
     plugins.push(
         json({}),
+    )
+    plugins.push(
+        replace({
+            'process.env.NODE_ENV': JSON.stringify(process.env.NODE_ENV),
+            'env.NODE_ENV': JSON.stringify(env.NODE_ENV),
+            preventAssignment: true,
+        }),
     )
     if (isMin) {
         plugins.push(
