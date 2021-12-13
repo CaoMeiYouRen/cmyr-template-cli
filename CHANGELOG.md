@@ -1,5 +1,12 @@
 # cmyr-template-cli
 
+# [1.3.0](https://github.com/CaoMeiYouRen/cmyr-template-cli/compare/v1.2.0...v1.3.0) (2021-12-13)
+
+
+### ✨ 新功能
+
+* 新增 github 镜像加速 ([2b0824f](https://github.com/CaoMeiYouRen/cmyr-template-cli/commit/2b0824f))
+
 # [1.2.0](https://github.com/CaoMeiYouRen/cmyr-template-cli/compare/v1.1.1...v1.2.0) (2021-12-03)
 
 
