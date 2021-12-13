@@ -1,5 +1,12 @@
 # cmyr-template-cli
 
+## [1.3.1](https://github.com/CaoMeiYouRen/cmyr-template-cli/compare/v1.3.0...v1.3.1) (2021-12-13)
+
+
+### 🐛 Bug 修复
+
+* 新增 请选择项目模板 的默认值 ([36f6f7e](https://github.com/CaoMeiYouRen/cmyr-template-cli/commit/36f6f7e))
+
 # [1.3.0](https://github.com/CaoMeiYouRen/cmyr-template-cli/compare/v1.2.0...v1.3.0) (2021-12-13)
 
 
