@@ -66,6 +66,7 @@ module.exports = function (plop: NodePlopAPI) {
                             'github-action',
                         ].map((e) => `${e}-template`)
                     },
+                    default: __DEV__ ? 'ts' : '',
                 },
             ]
             return inquirer.prompt(questions)
