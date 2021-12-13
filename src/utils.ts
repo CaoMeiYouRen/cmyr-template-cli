@@ -2,8 +2,22 @@ import fs from 'fs-extra'
 import path from 'path'
 import ora from 'ora'
 import download from 'download-git-repo'
+import axios from 'axios'
 import { exec, ExecOptions } from 'child_process'
 import { PACKAGE_MANAGER, __DEV__ } from './env'
+import any from 'promise.any'
+
+if (!Promise.any) {
+    Promise.any = any
+}
+
+const REMOTES = [
+    'https://github.com',
+    'https://hub.fastgit.org',
+    'https://gitclone.com',
+    'https://github.com.cnpmjs.org',
+]
+
 interface Package {
     name: string
     version: string
@@ -35,10 +49,11 @@ Bitbucket - bitbucket:owner/name
  * @returns 成功返回 true
  */
 export async function downloadGitRepo(repository: string, destination: string, options: any = {}) {
+    const fastRepo = await getFastGitRepo(repository)
     const loading = ora(`download - ${repository}`)
     loading.start()
     return new Promise((resolve, reject) => {
-        download(repository, destination, options, (err: any) => {
+        download(fastRepo, destination, options, (err: any) => {
             loading.stop()
             if (err) {
                 return reject(err)
@@ -171,4 +186,30 @@ export function sortKey(obj: Record<string, unknown>) {
         obj2[e] = obj[e]
     })
     return obj2
+}
+
+/**
+ * 从 github 和镜像中选择最快的源
+ * @param repository 源 owner/name, 例如 CaoMeiYouRen/rollup-template
+ */
+export async function getFastGitRepo(repository: string) {
+    const loading = ora(`正在选择镜像源 - ${repository}`)
+    loading.start()
+    try {
+        const fast = await Promise.any(REMOTES.map((remote) => {
+            // const url = `${remote}/${repository}/.git`
+            const url = `${remote}/${repository}/archive/refs/heads/master.zip`
+            return axios({
+                url,
+                method: 'HEAD',
+                timeout: 15 * 1000,
+            })
+        }))
+        return `direct:${fast.config.url}`
+    } catch (error) {
+        console.error(error)
+        process.exit(1)
+    } finally {
+        loading.stop()
+    }
 }

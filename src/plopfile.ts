@@ -9,7 +9,7 @@ module.exports = function (plop: NodePlopAPI) {
         const author = answers.author as string
         const template = answers.template as string
         const projectPath = path.join(process.cwd(), name)
-        await downloadGitRepo(`github:CaoMeiYouRen/${template}`, projectPath)
+        await downloadGitRepo(`CaoMeiYouRen/${template}`, projectPath)
         await init(projectPath, {
             name,
             author,
