@@ -1,5 +1,12 @@
 # cmyr-template-cli
 
+## [1.4.1](https://github.com/CaoMeiYouRen/cmyr-template-cli/compare/v1.4.0...v1.4.1) (2021-12-14)
+
+
+### 🐛 Bug 修复
+
+* 新增 项目简介 ([faef295](https://github.com/CaoMeiYouRen/cmyr-template-cli/commit/faef295))
+
 # [1.4.0](https://github.com/CaoMeiYouRen/cmyr-template-cli/compare/v1.3.1...v1.4.0) (2021-12-14)
 
 
