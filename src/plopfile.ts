@@ -29,6 +29,19 @@ module.exports = function (plop: NodePlopAPI) {
                 },
                 {
                     type: 'input',
+                    name: 'description',
+                    message: '请输入项目简介',
+                    // validate(input: string) {
+                    //     return input.trim().length !== 0
+                    // },
+                    transformer(input: string) {
+                        return input?.trim() || ''
+                    },
+                    default: __DEV__ ? '' : '',
+                    filter: (e: string) => e.trim(),
+                },
+                {
+                    type: 'input',
                     name: 'author',
                     message: '请输入作者名称',
                     validate(input: string) {

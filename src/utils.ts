@@ -98,7 +98,7 @@ export async function asyncExec(cmd: string, options?: ExecOptions) {
 
 export async function init(projectPath: string, answers: InitAnswers) {
     const loading = ora('正在安装依赖……')
-    const { name, author, isOpenSource, isRemoveDependabot } = answers
+    const { name, author, description, isOpenSource, isRemoveDependabot } = answers
     try {
         await asyncExec('git --version', {
             cwd: projectPath,
@@ -126,6 +126,7 @@ export async function init(projectPath: string, answers: InitAnswers) {
         const pkgData: IPackage = {
             name,
             author,
+            description,
             private: !isOpenSource,
         }
         const newPkg = Object.assign({}, pkg, pkgData)

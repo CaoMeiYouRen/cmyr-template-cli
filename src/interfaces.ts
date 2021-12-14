@@ -18,6 +18,7 @@ export type IPackage = Partial<Package>
 
 export interface InitAnswers {
     name: string
+    description: string
     author: string
     template: string
     /**
