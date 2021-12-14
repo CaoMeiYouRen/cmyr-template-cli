@@ -1,25 +1,22 @@
 import path from 'path'
 import { NodePlopAPI, ActionType } from 'plop'
+import { QuestionCollection, Answers } from 'inquirer'
 import { __DEV__ } from './env'
+import { InitAnswers } from './interfaces'
 import { downloadGitRepo, getGitUserName, init } from './utils'
 
 module.exports = function (plop: NodePlopAPI) {
-    plop.setActionType('initProject', async (answers: any) => {
-        const name = answers.name as string
-        const author = answers.author as string
-        const template = answers.template as string
+    plop.setActionType('initProject', async (answers: InitAnswers) => {
+        const { name, template } = answers
         const projectPath = path.join(process.cwd(), name)
         await downloadGitRepo(`CaoMeiYouRen/${template}`, projectPath)
-        await init(projectPath, {
-            name,
-            author,
-        })
+        await init(projectPath, answers)
         return '- 下载项目模板成功！'
     })
     plop.setGenerator('create', {
         description: '草梅项目创建器',
         async prompts(inquirer) {
-            const questions = [
+            const questions: QuestionCollection<Answers> = [
                 {
                     type: 'input',
                     name: 'name',
@@ -38,7 +35,6 @@ module.exports = function (plop: NodePlopAPI) {
                         return input.trim().length !== 0
                     },
                     default: __DEV__ ? 'CaoMeiYouRen' : await getGitUserName(),
-                    // default: 'CaoMeiYouRen',
                     filter: (e: string) => e.trim(),
                 },
                 {
@@ -66,7 +62,22 @@ module.exports = function (plop: NodePlopAPI) {
                             'github-action',
                         ].map((e) => `${e}-template`)
                     },
-                    default: __DEV__ ? 'ts' : '',
+                    default: __DEV__ ? 'ts-template' : '',
+                },
+                {
+                    type: 'confirm',
+                    name: 'isOpenSource',
+                    message: '是否开源？',
+                    default: false,
+                },
+                {
+                    type: 'confirm',
+                    name: 'isRemoveDependabot',
+                    message: '是否移除 github-dependabot ？',
+                    default: false,
+                    when(answers: InitAnswers) {
+                        return answers.isOpenSource
+                    },
                 },
             ]
             return inquirer.prompt(questions)

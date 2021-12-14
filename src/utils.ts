@@ -4,8 +4,9 @@ import ora from 'ora'
 import download from 'download-git-repo'
 import axios from 'axios'
 import { exec, ExecOptions } from 'child_process'
-import { PACKAGE_MANAGER, __DEV__ } from './env'
+import { PACKAGE_MANAGER } from './env'
 import any from 'promise.any'
+import { InitAnswers, IPackage } from './interfaces'
 
 if (!Promise.any) {
     Promise.any = any
@@ -18,23 +19,6 @@ const REMOTES = [
     'https://github.com.cnpmjs.org',
 ]
 
-interface Package {
-    name: string
-    version: string
-    description: string
-    author: string
-    private: boolean
-    license: string
-    main: string
-    bin: Record<string, string>
-    files: string[]
-    scripts: Record<string, string>
-    devDependencies: Record<string, string>
-    dependencies: Record<string, string>
-    [k: string]: unknown
-}
-
-export type IPackage = Partial<Package>
 /**
  * 下载 git 库。repository例子如下：
 GitHub - github:owner/name or simply owner/name
@@ -64,6 +48,32 @@ export async function downloadGitRepo(repository: string, destination: string, o
 }
 
 /**
+ * 从 github 和镜像中选择最快的源
+ * @param repository 源 owner/name, 例如 CaoMeiYouRen/rollup-template
+ */
+export async function getFastGitRepo(repository: string) {
+    const loading = ora(`正在选择镜像源 - ${repository}`)
+    loading.start()
+    try {
+        const fast = await Promise.any(REMOTES.map((remote) => {
+            // const url = `${remote}/${repository}/.git`
+            const url = `${remote}/${repository}/archive/refs/heads/master.zip`
+            return axios({
+                url,
+                method: 'HEAD',
+                timeout: 15 * 1000,
+            })
+        }))
+        return `direct:${fast.config.url}`
+    } catch (error) {
+        console.error(error)
+        process.exit(1)
+    } finally {
+        loading.stop()
+    }
+}
+
+/**
  * 执行命令行
  *
  * @author CaoMeiYouRen
@@ -86,9 +96,9 @@ export async function asyncExec(cmd: string, options?: ExecOptions) {
     })
 }
 
-export async function init(projectPath: string, pkgData: IPackage) {
+export async function init(projectPath: string, answers: InitAnswers) {
     const loading = ora('正在安装依赖……')
-
+    const { name, author, isOpenSource, isRemoveDependabot } = answers
     try {
         await asyncExec('git --version', {
             cwd: projectPath,
@@ -99,10 +109,28 @@ export async function init(projectPath: string, pkgData: IPackage) {
         await asyncExec('git init', {
             cwd: projectPath,
         })
+
+        const dependabotPath = path.join(projectPath, '.github/dependabot.yml')
+        const mergifyPath = path.join(projectPath, '.github/mergify.yml')
+        if (!isOpenSource || isRemoveDependabot) { // 闭源 或者 移除
+            if (await fs.pathExists(dependabotPath)) { // 如果存在 dependabot.yml
+                await fs.remove(dependabotPath)
+            }
+            if (await fs.pathExists(mergifyPath)) { // 如果存在 mergify.yml
+                await fs.remove(mergifyPath)
+            }
+        }
+
         const pkgPath = path.join(projectPath, 'package.json')
         const pkg: IPackage = await fs.readJSON(pkgPath)
+        const pkgData: IPackage = {
+            name,
+            author,
+            private: !isOpenSource,
+        }
         const newPkg = Object.assign({}, pkg, pkgData)
         await fs.writeFile(pkgPath, JSON.stringify(newPkg, null, 2))
+
         await asyncExec('git add .', {
             cwd: projectPath,
         })
@@ -132,84 +160,59 @@ export async function sleep(time: number) {
     return new Promise((resolve) => setTimeout(resolve, time))
 }
 
-const forEachSetVersion = (dep: Record<string, string>) => {
-    const promises: Promise<unknown>[] = []
-    const manager = 'npm'
-    Object.keys(dep).forEach((key) => {
-        // TODO: 优化逻辑
-        if (/^[0-9]+/.test(dep[key])) { // 开头为 数字 直接跳过。
-            return
-        }
-        const newPromise = new Promise((resolve, reject) => {
-            exec(`${manager} view ${key} version`, (err, stdout, stderr) => {
-                if (err) {
-                    return reject(err)
-                }
-                if (stderr) {
-                    return reject(stderr)
-                }
-                dep[key] = `^${stdout.slice(0, stdout.length - 1)}`
-                resolve(0)
-            })
-        })
-        promises.push(newPromise)
-    })
-    return promises
-}
+// const forEachSetVersion = (dep: Record<string, string>) => {
+//     const promises: Promise<unknown>[] = []
+//     const manager = 'npm'
+//     Object.keys(dep).forEach((key) => {
+//         // TODO: 优化逻辑
+//         if (/^[0-9]+/.test(dep[key])) { // 开头为 数字 直接跳过。
+//             return
+//         }
+//         const newPromise = new Promise((resolve, reject) => {
+//             exec(`${manager} view ${key} version`, (err, stdout, stderr) => {
+//                 if (err) {
+//                     return reject(err)
+//                 }
+//                 if (stderr) {
+//                     return reject(stderr)
+//                 }
+//                 dep[key] = `^${stdout.slice(0, stdout.length - 1)}`
+//                 resolve(0)
+//             })
+//         })
+//         promises.push(newPromise)
+//     })
+//     return promises
+// }
 
-/**
- * 更新 package 中 devDependencies、dependencies 到最新版本
- *
- * @author CaoMeiYouRen
- * @date 2020-12-05
- * @export
- * @param {IPackage} pkg package 文件
- */
-export async function updateDependencies(pkg: IPackage) {
-    const loading = ora('正在获取依赖最新版本……')
-    if (__DEV__) {
-        return pkg
-    }
-    loading.start()
-    await Promise.allSettled([
-        ...forEachSetVersion(pkg.devDependencies),
-        ...forEachSetVersion(pkg.dependencies),
-    ])
-    loading.stop()
-    return pkg
-}
+// /**
+//  * 更新 package 中 devDependencies、dependencies 到最新版本
+//  *
+//  * @author CaoMeiYouRen
+//  * @date 2020-12-05
+//  * @export
+//  * @param {IPackage} pkg package 文件
+//  */
+// export async function updateDependencies(pkg: IPackage) {
+//     const loading = ora('正在获取依赖最新版本……')
+//     if (__DEV__) {
+//         return pkg
+//     }
+//     loading.start()
+//     await Promise.allSettled([
+//         ...forEachSetVersion(pkg.devDependencies),
+//         ...forEachSetVersion(pkg.dependencies),
+//     ])
+//     loading.stop()
+//     return pkg
+// }
 
-export function sortKey(obj: Record<string, unknown>) {
-    const keys = Object.keys(obj).sort((a, b) => a.localeCompare(b))
-    const obj2: Record<string, unknown> = {}
-    keys.forEach((e) => {
-        obj2[e] = obj[e]
-    })
-    return obj2
-}
+// export function sortKey(obj: Record<string, unknown>) {
+//     const keys = Object.keys(obj).sort((a, b) => a.localeCompare(b))
+//     const obj2: Record<string, unknown> = {}
+//     keys.forEach((e) => {
+//         obj2[e] = obj[e]
+//     })
+//     return obj2
+// }
 
-/**
- * 从 github 和镜像中选择最快的源
- * @param repository 源 owner/name, 例如 CaoMeiYouRen/rollup-template
- */
-export async function getFastGitRepo(repository: string) {
-    const loading = ora(`正在选择镜像源 - ${repository}`)
-    loading.start()
-    try {
-        const fast = await Promise.any(REMOTES.map((remote) => {
-            // const url = `${remote}/${repository}/.git`
-            const url = `${remote}/${repository}/archive/refs/heads/master.zip`
-            return axios({
-                url,
-                method: 'HEAD',
-                timeout: 15 * 1000,
-            })
-        }))
-        return `direct:${fast.config.url}`
-    } catch (error) {
-        console.error(error)
-        process.exit(1)
-    } finally {
-        loading.stop()
-    }
-}
