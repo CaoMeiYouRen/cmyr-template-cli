@@ -1,5 +1,12 @@
 # cmyr-template-cli
 
+# [1.4.0](https://github.com/CaoMeiYouRen/cmyr-template-cli/compare/v1.3.1...v1.4.0) (2021-12-14)
+
+
+### ✨ 新功能
+
+* 新增 开源选项 ([4a7bf48](https://github.com/CaoMeiYouRen/cmyr-template-cli/commit/4a7bf48))
+
 ## [1.3.1](https://github.com/CaoMeiYouRen/cmyr-template-cli/compare/v1.3.0...v1.3.1) (2021-12-13)
 
 
