@@ -71,6 +71,14 @@
 <%= usage %>
 ```
 <% } -%>
+<% if (devCommand) { -%>
+
+## 开发
+
+```sh
+<%= devCommand %>
+```
+<% } -%>
 <% if (buildCommand) { -%>
 
 ## 编译

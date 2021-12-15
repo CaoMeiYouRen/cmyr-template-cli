@@ -248,8 +248,9 @@ export async function initReadme(projectPath: string, answers: InitAnswers) {
         const engines = pkg?.engines || {}
         const license = pkg?.license
         const version = pkg?.version
-        const installCommand = `${packageManager} install ${name}`
+        const installCommand = isPublishToNpm ? `${packageManager} install ${name}` : `${packageManager} install`
         const startCommand = pkg?.scripts?.start && `${packageManager} run start`
+        const devCommand = pkg?.scripts?.dev && `${packageManager} run dev`
         const buildCommand = pkg?.scripts?.build && `${packageManager} run build`
         const testCommand = pkg?.scripts?.test && `${packageManager} run test`
         const lintCommand = pkg?.scripts?.lint && `${packageManager} run lint`
@@ -288,11 +289,12 @@ export async function initReadme(projectPath: string, answers: InitAnswers) {
             installCommand,
             startCommand,
             usage: startCommand,
+            devCommand,
             buildCommand,
             testCommand,
             lintCommand,
             isJSProject: true,
-            packageManager: 'npm',
+            packageManager,
             isProjectOnNpm: isPublishToNpm,
             isOpenSource,
             projectName: name,
