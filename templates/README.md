@@ -28,6 +28,7 @@
     <img alt="License: <%= licenseName %>" src="https://img.shields.io/<%= `badge/License-${licenseName}-yellow.svg` %>" />
   </a>
 <% } -%>
+</p>
 
 <% if (projectDescription) { -%>
 

@@ -5,7 +5,6 @@ import download from 'download-git-repo'
 import axios from 'axios'
 import { exec, ExecOptions } from 'child_process'
 import { PACKAGE_MANAGER } from './env'
-import any from 'promise.any'
 import { InitAnswers, IPackage } from './interfaces'
 import colors from 'colors'
 import ejs from 'ejs'
@@ -13,7 +12,9 @@ import { unescape } from 'lodash'
 import { fix } from '@lint-md/core'
 
 if (!Promise.any) {
-    Promise.any = any
+    import('promise.any').then((any) => {
+        Promise.any = any.default
+    })
 }
 
 const GITHUB_API_URL = 'https://api.github.com'
