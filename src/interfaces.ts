@@ -11,6 +11,9 @@ export interface Package {
     scripts: Record<string, string>
     devDependencies: Record<string, string>
     dependencies: Record<string, string>
+    engines: Record<string, string>
+    homepage: string
+    bugs: Record<string, string>
     [k: string]: unknown
 }
 
@@ -26,7 +29,25 @@ export interface InitAnswers {
      */
     isOpenSource: boolean
     /**
+     * 是否初始化远程 repo
+     */
+    isInitRemoteRepo: boolean
+    /**
+     * 远程 repo 地址
+     */
+    gitRemoteUrl: string
+
+    /**
+     * 是否发布到 npm
+     */
+    isPublishToNpm: boolean
+
+    /**
      * 是否移除 github-dependabot，闭源的情况下默认移除
      */
     isRemoveDependabot: boolean
+    /**
+     * 是否初始化 README，仅开源的情况下初始化
+     */
+    isInitReadme: boolean
 }

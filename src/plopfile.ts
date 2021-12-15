@@ -34,9 +34,6 @@ module.exports = function (plop: NodePlopAPI) {
                     // validate(input: string) {
                     //     return input.trim().length !== 0
                     // },
-                    transformer(input: string) {
-                        return input?.trim() || ''
-                    },
                     default: __DEV__ ? '' : '',
                     filter: (e: string) => e.trim(),
                 },
@@ -82,6 +79,50 @@ module.exports = function (plop: NodePlopAPI) {
                     name: 'isOpenSource',
                     message: '是否开源？',
                     default: false,
+                },
+                {
+                    type: 'confirm',
+                    name: 'isInitRemoteRepo',
+                    message: '是否初始化远程 Git 仓库？',
+                    default: false,
+                },
+                {
+                    type: 'input',
+                    name: 'gitRemoteUrl',
+                    message: '请输入远程 Git 仓库 Url',
+                    validate(input: string) {
+                        return input.trim().length !== 0
+                    },
+                    default(answers: InitAnswers) {
+                        const { isOpenSource, name, author } = answers
+                        // 如果是开源，则默认为 github，如果为闭源，则默认为 gitee
+                        if (isOpenSource) {
+                            return `git@github.com:${author}/${name}.git`
+                        }
+                        return `git@gitee.com:caomeiyouren/${name}.git`
+                    },
+                    filter: (e: string) => e.trim(),
+                    when(answers: InitAnswers) {
+                        return answers.isInitRemoteRepo
+                    },
+                },
+                {
+                    type: 'confirm',
+                    name: 'isPublishToNpm',
+                    message: '是否发布到 npm？',
+                    default: false,
+                    when(answers: InitAnswers) {
+                        return answers.isOpenSource
+                    },
+                },
+                {
+                    type: 'confirm',
+                    name: 'isInitReadme',
+                    message: '是否初始化 README.md ？',
+                    default: true,
+                    when(answers: InitAnswers) {
+                        return answers.isOpenSource
+                    },
                 },
                 {
                     type: 'confirm',

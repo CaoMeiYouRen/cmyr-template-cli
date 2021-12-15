@@ -27,5 +27,6 @@ module.exports = {
     parser: '@typescript-eslint/parser',
     rules: {
         'no-console': 0,
+        'require-await': 0,
     },
 }
