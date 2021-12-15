@@ -1,5 +1,12 @@
 # cmyr-template-cli
 
+## [1.5.1](https://github.com/CaoMeiYouRen/cmyr-template-cli/compare/v1.5.0...v1.5.1) (2021-12-15)
+
+
+### 🐛 Bug 修复
+
+* 新增 开发 指令 ([301a5aa](https://github.com/CaoMeiYouRen/cmyr-template-cli/commit/301a5aa))
+
 # [1.5.0](https://github.com/CaoMeiYouRen/cmyr-template-cli/compare/v1.4.1...v1.5.0) (2021-12-15)
 
 
