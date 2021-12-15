@@ -1,5 +1,17 @@
 # cmyr-template-cli
 
+# [1.5.0](https://github.com/CaoMeiYouRen/cmyr-template-cli/compare/v1.4.1...v1.5.0) (2021-12-15)
+
+
+### ✨ 新功能
+
+* 新增 README 文件的创建，增加了更多选项 ([83d438e](https://github.com/CaoMeiYouRen/cmyr-template-cli/commit/83d438e))
+
+
+### 🐛 Bug 修复
+
+* 修复 templates 未发布 ([c2184bf](https://github.com/CaoMeiYouRen/cmyr-template-cli/commit/c2184bf))
+
 ## [1.4.1](https://github.com/CaoMeiYouRen/cmyr-template-cli/compare/v1.4.0...v1.4.1) (2021-12-14)
 
 
