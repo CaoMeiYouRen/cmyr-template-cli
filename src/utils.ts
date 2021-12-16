@@ -27,6 +27,7 @@ const REMOTES = [
     'https://github.com',
     'https://hub.fastgit.org',
     'https://github.com.cnpmjs.org',
+    'https://download.fastgit.org',
 ]
 
 /**
@@ -67,7 +68,6 @@ export async function getFastGitRepo(repository: string) {
     loading.start()
     try {
         const fast = await Promise.any(REMOTES.map((remote) => {
-            // const url = `${remote}/${repository}/.git`
             const url = `${remote}/${repository}/archive/refs/heads/master.zip`
             return axios({
                 url,
@@ -108,7 +108,7 @@ export async function asyncExec(cmd: string, options?: ExecOptions) {
 }
 
 export async function init(projectPath: string, answers: InitAnswers) {
-    const { isOpenSource, isRemoveDependabot, gitRemoteUrl } = answers
+    const { isOpenSource, isRemoveDependabot, gitRemoteUrl, isInitReadme, isInitContributing } = answers
 
     try {
         await asyncExec('git --version', {
@@ -141,7 +141,15 @@ export async function init(projectPath: string, answers: InitAnswers) {
         await initProjectJson(projectPath, answers)
 
         if (isOpenSource) { // 只有开源的时候才初始化 REAMD
-            await initReadme(projectPath, answers)
+            const info = await getProjectInfo(projectPath, answers)
+            if (info) {
+                if (isInitReadme) {
+                    await initReadme(projectPath, info)
+                }
+                if (isInitContributing) {
+                    await initContributing(projectPath, info)
+                }
+            }
         }
 
         await asyncExec('git add .', {
@@ -234,19 +242,11 @@ export async function initProjectJson(projectPath: string, answers: InitAnswers)
 
 const cleanText = (text: string) => text.replace(/-/g, '--').replace(/_/g, '__')
 
-/**
- * 初始化 README.md
- * @param projectPath
- * @param answers
- */
-export async function initReadme(projectPath: string, answers: InitAnswers) {
-    const loading = ora('正在初始化 README.md ……').start()
+async function getProjectInfo(projectPath: string, answers: InitAnswers) {
+    const loading = ora('正在获取项目信息 ……').start()
     try {
         const { name, author, description, isOpenSource, isPublishToNpm } = answers
         const packageManager = 'npm'
-        const templatePath = path.join(__dirname, '../templates/README.md')
-        const template = (await fs.readFile(templatePath, 'utf8')).toString()
-        const newReadmePath = path.join(projectPath, 'README.md')
 
         const pkgPath = path.join(projectPath, 'package.json')
         const pkg: IPackage = await fs.readJSON(pkgPath)
@@ -267,11 +267,12 @@ export async function initReadme(projectPath: string, answers: InitAnswers) {
         const demoUrl = `${repositoryUrl}#readme`
         const homepage = documentationUrl
         const githubUsername = author
-        const authorWebsite = isOpenSource ? await getAuthorWebsiteFromGithubAPI(githubUsername) : ''
+        const authorWebsite = await getAuthorWebsiteFromGithubAPI(githubUsername)
         const licenseUrl = `${repositoryUrl}/blob/master/LICENSE`
+        const discussionsUrl = `${repositoryUrl}/discussions`
+        const pullRequestsUrl = `${repositoryUrl}/pulls`
 
         const projectInfos = {
-            filename: templatePath,
             currentYear: new Date().getFullYear(),
             name,
             description,
@@ -312,7 +313,31 @@ export async function initReadme(projectPath: string, answers: InitAnswers) {
                 name: key,
                 value: engines[key],
             })),
+            discussionsUrl,
+            pullRequestsUrl,
         }
+        loading.succeed('项目信息 初始化成功！')
+        return projectInfos
+
+    } catch (error) {
+        loading.fail('项目信息 初始化失败！')
+        console.error(error)
+        return null
+    }
+}
+
+/**
+ * 初始化 README.md
+ * @param projectPath
+ * @param projectInfos
+ */
+async function initReadme(projectPath: string, projectInfos: any) {
+    const loading = ora('正在初始化 README.md ……').start()
+    try {
+
+        const templatePath = path.join(__dirname, '../templates/README.md')
+        const template = (await fs.readFile(templatePath, 'utf8')).toString()
+        const newReadmePath = path.join(projectPath, 'README.md')
 
         const readmeContent = await ejs.render(
             template,
@@ -336,8 +361,42 @@ export async function initReadme(projectPath: string, answers: InitAnswers) {
 }
 
 /**
- * 根据 github name 获取作者网站
+ * 初始化 贡献指南(CONTRIBUTING.md)
+ * @param projectPath
+ * @param projectInfos
  */
+async function initContributing(projectPath: string, projectInfos: any) {
+    const loading = ora('正在初始化 贡献指南 ……').start()
+    try {
+
+        const templatePath = path.join(__dirname, '../templates/CONTRIBUTING.md')
+        const template = (await fs.readFile(templatePath, 'utf8')).toString()
+        const newReadmePath = path.join(projectPath, 'CONTRIBUTING.md')
+
+        const readmeContent = await ejs.render(
+            template,
+            projectInfos,
+            {
+                debug: false,
+                async: true,
+            },
+        )
+
+        if (await fs.pathExists(newReadmePath)) {
+            await fs.remove(newReadmePath)
+        }
+        await fs.writeFile(newReadmePath, lintMd(unescape(readmeContent)))
+
+        loading.succeed('贡献指南 初始化成功！')
+    } catch (error) {
+        loading.fail('贡献指南 初始化失败！')
+        console.error(error)
+    }
+}
+
+/**
+     * 根据 github name 获取作者网站
+     */
 async function getAuthorWebsiteFromGithubAPI(githubUsername: string): Promise<string> {
     try {
         const userData = (await axios.get(`${GITHUB_API_URL}/users/${githubUsername}`)).data
@@ -350,8 +409,8 @@ async function getAuthorWebsiteFromGithubAPI(githubUsername: string): Promise<st
 }
 
 /**
- * 获取 Node.js lts 版本
- */
+     * 获取 Node.js lts 版本
+     */
 async function getLtsNodeVersion(): Promise<string> {
     try {
         const html = (await axios.get(NODEJS_URL)).data as string
@@ -364,10 +423,10 @@ async function getLtsNodeVersion(): Promise<string> {
 }
 
 /**
- * 修复 markdown 格式
- * @param markdown
- * @returns
- */
+     * 修复 markdown 格式
+     * @param markdown
+     * @returns
+     */
 function lintMd(markdown: string) {
     const rules = {
         'no-empty-code': 0,
@@ -379,4 +438,3 @@ function lintMd(markdown: string) {
     const fixed = fix(markdown, rules)
     return fixed
 }
-

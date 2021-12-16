@@ -126,6 +126,15 @@ module.exports = function (plop: NodePlopAPI) {
                 },
                 {
                     type: 'confirm',
+                    name: 'isInitContributing',
+                    message: '是否初始化 贡献指南(CONTRIBUTING.md) ？',
+                    default: true,
+                    when(answers: InitAnswers) {
+                        return answers.isOpenSource
+                    },
+                },
+                {
+                    type: 'confirm',
                     name: 'isRemoveDependabot',
                     message: '是否移除 github-dependabot ？',
                     default: false,

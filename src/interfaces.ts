@@ -50,4 +50,8 @@ export interface InitAnswers {
      * 是否初始化 README，仅开源的情况下初始化
      */
     isInitReadme: boolean
+    /**
+     * 是否初始化 贡献指南，仅开源的情况下初始化
+     */
+    isInitContributing: boolean
 }

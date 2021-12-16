@@ -1,0 +1,78 @@
+# 贡献指南
+
+在为此存储库做出贡献时，请首先通过 issue、电子邮件或任何其他方法与此存储库的所有者讨论您希望进行的更改，然后再进行更改。
+
+## 开发环境设置
+
+要设置开发环境，请按照以下步骤操作：
+
+1. Clone 本项目
+
+   ```sh
+   git clone <%= repositoryUrl %>
+   ```
+
+2.  安装依赖
+
+   ```sh
+   npm i
+   # 或 yarn
+   # 或 pnpm i
+   ```
+
+3.  运行开发环境
+
+<% if (devCommand) { -%>
+```sh
+<%= devCommand %>
+```
+<% } -%>
+
+## 问题和功能请求
+
+你在源代码中发现了一个错误，文档中有一个错误，或者你想要一个新功能？ 看看[GitHub 讨论](<%= discussionsUrl %>)看看它是否已经在讨论中。您可以通过[在 GitHub 上提交问题](<%= issuesUrl %>)来帮助我们。在创建问题之前，请确保搜索问题存档 - 您的问题可能已经得到解决！
+
+请尝试创建以下错误报告：
+
+- *可重现。*包括重现问题的步骤。
+- *具体的。*包括尽可能多的细节：哪个版本，什么环境等。
+- *独特的。*不要复制现有的已打开问题。
+- *范围仅限于单个错误。*每个报告一个错误。
+
+**更好的是：提交带有修复或新功能的拉取请求！**
+
+### 如何提交拉取请求
+
+1. 在我们的存储库中搜索 与您的提交相关的开放或关闭的 [Pull Requests](<%= pullRequestsUrl %>)。你不想重复努力。
+
+2. Fork 本项目
+
+3. 创建您的功能分支 ( `git checkout -b feat/your_feature`)
+
+4. 提交您的更改
+
+   本项目使用 [约定式提交](https://www.conventionalcommits.org/zh-hans/v1.0.0/)，因此请遵循提交消息中的规范。
+   
+   git commit 将用于自动化生成日志，所以请勿直接提交 git commit。
+   
+   非常建议使用 [commitizen](https://github.com/commitizen/cz-cli) 工具来生成 git commit，使用 husky 约束 git commit
+
+    ```sh
+    git add .
+    git cz # 使用 commitizen 提交！
+    git pull # 请合并最新代码并解决冲突后提交！
+    #请勿直接提交git commit
+    #若觉得修改太多也可分开提交。先 git add 一部分，执行 git cz 提交后再提交另外一部分
+    ```
+
+​	关于选项，参考 [semantic-release](https://github.com/semantic-release/semantic-release) 的文档
+
+-   若为 BUG 修复，则选择 `fix`
+-   若为新增功能，则选择 `feat`，新增音声可以按这个提交。
+-   若为移除某些功能，则选择 `perf`  或填写 `BREAKING CHANGE`
+    -    `perf` 和其他破坏性更新，若不是为了修复 BUG，原则上将拒绝该 PR
+
+
+5. 推送到分支 ( `git push origin feat/your_feature`)
+
+6. [打开一个新的 Pull Request](<%= repositoryUrl %>/compare?expand=1)

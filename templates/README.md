@@ -8,6 +8,11 @@
 <% if (projectVersion && !isProjectOnNpm) { -%>
   <img alt="Version" src="https://img.shields.io/badge/version-<%= projectVersion %>-blue.svg?cacheSeconds=2592000" />
 <% } -%>
+<% if (isGithubRepos) { -%>
+  <a href="<%= repositoryUrl %>/actions?query=workflow%3ARelease" target="_blank">
+    <img alt="GitHub Workflow Status" src="https://img.shields.io/github/workflow/status/<%= authorGithubUsername %>/<%= projectName %>/Release">
+  </a>
+<% } -%>
 <% if (projectPrerequisites) { -%>
 <% projectPrerequisites.map(({ name, value }) => { -%>
   <img src="https://img.shields.io/badge/<%= name %>-<%= encodeURIComponent(value) %>-blue.svg" />
@@ -123,7 +128,7 @@
 
 ## 🤝贡献
 
-欢迎 Contributions, issues and feature!<br />如有问题请查看 [issues page](<%= issuesUrl %>). <%= contributingUrl ? `您还可以查看[contributing guide](${contributingUrl}).` : '' %>
+欢迎 贡献、提问或提出新功能！<br />如有问题请查看 [issues page](<%= issuesUrl %>). <br/><%= contributingUrl ? `贡献或提出新功能可以查看[contributing guide](${contributingUrl}).` : '' %>
 <% } -%>
 
 ## 支持
