@@ -1,5 +1,18 @@
 # cmyr-template-cli
 
+# [1.6.0](https://github.com/CaoMeiYouRen/cmyr-template-cli/compare/v1.5.2...v1.6.0) (2021-12-16)
+
+
+### ✨ 新功能
+
+* 优化 ct create 为 ct，默认执行 ct create ([d769e5e](https://github.com/CaoMeiYouRen/cmyr-template-cli/commit/d769e5e))
+* 新增 贡献指南 初始化 ([8f0e304](https://github.com/CaoMeiYouRen/cmyr-template-cli/commit/8f0e304))
+
+
+### 🐛 Bug 修复
+
+* 新增 自动获取 NodeJS lts 版本 ([6246ffc](https://github.com/CaoMeiYouRen/cmyr-template-cli/commit/6246ffc))
+
 ## [1.5.2](https://github.com/CaoMeiYouRen/cmyr-template-cli/compare/v1.5.1...v1.5.2) (2021-12-15)
 
 
