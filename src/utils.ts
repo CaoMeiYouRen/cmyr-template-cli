@@ -11,6 +11,8 @@ import ejs from 'ejs'
 import { unescape } from 'lodash'
 import { fix } from '@lint-md/core'
 
+axios.defaults.timeout = 10 * 1000
+
 if (!Promise.any) {
     import('promise.any').then((any) => {
         Promise.any = any.default
@@ -19,10 +21,11 @@ if (!Promise.any) {
 
 const GITHUB_API_URL = 'https://api.github.com'
 
+const NODEJS_URL = 'https://nodejs.org/zh-cn/download/'
+
 const REMOTES = [
     'https://github.com',
     'https://hub.fastgit.org',
-    'https://gitclone.com',
     'https://github.com.cnpmjs.org',
 ]
 
@@ -191,7 +194,8 @@ export async function initProjectJson(projectPath: string, answers: InitAnswers)
         const homepage = `${repositoryUrl}#readme`
         const issuesUrl = `${repositoryUrl}/issues`
         const gitUrl = `git+${repositoryUrl}.git`
-
+        const nodeVersion = await getLtsNodeVersion() || '12'
+        const node = Number(nodeVersion) - 4 // lts 减 4 为最旧支持的版本
         const pkgPath = path.join(projectPath, 'package.json')
         const pkg: IPackage = await fs.readJSON(pkgPath)
         const pkgData: IPackage = {
@@ -201,7 +205,7 @@ export async function initProjectJson(projectPath: string, answers: InitAnswers)
             private: !isPublishToNpm,
             license: 'UNLICENSED',
             engines: {
-                node: '>=12',
+                node: `>=${node}`,
             },
         }
         let extData: IPackage = {}
@@ -339,6 +343,20 @@ async function getAuthorWebsiteFromGithubAPI(githubUsername: string): Promise<st
         const userData = (await axios.get(`${GITHUB_API_URL}/users/${githubUsername}`)).data
         const authorWebsite = userData?.blog
         return authorWebsite || ''
+    } catch (error) {
+        console.error(error)
+        return ''
+    }
+}
+
+/**
+ * 获取 Node.js lts 版本
+ */
+async function getLtsNodeVersion(): Promise<string> {
+    try {
+        const html = (await axios.get(NODEJS_URL)).data as string
+        const version = html.match(/<strong>(.*)<\/strong>/)?.[1]
+        return version.split('.')?.[0] // 取第一位  例如 '16.13.1' 取 '16'
     } catch (error) {
         console.error(error)
         return ''
