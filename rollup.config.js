@@ -5,7 +5,7 @@ import typescript from '@rollup/plugin-typescript'
 import json from '@rollup/plugin-json'
 import replace from '@rollup/plugin-replace'
 import _ from 'lodash'
-import { dependencies, name } from './package.json'
+import { dependencies, name, version } from './package.json'
 const external = Object.keys({ ...dependencies }) // 默认不打包 dependencies
 const outputName = _.upperFirst(_.camelCase(name))// 导出的模块名称 PascalCase
 const env = process.env
@@ -42,6 +42,7 @@ function getPlugins({ isBrowser = false, isMin = false, isDeclaration = false })
         replace({
             'process.env.NODE_ENV': JSON.stringify(process.env.NODE_ENV),
             'env.NODE_ENV': JSON.stringify(env.NODE_ENV),
+            'process.env.VERSION': JSON.stringify(version),
             preventAssignment: true,
         }),
     )

@@ -8,6 +8,12 @@ const program = new Command('ct')
 program.version(process.env.VERSION || '1.0.0', '-v, --version')
 
 const args = process.argv.slice(2)
+
+if (args.length === 0) { // 如果只传入了 ct，则默认执行 ct create
+    args.push('create')
+    process.argv.push('create')
+}
+
 const argv = minimist(args)
 program.option('-d, --debug', 'debug')
 
@@ -22,6 +28,7 @@ const create = new Command('create')
         }, (env) => run(env, undefined, true),
         )
     })
+
 program.addCommand(create)
 
 program.parse(process.argv)
@@ -29,6 +36,7 @@ program.parse(process.argv)
 const opts = program.opts()
 
 if (opts.debug) {
+    console.log(args)
     console.log(argv)
     console.log(opts)
 }
