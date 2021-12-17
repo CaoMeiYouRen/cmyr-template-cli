@@ -1,18 +1,11 @@
-import path from 'path'
 import { NodePlopAPI, ActionType } from 'plop'
 import { QuestionCollection, Answers } from 'inquirer'
 import { __DEV__ } from './env'
 import { InitAnswers } from './interfaces'
-import { downloadGitRepo, getGitUserName, init } from './utils'
+import { getGitUserName, initProject } from './utils'
 
 module.exports = function (plop: NodePlopAPI) {
-    plop.setActionType('initProject', async (answers: InitAnswers) => {
-        const { name, template } = answers
-        const projectPath = path.join(process.cwd(), name)
-        await downloadGitRepo(`CaoMeiYouRen/${template}`, projectPath)
-        await init(projectPath, answers)
-        return '- 下载项目模板成功！'
-    })
+    plop.setActionType('initProject', initProject)
     plop.setGenerator('create', {
         description: '草梅项目创建器',
         async prompts(inquirer) {

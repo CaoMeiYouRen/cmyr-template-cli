@@ -107,6 +107,14 @@ export async function asyncExec(cmd: string, options?: ExecOptions) {
     })
 }
 
+export async function initProject(answers: InitAnswers) {
+    const { name, template } = answers
+    const projectPath = path.join(process.cwd(), name)
+    await downloadGitRepo(`CaoMeiYouRen/${template}`, projectPath)
+    await init(projectPath, answers)
+    return '- 下载项目模板成功！'
+}
+
 export async function init(projectPath: string, answers: InitAnswers) {
     const { isOpenSource, isRemoveDependabot, gitRemoteUrl, isInitReadme, isInitContributing } = answers
 
@@ -138,7 +146,7 @@ export async function init(projectPath: string, answers: InitAnswers) {
             }
         }
 
-        await initProjectJson(projectPath, answers)
+        const newPkg = await initProjectJson(projectPath, answers)
 
         if (isOpenSource) { // 只有开源的时候才初始化 REAMD
             const info = await getProjectInfo(projectPath, answers)
@@ -149,13 +157,15 @@ export async function init(projectPath: string, answers: InitAnswers) {
                 if (isInitContributing) {
                     await initContributing(projectPath, info)
                 }
+                if (info.licenseName === 'MIT') {
+                    await initLicense(projectPath, info)
+                }
             }
+            await initGithubWorkflows(projectPath, info)
         }
+        await initConfig(projectPath)
 
         await asyncExec('git add .', {
-            cwd: projectPath,
-        })
-        await asyncExec('git commit -m "chore: init"', {
             cwd: projectPath,
         })
 
@@ -167,9 +177,19 @@ export async function init(projectPath: string, answers: InitAnswers) {
             loading.succeed('依赖安装成功！')
         } catch (error) {
             loading.fail('依赖安装失败！')
+            process.exit(1)
+        }
+
+        if (newPkg?.scripts?.lint) {
+            await asyncExec(`${PACKAGE_MANAGER} run lint`, {
+                cwd: projectPath,
+            })
         }
 
         await asyncExec('git add .', {
+            cwd: projectPath,
+        })
+        await asyncExec('git commit -m "chore: init"', {
             cwd: projectPath,
         })
 
@@ -234,6 +254,7 @@ export async function initProjectJson(projectPath: string, answers: InitAnswers)
         await fs.writeFile(pkgPath, JSON.stringify(newPkg, null, 2))
 
         loading.succeed('package.json 初始化成功！')
+        return newPkg
     } catch (error) {
         console.error(error)
         loading.fail('package.json 初始化失败！')
@@ -273,6 +294,7 @@ async function getProjectInfo(projectPath: string, answers: InitAnswers) {
         const pullRequestsUrl = `${repositoryUrl}/pulls`
 
         const projectInfos = {
+            ...answers,
             currentYear: new Date().getFullYear(),
             name,
             description,
@@ -393,6 +415,96 @@ async function initContributing(projectPath: string, projectInfos: any) {
         console.error(error)
     }
 }
+
+/**
+ * 初始化 LICENSE
+ * @param projectPath
+ * @param projectInfos
+ */
+async function initLicense(projectPath: string, projectInfos: any) {
+    const loading = ora('正在初始化 LICENSE ……').start()
+    try {
+
+        const templatePath = path.join(__dirname, '../templates/LICENSE')
+        const template = (await fs.readFile(templatePath, 'utf8')).toString()
+        const newReadmePath = path.join(projectPath, 'LICENSE')
+
+        const readmeContent = await ejs.render(
+            template,
+            projectInfos,
+            {
+                debug: false,
+                async: true,
+            },
+        )
+
+        if (await fs.pathExists(newReadmePath)) {
+            await fs.remove(newReadmePath)
+        }
+        await fs.writeFile(newReadmePath, unescape(readmeContent))
+
+        loading.succeed('LICENSE 初始化成功！')
+    } catch (error) {
+        loading.fail('LICENSE 初始化失败！')
+        console.error(error)
+    }
+}
+
+/**
+ * 初始化 .editorconfig、commitlint.config.js 等配置
+ * @param projectPath
+ */
+async function initConfig(projectPath: string) {
+    try {
+        const files = ['.editorconfig', 'commitlint.config.js']
+        files.forEach(async (file) => {
+            const templatePath = path.join(__dirname, '../templates/', file)
+            const newPath = path.join(projectPath, file)
+            if (await fs.pathExists(newPath)) {
+                await fs.remove(newPath)
+            }
+            await fs.copyFile(templatePath, newPath)
+        })
+    } catch (error) {
+        console.error(error)
+    }
+}
+
+/**
+ * 初始化 Github Workflows
+ * @param projectPath
+ * @param projectInfos
+ */
+async function initGithubWorkflows(projectPath: string, projectInfos: any) {
+    const loading = ora('正在初始化 Github Workflows ……').start()
+    try {
+        const { isPublishToNpm } = projectInfos
+        const files = ['.github/workflows/test.yml']
+
+        if (isPublishToNpm) {
+            const releaseYml = '.github/workflows/release.yml'
+            files.push(releaseYml)
+            const oldReleaseYml = path.join(projectPath, '.github/release.yml')
+            if (await fs.pathExists(oldReleaseYml)) {
+                await fs.remove(oldReleaseYml)
+            }
+        }
+
+        files.forEach(async (file) => {
+            const templatePath = path.join(__dirname, '../templates/', file)
+            const newPath = path.join(projectPath, file)
+            if (await fs.pathExists(newPath)) {
+                await fs.remove(newPath)
+            }
+            await fs.copyFile(templatePath, newPath)
+        })
+        loading.succeed('Github Workflows 初始化成功！')
+    } catch (error) {
+        loading.fail('Github Workflows 初始化失败！')
+        console.error(error)
+    }
+}
+
 
 /**
      * 根据 github name 获取作者网站
