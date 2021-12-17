@@ -19,10 +19,9 @@
    # 或 yarn
    # 或 pnpm i
    ```
-
+<% if (devCommand) { -%>
 3.  运行开发环境
 
-<% if (devCommand) { -%>
 ```sh
 <%= devCommand %>
 ```
@@ -34,12 +33,12 @@
 
 请尝试创建以下错误报告：
 
-- *可重现。*包括重现问题的步骤。
-- *具体的。*包括尽可能多的细节：哪个版本，什么环境等。
-- *独特的。*不要复制现有的已打开问题。
-- *范围仅限于单个错误。*每个报告一个错误。
+- *可重现*。包括重现问题的步骤。
+- *具体的*。包括尽可能多的细节：哪个版本，什么环境等。
+- *独特的*。不要复制现有的已打开问题。
+- *范围仅限于单个错误*。每个报告一个错误。
 
-**更好的是：提交带有修复或新功能的拉取请求！**
+**更好的是：提交带有修复或新功能的 Pull Requests！**
 
 ### 如何提交拉取请求
 
@@ -65,12 +64,12 @@
     #若觉得修改太多也可分开提交。先 git add 一部分，执行 git cz 提交后再提交另外一部分
     ```
 
-​	关于选项，参考 [semantic-release](https://github.com/semantic-release/semantic-release) 的文档
+    关于选项，参考 [semantic-release](https://github.com/semantic-release/semantic-release) 的文档
 
--   若为 BUG 修复，则选择 `fix`
--   若为新增功能，则选择 `feat`，新增音声可以按这个提交。
--   若为移除某些功能，则选择 `perf`  或填写 `BREAKING CHANGE`
-    -    `perf` 和其他破坏性更新，若不是为了修复 BUG，原则上将拒绝该 PR
+    -   若为 BUG 修复，则选择 `fix`
+    -   若为新增功能，则选择 `feat`
+    -   若为移除某些功能，则选择 `perf`  或填写 `BREAKING CHANGE`
+        -    `perf` 和其他破坏性更新，若不是为了修复 BUG，原则上将拒绝该 PR
 
 
 5. 推送到分支 ( `git push origin feat/your_feature`)
