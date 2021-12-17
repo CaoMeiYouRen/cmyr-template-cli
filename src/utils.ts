@@ -597,7 +597,6 @@ async function initHusky(projectPath: string, projectInfos: any) {
     }
 }
 
-
 /**
      * 根据 github name 获取作者网站
      */

@@ -1,5 +1,19 @@
 # cmyr-template-cli
 
+# [1.7.0](https://github.com/CaoMeiYouRen/cmyr-template-cli/compare/v1.6.0...v1.7.0) (2021-12-17)
+
+
+### ✨ 新功能
+
+* 新增 Github Workflows、.editorconfig、commitlint.config.js 等配置的初始化 ([41f4905](https://github.com/CaoMeiYouRen/cmyr-template-cli/commit/41f4905))
+* 新增 License 初始化 ([cb1ad29](https://github.com/CaoMeiYouRen/cmyr-template-cli/commit/cb1ad29))
+* 新增 是否初始化 husky 选项；优化 commitlint、cz-conventional-changelog、husky、lint-staged 等的配置和依赖 ([e769a02](https://github.com/CaoMeiYouRen/cmyr-template-cli/commit/e769a02))
+
+
+### 🐛 Bug 修复
+
+* 修复 贡献指南 文本错误 ([1677849](https://github.com/CaoMeiYouRen/cmyr-template-cli/commit/1677849))
+
 # [1.6.0](https://github.com/CaoMeiYouRen/cmyr-template-cli/compare/v1.5.2...v1.6.0) (2021-12-16)
 
 
