@@ -615,6 +615,7 @@ async function initHusky(projectPath: string, projectInfos: any) {
             scripts: {
                 commit: 'cz',
                 ...pkg?.scripts,
+                prepare: 'husky install',
             },
             devDependencies: {
                 ...devDependencies,
