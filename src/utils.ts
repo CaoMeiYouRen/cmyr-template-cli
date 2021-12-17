@@ -116,7 +116,7 @@ export async function initProject(answers: InitAnswers) {
 }
 
 export async function init(projectPath: string, answers: InitAnswers) {
-    const { isOpenSource, isRemoveDependabot, gitRemoteUrl, isInitReadme, isInitContributing, isInitHusky } = answers
+    const { isOpenSource, isRemoveDependabot, gitRemoteUrl, isInitReadme, isInitContributing, isInitHusky, isInitSemanticRelease } = answers
 
     try {
         await asyncExec('git --version', {
@@ -159,6 +159,9 @@ export async function init(projectPath: string, answers: InitAnswers) {
                 }
                 if (info.licenseName === 'MIT') {
                     await initLicense(projectPath, info)
+                }
+                if (isInitSemanticRelease) {
+                    await initSemanticRelease(projectPath, info)
                 }
                 if (isInitHusky) {
                     await initHusky(projectPath, info)
@@ -255,11 +258,6 @@ export async function initProjectJson(projectPath: string, answers: InitAnswers)
                 },
                 bugs: {
                     url: issuesUrl,
-                },
-                devDependencies: {
-                    'conventional-changelog-cli': '^2.1.1',
-                    'conventional-changelog-cmyr-config': `^${await getNpmPackageVersion('conventional-changelog-cmyr-config')}`,
-                    ...pkg?.devDependencies,
                 },
                 changelog: {
                     language: 'zh',
@@ -494,14 +492,14 @@ async function initConfig(projectPath: string) {
 async function initGithubWorkflows(projectPath: string, projectInfos: any) {
     const loading = ora('正在初始化 Github Workflows ……').start()
     try {
-        const { isPublishToNpm } = projectInfos
+        const { isInitSemanticRelease } = projectInfos
         const files = ['.github/workflows/test.yml']
         const dir = path.join(projectPath, '.github/workflows')
         if (!await fs.pathExists(dir)) {
             await fs.mkdirp(dir)
         }
         const releaseYml = '.github/workflows/release.yml'
-        if (isPublishToNpm) { // 如果需要发布到 npm 则说明需要自动 release
+        if (isInitSemanticRelease) { // 如果初始化 semantic-release 则说明需要自动 release
             files.push(releaseYml)
             const oldReleaseYml = path.join(projectPath, '.github/release.yml')
             if (await fs.pathExists(oldReleaseYml)) {
@@ -528,11 +526,56 @@ async function initGithubWorkflows(projectPath: string, projectInfos: any) {
     }
 }
 
+async function initSemanticRelease(projectPath: string, projectInfos: any) {
+    const loading = ora('正在初始化 semantic-release ……').start()
+    try {
+        const files = ['.releaserc.js']
+        files.forEach(async (file) => {
+            const templatePath = path.join(__dirname, '../templates/', file)
+            const newPath = path.join(projectPath, file)
+            if (await fs.pathExists(newPath)) {
+                await fs.remove(newPath)
+            }
+            await fs.copyFile(templatePath, newPath)
+        })
+
+        const pkgPath = path.join(projectPath, 'package.json')
+        const pkg: IPackage = await fs.readJSON(pkgPath)
+
+        const devDependencies = {
+            '@semantic-release/changelog': '^6.0.1',
+            '@semantic-release/git': '^10.0.1',
+            'conventional-changelog-cli': '^2.1.1',
+            'conventional-changelog-cmyr-config': `^${await getNpmPackageVersion('conventional-changelog-cmyr-config')}`,
+            'semantic-release': '^18.0.1',
+        }
+
+        const pkgData: IPackage = {
+            scripts: {
+                release: 'semantic-release',
+                ...pkg?.scripts,
+            },
+            devDependencies: {
+                ...devDependencies,
+                ...pkg?.devDependencies,
+            },
+        }
+
+        const newPkg = Object.assign({}, pkg, pkgData)
+        await fs.writeFile(pkgPath, JSON.stringify(newPkg, null, 2))
+
+        loading.succeed('semantic-release 初始化成功！')
+    } catch (error) {
+        loading.fail('semantic-release 初始化失败！')
+        console.error(error)
+    }
+}
+
 /**
- * 初始化 husky
- * @param projectPath
- * @param projectInfos
- */
+     * 初始化 husky
+     * @param projectPath
+     * @param projectInfos
+     */
 async function initHusky(projectPath: string, projectInfos: any) {
     const loading = ora('正在初始化 husky ……').start()
     try {
@@ -569,6 +612,10 @@ async function initHusky(projectPath: string, projectInfos: any) {
             'lint-staged': '^12.1.2',
         }
         const pkgData: IPackage = {
+            scripts: {
+                commit: 'cz',
+                ...pkg?.scripts,
+            },
             devDependencies: {
                 ...devDependencies,
                 ...pkg?.devDependencies,
@@ -598,8 +645,8 @@ async function initHusky(projectPath: string, projectInfos: any) {
 }
 
 /**
-     * 根据 github name 获取作者网站
-     */
+         * 根据 github name 获取作者网站
+         */
 async function getAuthorWebsiteFromGithubAPI(githubUsername: string): Promise<string> {
     try {
         const userData = (await axios.get(`${GITHUB_API_URL}/users/${githubUsername}`)).data
@@ -612,8 +659,8 @@ async function getAuthorWebsiteFromGithubAPI(githubUsername: string): Promise<st
 }
 
 /**
-     * 获取 Node.js lts 版本
-     */
+         * 获取 Node.js lts 版本
+         */
 async function getLtsNodeVersion(): Promise<string> {
     try {
         const html = (await axios.get(NODEJS_URL)).data as string
@@ -631,10 +678,10 @@ async function getNpmPackageVersion(name: string) {
 }
 
 /**
-     * 修复 markdown 格式
-     * @param markdown
-     * @returns
-     */
+         * 修复 markdown 格式
+         * @param markdown
+         * @returns
+         */
 function lintMd(markdown: string) {
     const rules = {
         'no-empty-code': 0,

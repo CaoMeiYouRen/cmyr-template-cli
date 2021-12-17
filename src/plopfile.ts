@@ -110,9 +110,24 @@ module.exports = function (plop: NodePlopAPI) {
                 },
                 {
                     type: 'confirm',
+                    name: 'isInitSemanticRelease',
+                    message: '是否初始化 semantic-release？',
+                    default(answers: InitAnswers) {
+                        const { isPublishToNpm } = answers
+                        return isPublishToNpm
+                    },
+                    when(answers: InitAnswers) {
+                        return answers.isOpenSource
+                    },
+                },
+                {
+                    type: 'confirm',
                     name: 'isInitHusky',
                     message: '是否初始化 husky？',
-                    default: false,
+                    default(answers: InitAnswers) {
+                        const { isPublishToNpm } = answers
+                        return isPublishToNpm
+                    },
                     when(answers: InitAnswers) {
                         return answers.isOpenSource
                     },
@@ -130,7 +145,10 @@ module.exports = function (plop: NodePlopAPI) {
                     type: 'confirm',
                     name: 'isInitContributing',
                     message: '是否初始化 贡献指南(CONTRIBUTING.md) ？',
-                    default: true,
+                    default(answers: InitAnswers) {
+                        const { isPublishToNpm } = answers
+                        return isPublishToNpm
+                    },
                     when(answers: InitAnswers) {
                         return answers.isOpenSource
                     },

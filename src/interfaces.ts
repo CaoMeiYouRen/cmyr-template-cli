@@ -58,4 +58,8 @@ export interface InitAnswers {
      * 是否初始化 husky
      */
     isInitHusky: boolean
+    /**
+     * 是否初始化 semantic-release
+     */
+    isInitSemanticRelease: boolean
 }
