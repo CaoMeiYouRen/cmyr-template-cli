@@ -1,5 +1,12 @@
 # cmyr-template-cli
 
+## [1.7.2](https://github.com/CaoMeiYouRen/cmyr-template-cli/compare/v1.7.1...v1.7.2) (2021-12-17)
+
+
+### 🐛 Bug 修复
+
+* 修复 husky install ([7b392be](https://github.com/CaoMeiYouRen/cmyr-template-cli/commit/7b392be))
+
 ## [1.7.1](https://github.com/CaoMeiYouRen/cmyr-template-cli/compare/v1.7.0...v1.7.1) (2021-12-17)
 
 
