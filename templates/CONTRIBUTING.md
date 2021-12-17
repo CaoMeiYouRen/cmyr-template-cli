@@ -9,7 +9,7 @@
 1. Clone 本项目
 
    ```sh
-   git clone <%= repositoryUrl %>
+   git clone <%= repositoryUrl %>.git
    ```
 
 2.  安装依赖

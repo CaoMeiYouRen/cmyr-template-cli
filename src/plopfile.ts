@@ -110,6 +110,15 @@ module.exports = function (plop: NodePlopAPI) {
                 },
                 {
                     type: 'confirm',
+                    name: 'isInitHusky',
+                    message: '是否初始化 husky？',
+                    default: false,
+                    when(answers: InitAnswers) {
+                        return answers.isOpenSource
+                    },
+                },
+                {
+                    type: 'confirm',
                     name: 'isInitReadme',
                     message: '是否初始化 README.md ？',
                     default: true,

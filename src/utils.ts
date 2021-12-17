@@ -116,7 +116,7 @@ export async function initProject(answers: InitAnswers) {
 }
 
 export async function init(projectPath: string, answers: InitAnswers) {
-    const { isOpenSource, isRemoveDependabot, gitRemoteUrl, isInitReadme, isInitContributing } = answers
+    const { isOpenSource, isRemoveDependabot, gitRemoteUrl, isInitReadme, isInitContributing, isInitHusky } = answers
 
     try {
         await asyncExec('git --version', {
@@ -160,6 +160,9 @@ export async function init(projectPath: string, answers: InitAnswers) {
                 if (info.licenseName === 'MIT') {
                     await initLicense(projectPath, info)
                 }
+                if (isInitHusky) {
+                    await initHusky(projectPath, info)
+                }
             }
             await initGithubWorkflows(projectPath, info)
         }
@@ -180,6 +183,10 @@ export async function init(projectPath: string, answers: InitAnswers) {
             process.exit(1)
         }
 
+        await asyncExec('git add .', {
+            cwd: projectPath,
+        })
+
         if (newPkg?.scripts?.lint) {
             await asyncExec(`${PACKAGE_MANAGER} run lint`, {
                 cwd: projectPath,
@@ -189,6 +196,7 @@ export async function init(projectPath: string, answers: InitAnswers) {
         await asyncExec('git add .', {
             cwd: projectPath,
         })
+
         await asyncExec('git commit -m "chore: init"', {
             cwd: projectPath,
         })
@@ -199,7 +207,7 @@ export async function init(projectPath: string, answers: InitAnswers) {
 }
 
 export async function getGitUserName() {
-    const username = (await asyncExec('git config user.name')) as string
+    const username = (await asyncExec('git config user.name')) as string || ''
     return username.trim()
 }
 
@@ -222,7 +230,7 @@ export async function initProjectJson(projectPath: string, answers: InitAnswers)
         const homepage = `${repositoryUrl}#readme`
         const issuesUrl = `${repositoryUrl}/issues`
         const gitUrl = `git+${repositoryUrl}.git`
-        const nodeVersion = await getLtsNodeVersion() || '12'
+        const nodeVersion = await getLtsNodeVersion() || '16'
         const node = Number(nodeVersion) - 4 // lts 减 4 为最旧支持的版本
         const pkgPath = path.join(projectPath, 'package.json')
         const pkg: IPackage = await fs.readJSON(pkgPath)
@@ -247,6 +255,14 @@ export async function initProjectJson(projectPath: string, answers: InitAnswers)
                 },
                 bugs: {
                     url: issuesUrl,
+                },
+                devDependencies: {
+                    'conventional-changelog-cli': '^2.1.1',
+                    'conventional-changelog-cmyr-config': `^${await getNpmPackageVersion('conventional-changelog-cmyr-config')}`,
+                    ...pkg?.devDependencies,
+                },
+                changelog: {
+                    language: 'zh',
                 },
             }
         }
@@ -480,16 +496,23 @@ async function initGithubWorkflows(projectPath: string, projectInfos: any) {
     try {
         const { isPublishToNpm } = projectInfos
         const files = ['.github/workflows/test.yml']
-
-        if (isPublishToNpm) {
-            const releaseYml = '.github/workflows/release.yml'
+        const dir = path.join(projectPath, '.github/workflows')
+        if (!await fs.pathExists(dir)) {
+            await fs.mkdirp(dir)
+        }
+        const releaseYml = '.github/workflows/release.yml'
+        if (isPublishToNpm) { // 如果需要发布到 npm 则说明需要自动 release
             files.push(releaseYml)
             const oldReleaseYml = path.join(projectPath, '.github/release.yml')
             if (await fs.pathExists(oldReleaseYml)) {
                 await fs.remove(oldReleaseYml)
             }
+        } else { // 否则就移除 release.yml
+            const oldReleaseYml = path.join(projectPath, releaseYml)
+            if (await fs.pathExists(oldReleaseYml)) {
+                await fs.remove(oldReleaseYml)
+            }
         }
-
         files.forEach(async (file) => {
             const templatePath = path.join(__dirname, '../templates/', file)
             const newPath = path.join(projectPath, file)
@@ -501,6 +524,75 @@ async function initGithubWorkflows(projectPath: string, projectInfos: any) {
         loading.succeed('Github Workflows 初始化成功！')
     } catch (error) {
         loading.fail('Github Workflows 初始化失败！')
+        console.error(error)
+    }
+}
+
+/**
+ * 初始化 husky
+ * @param projectPath
+ * @param projectInfos
+ */
+async function initHusky(projectPath: string, projectInfos: any) {
+    const loading = ora('正在初始化 husky ……').start()
+    try {
+        const files = ['.husky/commit-msg', '.husky/pre-commit']
+        const dir = path.join(projectPath, '.husky')
+        if (!await fs.pathExists(dir)) {
+            await fs.mkdirp(dir)
+        }
+        files.forEach(async (file) => {
+            const templatePath = path.join(__dirname, '../templates/', file)
+            const newPath = path.join(projectPath, file)
+            if (await fs.pathExists(newPath)) {
+                await fs.remove(newPath)
+            }
+            await fs.copyFile(templatePath, newPath)
+        })
+
+        const extnames = ['js', 'ts']
+        const pkgPath = path.join(projectPath, 'package.json')
+        const pkg: IPackage = await fs.readJSON(pkgPath)
+        if (pkg?.dependencies?.vue) {
+            extnames.push('vue')
+        }
+        if (pkg?.dependencies?.react) {
+            extnames.push('jsx', 'tsx')
+        }
+        const keyname = `*.{${extnames.join(',')}}`
+        const devDependencies = {
+            '@commitlint/cli': '^15.0.0',
+            '@commitlint/config-conventional': '^15.0.0',
+            commitizen: '^4.2.3',
+            'cz-conventional-changelog': '^3.3.0',
+            husky: '^7.0.4',
+            'lint-staged': '^12.1.2',
+        }
+        const pkgData: IPackage = {
+            devDependencies: {
+                ...devDependencies,
+                ...pkg?.devDependencies,
+            },
+            husky: undefined,
+            config: {
+                commitizen: {
+                    path: 'cz-conventional-changelog',
+                },
+            },
+            'lint-staged': {
+                [keyname]: [
+                    'npm run lint',
+                    'git add',
+                ],
+            },
+        }
+
+        const newPkg = Object.assign({}, pkg, pkgData)
+        await fs.writeFile(pkgPath, JSON.stringify(newPkg, null, 2))
+
+        loading.succeed('husky 初始化成功！')
+    } catch (error) {
+        loading.fail('husky 初始化失败！')
         console.error(error)
     }
 }
@@ -532,6 +624,11 @@ async function getLtsNodeVersion(): Promise<string> {
         console.error(error)
         return ''
     }
+}
+
+async function getNpmPackageVersion(name: string) {
+    const version = (await asyncExec(`${PACKAGE_MANAGER} view ${name} version`)) as string || ''
+    return version.trim()
 }
 
 /**
