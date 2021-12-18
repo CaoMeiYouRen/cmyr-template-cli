@@ -1,5 +1,12 @@
 # cmyr-template-cli
 
+## [1.7.5](https://github.com/CaoMeiYouRen/cmyr-template-cli/compare/v1.7.4...v1.7.5) (2021-12-18)
+
+
+### 🐛 Bug 修复
+
+* 优化 初始化 Commitizen 相关配置；添加 cz-conventional-changelog-cmyr ([08e8c78](https://github.com/CaoMeiYouRen/cmyr-template-cli/commit/08e8c78))
+
 ## [1.7.4](https://github.com/CaoMeiYouRen/cmyr-template-cli/compare/v1.7.3...v1.7.4) (2021-12-18)
 
 
