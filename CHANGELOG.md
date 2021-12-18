@@ -1,5 +1,12 @@
 # cmyr-template-cli
 
+## [1.7.6](https://github.com/CaoMeiYouRen/cmyr-template-cli/compare/v1.7.5...v1.7.6) (2021-12-18)
+
+
+### 🐛 Bug 修复
+
+* 增加 commitizen 初始化提示 ([19f24b0](https://github.com/CaoMeiYouRen/cmyr-template-cli/commit/19f24b0))
+
 ## [1.7.5](https://github.com/CaoMeiYouRen/cmyr-template-cli/compare/v1.7.4...v1.7.5) (2021-12-18)
 
 
