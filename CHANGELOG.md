@@ -1,5 +1,12 @@
 # cmyr-template-cli
 
+## [1.7.4](https://github.com/CaoMeiYouRen/cmyr-template-cli/compare/v1.7.3...v1.7.4) (2021-12-18)
+
+
+### 🐛 Bug 修复
+
+* 优化 package.json 改动 ([3d7327a](https://github.com/CaoMeiYouRen/cmyr-template-cli/commit/3d7327a))
+
 ## [1.7.3](https://github.com/CaoMeiYouRen/cmyr-template-cli/compare/v1.7.2...v1.7.3) (2021-12-18)
 
 
