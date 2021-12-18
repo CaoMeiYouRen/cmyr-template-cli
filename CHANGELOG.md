@@ -1,5 +1,12 @@
 # cmyr-template-cli
 
+## [1.7.3](https://github.com/CaoMeiYouRen/cmyr-template-cli/compare/v1.7.2...v1.7.3) (2021-12-18)
+
+
+### 🐛 Bug 修复
+
+* 新增 是否启用爱发电 选项 ([19a1121](https://github.com/CaoMeiYouRen/cmyr-template-cli/commit/19a1121))
+
 ## [1.7.2](https://github.com/CaoMeiYouRen/cmyr-template-cli/compare/v1.7.1...v1.7.2) (2021-12-17)
 
 

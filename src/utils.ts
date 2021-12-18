@@ -673,7 +673,6 @@ async function sortProjectJson(projectPath: string) {
     }
 }
 
-
 /**
          * 根据 github name 获取作者网站
          */
@@ -723,7 +722,6 @@ function lintMd(markdown: string) {
     const fixed = fix(markdown, rules)
     return fixed
 }
-
 
 function sortKey<T extends Record<string, unknown>>(obj: T) {
     const keys = Object.keys(obj).sort((a, b) => a.localeCompare(b))
