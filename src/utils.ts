@@ -172,6 +172,7 @@ async function init(projectPath: string, answers: InitAnswers) {
         }
 
         await initConfig(projectPath)
+        await initCommitizen(projectPath)
 
         await sortProjectJson(projectPath)
 
@@ -615,14 +616,11 @@ async function initHusky(projectPath: string) {
         const devDependencies = {
             '@commitlint/cli': '^15.0.0',
             '@commitlint/config-conventional': '^15.0.0',
-            commitizen: '^4.2.3',
-            'cz-conventional-changelog': '^3.3.0',
             husky: '^7.0.4',
             'lint-staged': '^12.1.2',
         }
         const pkgData: IPackage = {
             scripts: {
-                commit: 'cz',
                 ...pkg?.scripts,
                 prepare: 'husky install',
             },
@@ -631,11 +629,6 @@ async function initHusky(projectPath: string) {
                 ...pkg?.devDependencies,
             },
             husky: undefined,
-            config: {
-                commitizen: {
-                    path: 'cz-conventional-changelog',
-                },
-            },
             'lint-staged': {
                 [keyname]: [
                     'npm run lint',
@@ -649,6 +642,38 @@ async function initHusky(projectPath: string) {
         loading.succeed('husky 初始化成功！')
     } catch (error) {
         loading.fail('husky 初始化失败！')
+        console.error(error)
+    }
+}
+/**
+ * 初始化 Commitizen 相关配置
+ * @param projectPath
+ */
+async function initCommitizen(projectPath: string) {
+    try {
+        const pkg: IPackage = await getProjectJson(projectPath)
+        const devDependencies = {
+            commitizen: '^4.2.3',
+            'cz-conventional-changelog-cmyr': `^${await getNpmPackageVersion('cz-conventional-changelog-cmyr')}`,
+        }
+        const pkgData: IPackage = {
+            scripts: {
+                ...pkg?.scripts,
+                commit: 'cz',
+            },
+            devDependencies: {
+                ...devDependencies,
+                ...pkg?.devDependencies,
+            },
+            config: {
+                ...pkg?.config,
+                commitizen: {
+                    path: './node_modules/cz-conventional-changelog-cmyr',
+                },
+            },
+        }
+        await saveProjectJson(projectPath, pkgData)
+    } catch (error) {
         console.error(error)
     }
 }

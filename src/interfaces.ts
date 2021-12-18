@@ -14,6 +14,7 @@ export interface Package {
     engines: Record<string, string>
     homepage: string
     bugs: Record<string, string>
+    config: Record<string, unknown>
     [k: string]: unknown
 }
 
