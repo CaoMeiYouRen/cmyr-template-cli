@@ -650,6 +650,7 @@ async function initHusky(projectPath: string) {
  * @param projectPath
  */
 async function initCommitizen(projectPath: string) {
+    const loading = ora('正在初始化 commitizen ……').start()
     try {
         const pkg: IPackage = await getProjectJson(projectPath)
         const devDependencies = {
@@ -673,8 +674,10 @@ async function initCommitizen(projectPath: string) {
             },
         }
         await saveProjectJson(projectPath, pkgData)
+        loading.succeed('commitizen 初始化成功！')
     } catch (error) {
         console.error(error)
+        loading.fail('commitizen 初始化失败！')
     }
 }
 
