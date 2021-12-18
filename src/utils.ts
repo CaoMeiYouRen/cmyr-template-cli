@@ -239,8 +239,8 @@ async function initProjectJson(projectPath: string, answers: InitAnswers) {
         const gitUrl = `git+${repositoryUrl}.git`
         const nodeVersion = await getLtsNodeVersion() || '16'
         const node = Number(nodeVersion) - 4 // lts 减 4 为最旧支持的版本
-        const pkgPath = path.join(projectPath, 'package.json')
-        const pkg: IPackage = await fs.readJSON(pkgPath)
+
+        const pkg: IPackage = await getProjectJson(projectPath)
         const pkgData: IPackage = {
             name,
             author,
@@ -274,7 +274,7 @@ async function initProjectJson(projectPath: string, answers: InitAnswers) {
             }
         }
         const newPkg = Object.assign({}, pkg, pkgData, extData)
-        await fs.writeFile(pkgPath, JSON.stringify(newPkg, null, 2))
+        await saveProjectJson(projectPath, newPkg)
 
         loading.succeed('package.json 初始化成功！')
         return newPkg
@@ -292,8 +292,7 @@ async function getProjectInfo(projectPath: string, answers: InitAnswers) {
         const { name, author, description, isOpenSource, isPublishToNpm } = answers
         const packageManager = 'npm'
 
-        const pkgPath = path.join(projectPath, 'package.json')
-        const pkg: IPackage = await fs.readJSON(pkgPath)
+        const pkg: IPackage = await getProjectJson(projectPath)
         const engines = pkg?.engines || {}
         const license = pkg?.license
         const version = pkg?.version
@@ -552,13 +551,12 @@ async function initSemanticRelease(projectPath: string) {
             await fs.copyFile(templatePath, newPath)
         })
 
-        const pkgPath = path.join(projectPath, 'package.json')
-        const pkg: IPackage = await fs.readJSON(pkgPath)
+        const pkg: IPackage = await getProjectJson(projectPath)
 
         const devDependencies = {
             '@semantic-release/changelog': '^6.0.1',
             '@semantic-release/git': '^10.0.1',
-            'conventional-changelog-cli': '^2.1.1',
+            // 'conventional-changelog-cli': '^2.1.1',
             'semantic-release': '^18.0.1',
         }
 
@@ -574,8 +572,7 @@ async function initSemanticRelease(projectPath: string) {
             },
         }
 
-        const newPkg = Object.assign({}, pkg, pkgData)
-        await fs.writeFile(pkgPath, JSON.stringify(newPkg, null, 2))
+        await saveProjectJson(projectPath, pkgData)
 
         loading.succeed('semantic-release 初始化成功！')
     } catch (error) {
@@ -607,8 +604,7 @@ async function initHusky(projectPath: string) {
         })
 
         const extnames = ['js', 'ts']
-        const pkgPath = path.join(projectPath, 'package.json')
-        const pkg: IPackage = await fs.readJSON(pkgPath)
+        const pkg: IPackage = await getProjectJson(projectPath)
         if (pkg?.dependencies?.vue) {
             extnames.push('vue')
         }
@@ -648,8 +644,7 @@ async function initHusky(projectPath: string) {
             },
         }
 
-        const newPkg = Object.assign({}, pkg, pkgData)
-        await fs.writeFile(pkgPath, JSON.stringify(newPkg, null, 2))
+        await saveProjectJson(projectPath, pkgData)
 
         loading.succeed('husky 初始化成功！')
     } catch (error) {
@@ -660,14 +655,12 @@ async function initHusky(projectPath: string) {
 
 async function sortProjectJson(projectPath: string) {
     try {
-        const pkgPath = path.join(projectPath, 'package.json')
-        const pkg: IPackage = await fs.readJSON(pkgPath)
+        const pkg: IPackage = await getProjectJson(projectPath)
         const pkgData: IPackage = {
             dependencies: sortKey(pkg?.dependencies || {}),
             devDependencies: sortKey(pkg?.devDependencies || {}),
         }
-        const newPkg = Object.assign({}, pkg, pkgData)
-        await fs.writeFile(pkgPath, JSON.stringify(newPkg, null, 2))
+        await saveProjectJson(projectPath, pkgData)
     } catch (error) {
         console.error(error)
     }
@@ -730,4 +723,17 @@ function sortKey<T extends Record<string, unknown>>(obj: T) {
         obj2[e] = obj[e]
     })
     return obj2 as T
+}
+
+async function getProjectJson(projectPath: string) {
+    const pkgPath = path.join(projectPath, 'package.json')
+    const pkg: IPackage = await fs.readJSON(pkgPath)
+    return pkg
+}
+
+async function saveProjectJson(projectPath: string, pkgData: IPackage) {
+    const pkgPath = path.join(projectPath, 'package.json')
+    const pkg: IPackage = await getProjectJson(projectPath)
+    const newPkg = Object.assign({}, pkg, pkgData)
+    await fs.writeFile(pkgPath, JSON.stringify(newPkg, null, 2))
 }

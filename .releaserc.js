@@ -7,10 +7,12 @@ module.exports = {
                 "config": "conventional-changelog-cmyr-config"
             }
         ],
-        ["@semantic-release/release-notes-generator",
+        [
+            "@semantic-release/release-notes-generator",
             {
                 "config": "conventional-changelog-cmyr-config"
-            }],
+            }
+        ],
         [
             "@semantic-release/changelog",
             {
