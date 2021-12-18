@@ -115,7 +115,7 @@ export async function initProject(answers: InitAnswers) {
     return '- 下载项目模板成功！'
 }
 
-export async function init(projectPath: string, answers: InitAnswers) {
+async function init(projectPath: string, answers: InitAnswers) {
     const { isOpenSource, isRemoveDependabot, gitRemoteUrl, isInitReadme, isInitContributing, isInitHusky, isInitSemanticRelease } = answers
 
     try {
@@ -148,6 +148,13 @@ export async function init(projectPath: string, answers: InitAnswers) {
 
         const newPkg = await initProjectJson(projectPath, answers)
 
+        if (isInitSemanticRelease) {
+            await initSemanticRelease(projectPath)
+        }
+        if (isInitHusky) {
+            await initHusky(projectPath)
+        }
+
         if (isOpenSource) { // 只有开源的时候才初始化 REAMD
             const info = await getProjectInfo(projectPath, answers)
             if (info) {
@@ -160,16 +167,13 @@ export async function init(projectPath: string, answers: InitAnswers) {
                 if (info.licenseName === 'MIT') {
                     await initLicense(projectPath, info)
                 }
-                if (isInitSemanticRelease) {
-                    await initSemanticRelease(projectPath, info)
-                }
-                if (isInitHusky) {
-                    await initHusky(projectPath, info)
-                }
             }
-            await initGithubWorkflows(projectPath, info)
+            await initGithubWorkflows(projectPath, answers)
         }
+
         await initConfig(projectPath)
+
+        await sortProjectJson(projectPath)
 
         await asyncExec('git add .', {
             cwd: projectPath,
@@ -223,7 +227,7 @@ export async function sleep(time: number) {
  * @param projectPath
  * @param answers
  */
-export async function initProjectJson(projectPath: string, answers: InitAnswers) {
+async function initProjectJson(projectPath: string, answers: InitAnswers) {
     const loading = ora('正在初始化 package.json ……').start()
     try {
 
@@ -244,7 +248,12 @@ export async function initProjectJson(projectPath: string, answers: InitAnswers)
             private: !isPublishToNpm,
             license: 'UNLICENSED',
             engines: {
+                ...pkg?.engines || {},
                 node: `>=${node}`,
+            },
+            devDependencies: {
+                ...pkg?.devDependencies,
+                'eslint-config-cmyr': `^${await getNpmPackageVersion('eslint-config-cmyr')}`,
             },
         }
         let extData: IPackage = {}
@@ -294,6 +303,7 @@ async function getProjectInfo(projectPath: string, answers: InitAnswers) {
         const buildCommand = pkg?.scripts?.build && `${packageManager} run build`
         const testCommand = pkg?.scripts?.test && `${packageManager} run test`
         const lintCommand = pkg?.scripts?.lint && `${packageManager} run lint`
+        const commitCommand = pkg?.scripts?.commit && `${packageManager} run commit`
 
         const repositoryUrl = `https://github.com/${author}/${name}`
         const issuesUrl = `${repositoryUrl}/issues`
@@ -335,6 +345,7 @@ async function getProjectInfo(projectPath: string, answers: InitAnswers) {
             buildCommand,
             testCommand,
             lintCommand,
+            commitCommand,
             isJSProject: true,
             packageManager,
             isProjectOnNpm: isPublishToNpm,
@@ -487,12 +498,12 @@ async function initConfig(projectPath: string) {
 /**
  * 初始化 Github Workflows
  * @param projectPath
- * @param projectInfos
+ * @param answers
  */
-async function initGithubWorkflows(projectPath: string, projectInfos: any) {
+async function initGithubWorkflows(projectPath: string, answers: InitAnswers) {
     const loading = ora('正在初始化 Github Workflows ……').start()
     try {
-        const { isInitSemanticRelease } = projectInfos
+        const { isInitSemanticRelease } = answers
         const files = ['.github/workflows/test.yml']
         const dir = path.join(projectPath, '.github/workflows')
         if (!await fs.pathExists(dir)) {
@@ -501,16 +512,18 @@ async function initGithubWorkflows(projectPath: string, projectInfos: any) {
         const releaseYml = '.github/workflows/release.yml'
         if (isInitSemanticRelease) { // 如果初始化 semantic-release 则说明需要自动 release
             files.push(releaseYml)
-            const oldReleaseYml = path.join(projectPath, '.github/release.yml')
-            if (await fs.pathExists(oldReleaseYml)) {
-                await fs.remove(oldReleaseYml)
-            }
         } else { // 否则就移除 release.yml
             const oldReleaseYml = path.join(projectPath, releaseYml)
             if (await fs.pathExists(oldReleaseYml)) {
                 await fs.remove(oldReleaseYml)
             }
         }
+
+        const oldReleaseYml = path.join(projectPath, '.github/release.yml')
+        if (await fs.pathExists(oldReleaseYml)) {
+            await fs.remove(oldReleaseYml)
+        }
+
         files.forEach(async (file) => {
             const templatePath = path.join(__dirname, '../templates/', file)
             const newPath = path.join(projectPath, file)
@@ -526,7 +539,7 @@ async function initGithubWorkflows(projectPath: string, projectInfos: any) {
     }
 }
 
-async function initSemanticRelease(projectPath: string, projectInfos: any) {
+async function initSemanticRelease(projectPath: string) {
     const loading = ora('正在初始化 semantic-release ……').start()
     try {
         const files = ['.releaserc.js']
@@ -546,7 +559,6 @@ async function initSemanticRelease(projectPath: string, projectInfos: any) {
             '@semantic-release/changelog': '^6.0.1',
             '@semantic-release/git': '^10.0.1',
             'conventional-changelog-cli': '^2.1.1',
-            'conventional-changelog-cmyr-config': `^${await getNpmPackageVersion('conventional-changelog-cmyr-config')}`,
             'semantic-release': '^18.0.1',
         }
 
@@ -558,6 +570,7 @@ async function initSemanticRelease(projectPath: string, projectInfos: any) {
             devDependencies: {
                 ...devDependencies,
                 ...pkg?.devDependencies,
+                'conventional-changelog-cmyr-config': `^${await getNpmPackageVersion('conventional-changelog-cmyr-config')}`,
             },
         }
 
@@ -576,7 +589,7 @@ async function initSemanticRelease(projectPath: string, projectInfos: any) {
      * @param projectPath
      * @param projectInfos
      */
-async function initHusky(projectPath: string, projectInfos: any) {
+async function initHusky(projectPath: string) {
     const loading = ora('正在初始化 husky ……').start()
     try {
         const files = ['.husky/commit-msg', '.husky/pre-commit']
@@ -645,6 +658,22 @@ async function initHusky(projectPath: string, projectInfos: any) {
     }
 }
 
+async function sortProjectJson(projectPath: string) {
+    try {
+        const pkgPath = path.join(projectPath, 'package.json')
+        const pkg: IPackage = await fs.readJSON(pkgPath)
+        const pkgData: IPackage = {
+            dependencies: sortKey(pkg?.dependencies || {}),
+            devDependencies: sortKey(pkg?.devDependencies || {}),
+        }
+        const newPkg = Object.assign({}, pkg, pkgData)
+        await fs.writeFile(pkgPath, JSON.stringify(newPkg, null, 2))
+    } catch (error) {
+        console.error(error)
+    }
+}
+
+
 /**
          * 根据 github name 获取作者网站
          */
@@ -693,4 +722,14 @@ function lintMd(markdown: string) {
     } as const
     const fixed = fix(markdown, rules)
     return fixed
+}
+
+
+function sortKey<T extends Record<string, unknown>>(obj: T) {
+    const keys = Object.keys(obj).sort((a, b) => a.localeCompare(b))
+    const obj2: Record<string, unknown> = {}
+    keys.forEach((e) => {
+        obj2[e] = obj[e]
+    })
+    return obj2 as T
 }

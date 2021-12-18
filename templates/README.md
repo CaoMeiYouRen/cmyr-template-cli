@@ -8,7 +8,7 @@
 <% if (projectVersion && !isProjectOnNpm) { -%>
   <img alt="Version" src="https://img.shields.io/badge/version-<%= projectVersion %>-blue.svg?cacheSeconds=2592000" />
 <% } -%>
-<% if (isGithubRepos) { -%>
+<% if (isGithubRepos && isInitSemanticRelease) { -%>
   <a href="<%= repositoryUrl %>/actions?query=workflow%3ARelease" target="_blank">
     <img alt="GitHub Workflow Status" src="https://img.shields.io/github/workflow/status/<%= authorGithubUsername %>/<%= projectName %>/Release">
   </a>
@@ -58,6 +58,7 @@
 ## 依赖要求
 
 <% projectPrerequisites.map(({ name, value }) => { -%>
+
 - <%= name %> <%= value %>
 <% }) -%>
 <% } -%>
@@ -109,6 +110,14 @@
 <%= lintCommand %>
 ```
 <% } -%>
+<% if (commitCommand) { -%>
+
+## Commit
+
+```sh
+<%= commitCommand %>
+```
+<% } -%>
 
 <% if (authorName || authorGithubUsername) { -%>
 
@@ -131,10 +140,15 @@
 欢迎 贡献、提问或提出新功能！<br />如有问题请查看 [issues page](<%= issuesUrl %>). <br/><%= contributingUrl ? `贡献或提出新功能可以查看[contributing guide](${contributingUrl}).` : '' %>
 <% } -%>
 
-## 支持
+## 💰支持
 
 如果觉得这个项目有用的话请给一颗⭐️，非常感谢
+<% if (isEnableAfdian) { -%>
 
+<a href="https://afdian.net/@<%= authorName %>">
+  <img src="https://cdn.jsdelivr.net/gh/CaoMeiYouRen/image-hosting-01@master/images/202112181214695.png">
+</a>
+<% } -%>
 <% if (licenseName && licenseUrl) { -%>
 
 ## 📝 License

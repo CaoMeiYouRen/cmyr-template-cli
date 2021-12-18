@@ -162,6 +162,15 @@ module.exports = function (plop: NodePlopAPI) {
                         return answers.isOpenSource
                     },
                 },
+                {
+                    type: 'confirm',
+                    name: 'isEnableAfdian',
+                    message: '是否启用爱发电 ？',
+                    default: false,
+                    when(answers: InitAnswers) {
+                        return answers.isOpenSource
+                    },
+                },
             ]
             return inquirer.prompt(questions)
         },
