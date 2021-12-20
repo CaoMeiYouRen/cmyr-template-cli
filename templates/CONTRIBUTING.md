@@ -68,6 +68,7 @@
 
     -   若为 BUG 修复，则选择 `fix`
     -   若为新增功能，则选择 `feat`
+    -   若为性能优化，则选择 `perf`
     -   若为移除某些功能，则选择 `BREAKING CHANGE`
         -    `BREAKING CHANGE` 和其他破坏性更新，若不是为了修复 BUG，原则上将拒绝该 PR
 
