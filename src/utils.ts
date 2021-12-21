@@ -135,16 +135,8 @@ async function init(projectPath: string, answers: InitAnswers) {
             console.info(colors.green(`请在远程 Git 仓库初始化 ${gitRemoteUrl}`))
         }
 
-        const dependabotPath = path.join(projectPath, '.github/dependabot.yml')
-        const mergifyPath = path.join(projectPath, '.github/mergify.yml')
-        if (!isOpenSource || isRemoveDependabot) { // 闭源 或者 直接指定移除
-            if (await fs.pathExists(dependabotPath)) { // 如果存在 dependabot.yml
-                await fs.remove(dependabotPath)
-            }
-            if (await fs.pathExists(mergifyPath)) { // 如果存在 mergify.yml
-                await fs.remove(mergifyPath)
-            }
-        }
+        await initDependabot(projectPath, answers)
+        await initYarn(projectPath, answers)
 
         const newPkg = await initProjectJson(projectPath, answers)
 
@@ -221,6 +213,38 @@ export async function getGitUserName() {
 
 export async function sleep(time: number) {
     return new Promise((resolve) => setTimeout(resolve, time))
+}
+
+async function initDependabot(projectPath: string, answers: InitAnswers) {
+    try {
+        const { isOpenSource, isRemoveDependabot } = answers
+        const dependabotPath = path.join(projectPath, '.github/dependabot.yml')
+        const mergifyPath = path.join(projectPath, '.github/mergify.yml')
+        if (!isOpenSource || isRemoveDependabot) { // 闭源 或者 直接指定移除
+            if (await fs.pathExists(dependabotPath)) { // 如果存在 dependabot.yml
+                await fs.remove(dependabotPath)
+            }
+            if (await fs.pathExists(mergifyPath)) { // 如果存在 mergify.yml
+                await fs.remove(mergifyPath)
+            }
+        }
+    } catch (error) {
+        console.error(error)
+    }
+}
+
+async function initYarn(projectPath: string, answers: InitAnswers) {
+    try {
+        const { isRemoveYarn } = answers
+        const yarnPath = path.join(projectPath, 'yarn.lock')
+        if (isRemoveYarn) {
+            if (await fs.pathExists(yarnPath)) { // 如果存在 yarn.lock
+                await fs.remove(yarnPath)
+            }
+        }
+    } catch (error) {
+        console.error(error)
+    }
 }
 
 /**

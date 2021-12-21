@@ -76,3 +76,6 @@
 5. 推送到分支 ( `git push origin feat/your_feature`)
 
 6. [打开一个新的 Pull Request](<%= repositoryUrl %>/compare?expand=1)
+
+***
+_This CONTRIBUTING was generated with ❤️ by [cmyr-template-cli](https://github.com/CaoMeiYouRen/cmyr-template-cli)_

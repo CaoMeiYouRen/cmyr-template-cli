@@ -68,4 +68,9 @@ export interface InitAnswers {
      * 是否启用爱发电
      */
     isEnableAfdian: boolean
+
+    /**
+     * 是否移除 yarn
+     */
+    isRemoveYarn: boolean
 }

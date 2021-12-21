@@ -164,6 +164,15 @@ module.exports = function (plop: NodePlopAPI) {
                 },
                 {
                     type: 'confirm',
+                    name: 'isRemoveYarn',
+                    message: '是否移除 yarn ？',
+                    default: false,
+                    when(answers: InitAnswers) {
+                        return answers.isOpenSource
+                    },
+                },
+                {
+                    type: 'confirm',
                     name: 'isEnableAfdian',
                     message: '是否启用爱发电 ？',
                     default: false,
