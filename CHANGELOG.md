@@ -8,13 +8,13 @@
 * 新增 是否移除 yarn 选项；优化 dependabot 部分生成 ([0a972d6](https://github.com/CaoMeiYouRen/cmyr-template-cli/commit/0a972d6))
 
 
-### chore
+### 🎫 其他更新
 
 * 更新 .github\workflows ([e261d31](https://github.com/CaoMeiYouRen/cmyr-template-cli/commit/e261d31))
 * 更新 conventional-changelog-cmyr-config 版本 ([27ea0d6](https://github.com/CaoMeiYouRen/cmyr-template-cli/commit/27ea0d6))
 
 
-### docs
+### 📝 文档
 
 * 修改 CONTRIBUTING.md 模板 ([473a4d1](https://github.com/CaoMeiYouRen/cmyr-template-cli/commit/473a4d1))
 
