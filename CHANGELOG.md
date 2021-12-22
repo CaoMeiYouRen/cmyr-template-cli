@@ -1,5 +1,12 @@
 # cmyr-template-cli
 
+## [1.8.2](https://github.com/CaoMeiYouRen/cmyr-template-cli/compare/v1.8.1...v1.8.2) (2021-12-22)
+
+
+### 🐛 Bug 修复
+
+* 优化 发布到 npm 的配置；优化项目模板；优化 README；新增 贡献指南 ([ae8704d](https://github.com/CaoMeiYouRen/cmyr-template-cli/commit/ae8704d))
+
 ## [1.8.1](https://github.com/CaoMeiYouRen/cmyr-template-cli/compare/v1.8.0...v1.8.1) (2021-12-21)
 
 
