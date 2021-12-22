@@ -15,7 +15,7 @@
 1. Clone 本项目
 
    ```sh
-   git clone <%= repositoryUrl %>.git
+   git clone https://github.com/CaoMeiYouRen/cmyr-template-cli.git
    ```
 
 2.  安装依赖
@@ -25,17 +25,15 @@
    # 或 yarn
    # 或 pnpm i
    ```
-<% if (devCommand) { -%>
 3.  运行开发环境
 
 ```sh
-<%= devCommand %>
+npm run dev
 ```
-<% } -%>
 
 ## 问题和功能请求
 
-你在源代码中发现了一个错误，文档中有一个错误，或者你想要一个新功能？ 看看[GitHub 讨论](<%= discussionsUrl %>)看看它是否已经在讨论中。您可以通过[在 GitHub 上提交问题](<%= issuesUrl %>)来帮助我们。在创建问题之前，请确保搜索[问题存档](<%= issuesUrl %>?q=is%3Aissue+is%3Aclosed) - 您的问题可能已经得到解决！
+你在源代码中发现了一个错误，文档中有一个错误，或者你想要一个新功能？ 看看[GitHub 讨论](https://github.com/CaoMeiYouRen/cmyr-template-cli/discussions)看看它是否已经在讨论中。您可以通过[在 GitHub 上提交问题](https://github.com/CaoMeiYouRen/cmyr-template-cli/issues)来帮助我们。在创建问题之前，请确保搜索问题存档 - 您的问题可能已经得到解决！
 
 请尝试创建以下错误报告：
 
@@ -48,7 +46,7 @@
 
 ### 如何提交拉取请求
 
-1. 在我们的存储库中搜索 与您的提交相关的开放或关闭的 [Pull Requests](<%= pullRequestsUrl %>)。你不想重复努力。
+1. 在我们的存储库中搜索 与您的提交相关的开放或关闭的 [Pull Requests](https://github.com/CaoMeiYouRen/cmyr-template-cli/pulls)。你不想重复努力。
 
 2. Fork 本项目
 
@@ -81,7 +79,7 @@
 
 5. 推送到分支 ( `git push origin feat/your_feature`)
 
-6. [打开一个新的 Pull Request](<%= repositoryUrl %>/compare?expand=1)
+6. [打开一个新的 Pull Request](https://github.com/CaoMeiYouRen/cmyr-template-cli/compare?expand=1)
 
 ***
 _This CONTRIBUTING was generated with ❤️ by [cmyr-template-cli](https://github.com/CaoMeiYouRen/cmyr-template-cli)_

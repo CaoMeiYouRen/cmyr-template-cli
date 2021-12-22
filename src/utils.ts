@@ -298,6 +298,11 @@ async function initProjectJson(projectPath: string, answers: InitAnswers) {
                 },
             }
         }
+        if (isPublishToNpm) {
+            extData.publishConfig = {
+                access: 'public',
+            }
+        }
         const newPkg = Object.assign({}, pkg, pkgData, extData)
         await saveProjectJson(projectPath, newPkg)
 
