@@ -1,5 +1,6 @@
 import { NodePlopAPI, ActionType } from 'plop'
 import { QuestionCollection, Answers } from 'inquirer'
+import { kebabCase } from 'lodash'
 import { __DEV__ } from './env'
 import { InitAnswers } from './interfaces'
 import { getGitUserName, initProject } from './utils'
@@ -18,7 +19,8 @@ module.exports = function (plop: NodePlopAPI) {
                         return input.trim().length !== 0
                     },
                     default: __DEV__ ? 'temp' : '',
-                    filter: (e: string) => e.trim(),
+                    filter: (e: string) => kebabCase(e.trim()),
+                    // transformer: (e: string) => kebabCase(e),
                 },
                 {
                     type: 'input',

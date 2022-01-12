@@ -116,7 +116,7 @@ export async function initProject(answers: InitAnswers) {
 }
 
 async function init(projectPath: string, answers: InitAnswers) {
-    const { isOpenSource, isRemoveDependabot, gitRemoteUrl, isInitReadme, isInitContributing, isInitHusky, isInitSemanticRelease } = answers
+    const { isOpenSource, gitRemoteUrl, isInitReadme, isInitContributing, isInitHusky, isInitSemanticRelease } = answers
 
     try {
         await asyncExec('git --version', {
@@ -156,9 +156,7 @@ async function init(projectPath: string, answers: InitAnswers) {
                 if (isInitContributing) {
                     await initContributing(projectPath, info)
                 }
-                if (info.licenseName === 'MIT') {
-                    await initLicense(projectPath, info)
-                }
+                await initLicense(projectPath, info)
             }
             await initGithubWorkflows(projectPath, answers)
         }
@@ -363,6 +361,7 @@ async function getProjectInfo(projectPath: string, answers: InitAnswers) {
             authorName: author,
             authorGithubUsername: githubUsername,
             engines,
+            license,
             licenseName: cleanText(license),
             licenseUrl,
             documentationUrl,
@@ -478,8 +477,14 @@ async function initContributing(projectPath: string, projectInfos: any) {
 async function initLicense(projectPath: string, projectInfos: any) {
     const loading = ora('正在初始化 LICENSE ……').start()
     try {
-
-        const templatePath = path.join(__dirname, '../templates/LICENSE')
+        let templatePath = ''
+        if (projectInfos.licenseName === 'MIT') {
+            templatePath = path.join(__dirname, '../templates/licenses/MIT')
+        }
+        if (!templatePath) {
+            loading.fail('无效的 LICENSE Name')
+            return
+        }
         const template = (await fs.readFile(templatePath, 'utf8')).toString()
         const newReadmePath = path.join(projectPath, 'LICENSE')
 
