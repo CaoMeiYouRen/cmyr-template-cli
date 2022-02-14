@@ -69,7 +69,7 @@
   },
   "dependencies": {
     "@lint-md/core": "^0.2.1",
-    "axios": "^0.25.0",
+    "axios": "^0.26.0",
     "colors": "^1.4.0",
     "commander": "^9.0.0",
     "dayjs": "^1.9.6",
