@@ -25,8 +25,7 @@ const NODEJS_URL = 'https://nodejs.org/zh-cn/download/'
 
 const REMOTES = [
     'https://github.com',
-    'https://hub.fastgit.org',
-    'https://github.com.cnpmjs.org',
+    'https://hub.fastgit.xyz',
     'https://download.fastgit.org',
 ]
 
