@@ -115,7 +115,7 @@ export async function initProject(answers: InitAnswers) {
 }
 
 async function init(projectPath: string, answers: InitAnswers) {
-    const { isOpenSource, gitRemoteUrl, isInitReadme, isInitContributing, isInitHusky, isInitSemanticRelease } = answers
+    const { isOpenSource, gitRemoteUrl, isInitReadme, isInitContributing, isInitHusky, isInitSemanticRelease, isInitDocker } = answers
 
     try {
         await asyncExec('git --version', {
@@ -127,23 +127,13 @@ async function init(projectPath: string, answers: InitAnswers) {
         await asyncExec('git init', {
             cwd: projectPath,
         })
-        if (gitRemoteUrl) {
-            await asyncExec(`git remote add origin ${gitRemoteUrl}`, {
-                cwd: projectPath,
-            })
-            console.info(colors.green(`请在远程 Git 仓库初始化 ${gitRemoteUrl}`))
-        }
-
-        await initDependabot(projectPath, answers)
-        await initYarn(projectPath, answers)
 
         const newPkg = await initProjectJson(projectPath, answers)
 
-        if (isInitSemanticRelease) {
-            await initSemanticRelease(projectPath)
-        }
-        if (isInitHusky) {
-            await initHusky(projectPath)
+        await initConfig(projectPath)
+        await initCommitizen(projectPath)
+        if (isInitDocker) {
+            await initDocker(projectPath)
         }
 
         if (isOpenSource) { // 只有开源的时候才初始化 REAMD
@@ -160,10 +150,25 @@ async function init(projectPath: string, answers: InitAnswers) {
             await initGithubWorkflows(projectPath, answers)
         }
 
-        await initConfig(projectPath)
-        await initCommitizen(projectPath)
+        if (gitRemoteUrl) {
+            await asyncExec(`git remote add origin ${gitRemoteUrl}`, {
+                cwd: projectPath,
+            })
+            console.info(colors.green(`请在远程 Git 仓库初始化 ${gitRemoteUrl}`))
+        }
+
+        if (isInitSemanticRelease) {
+            await initSemanticRelease(projectPath)
+        }
+        if (isInitHusky) {
+            await initHusky(projectPath)
+        }
 
         await sortProjectJson(projectPath)
+
+        await initDependabot(projectPath, answers)
+
+        await initYarn(projectPath, answers)
 
         await asyncExec('git add .', {
             cwd: projectPath,
@@ -711,6 +716,24 @@ async function initCommitizen(projectPath: string) {
     } catch (error) {
         console.error(error)
         loading.fail('commitizen 初始化失败！')
+    }
+}
+
+async function initDocker(projectPath: string) {
+    const loading = ora('正在初始化 Docker ……').start()
+    try {
+        const files = ['.dockerignore', 'docker-compose.yml', 'Dockerfile']
+        files.forEach(async (file) => {
+            const templatePath = path.join(__dirname, '../templates/', file)
+            const newPath = path.join(projectPath, file)
+            if (await fs.pathExists(newPath)) {
+                await fs.remove(newPath)
+            }
+            await fs.copyFile(templatePath, newPath)
+        })
+        loading.succeed('Docker 初始化成功！')
+    } catch (error) {
+        loading.fail('Docker 初始化失败！')
     }
 }
 

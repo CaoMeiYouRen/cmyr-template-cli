@@ -73,4 +73,8 @@ export interface InitAnswers {
      * 是否移除 yarn
      */
     isRemoveYarn: boolean
+    /**
+     *初始化 Docker
+    */
+    isInitDocker: boolean
 }

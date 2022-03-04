@@ -71,6 +71,19 @@ module.exports = function (plop: NodePlopAPI) {
                 },
                 {
                     type: 'confirm',
+                    name: 'isInitDocker',
+                    message: '是否初始化 Docker？',
+                    default: false,
+                    when(answers: InitAnswers) {
+                        return [
+                            'express',
+                            'koa2',
+                            'nest',
+                        ].map((e) => `${e}-template`).includes(answers.template)
+                    },
+                },
+                {
+                    type: 'confirm',
                     name: 'isOpenSource',
                     message: '是否开源？',
                     default: false,
