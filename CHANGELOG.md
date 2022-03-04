@@ -1,5 +1,12 @@
 # cmyr-template-cli
 
+# [1.10.0](https://github.com/CaoMeiYouRen/cmyr-template-cli/compare/v1.9.2...v1.10.0) (2022-03-04)
+
+
+### ✨ 新功能
+
+* 新增 是否初始化 Docker 配置 ([8d95c6f](https://github.com/CaoMeiYouRen/cmyr-template-cli/commit/8d95c6f))
+
 ## [1.9.2](https://github.com/CaoMeiYouRen/cmyr-template-cli/compare/v1.9.1...v1.9.2) (2022-02-15)
 
 
