@@ -1,5 +1,12 @@
 # cmyr-template-cli
 
+## [1.10.2](https://github.com/CaoMeiYouRen/cmyr-template-cli/compare/v1.10.1...v1.10.2) (2022-03-05)
+
+
+### 🐛 Bug 修复
+
+* 优化 docker-compose.yml 环境变量 ([251724e](https://github.com/CaoMeiYouRen/cmyr-template-cli/commit/251724e))
+
 ## [1.10.1](https://github.com/CaoMeiYouRen/cmyr-template-cli/compare/v1.10.0...v1.10.1) (2022-03-05)
 
 
