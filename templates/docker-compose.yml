@@ -8,6 +8,9 @@ services:
       - "3000:3000"
     environment:
       NODE_ENV: production
+      PORT: 3000
+      TZ: "Asia/Shanghai"
+      TIMEOUT: 10000
       # MONGODB_DB_NAME: "mongo-db"
       # MONGODB_HOST: "mongo"
       # MONGODB_PORT: 27017
