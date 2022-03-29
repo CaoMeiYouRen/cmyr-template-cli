@@ -1,5 +1,12 @@
 # cmyr-template-cli
 
+## [1.10.3](https://github.com/CaoMeiYouRen/cmyr-template-cli/compare/v1.10.2...v1.10.3) (2022-03-29)
+
+
+### 🐛 Bug 修复
+
+* 修复 tsconfig 设置 importHelpers 为 true 时的 tslib 缺失 ([67c7c01](https://github.com/CaoMeiYouRen/cmyr-template-cli/commit/67c7c01))
+
 ## [1.10.2](https://github.com/CaoMeiYouRen/cmyr-template-cli/compare/v1.10.1...v1.10.2) (2022-03-05)
 
 
