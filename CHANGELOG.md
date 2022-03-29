@@ -1,5 +1,12 @@
 # cmyr-template-cli
 
+# [1.11.0](https://github.com/CaoMeiYouRen/cmyr-template-cli/compare/v1.10.3...v1.11.0) (2022-03-29)
+
+
+### ✨ 新功能
+
+* 新增 支持 uni-vite2-template ([21f48f0](https://github.com/CaoMeiYouRen/cmyr-template-cli/commit/21f48f0))
+
 ## [1.10.3](https://github.com/CaoMeiYouRen/cmyr-template-cli/compare/v1.10.2...v1.10.3) (2022-03-29)
 
 
