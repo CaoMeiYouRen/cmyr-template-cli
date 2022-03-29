@@ -55,6 +55,7 @@ module.exports = function (plop: NodePlopAPI) {
                             'electron-vue',
                             'nuxt',
                             'uni',
+                            'uni-vite2',
                             'react',
                             'react16',
                             'ts',
