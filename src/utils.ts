@@ -10,6 +10,7 @@ import colors from 'colors'
 import ejs from 'ejs'
 import { unescape } from 'lodash'
 import { fix } from '@lint-md/core'
+import JSON5 from 'json5'
 
 axios.defaults.timeout = 10 * 1000
 
@@ -170,6 +171,8 @@ async function init(projectPath: string, answers: InitAnswers) {
 
         await initYarn(projectPath, answers)
 
+        await initTsconfig(projectPath)
+
         await asyncExec('git add .', {
             cwd: projectPath,
         })
@@ -242,6 +245,30 @@ async function initYarn(projectPath: string, answers: InitAnswers) {
         if (isRemoveYarn) {
             if (await fs.pathExists(yarnPath)) { // 如果存在 yarn.lock
                 await fs.remove(yarnPath)
+            }
+        }
+    } catch (error) {
+        console.error(error)
+    }
+}
+
+async function initTsconfig(projectPath: string) {
+    try {
+        const tsconfigPath = path.join(projectPath, 'tsconfig.json')
+
+        if (await fs.pathExists(tsconfigPath)) { // 如果存在 tsconfig.json
+            const tsconfigStr = await fs.readFile(tsconfigPath, 'utf8')
+            const tsconfig = JSON5.parse(tsconfigStr)
+            if (tsconfig?.compilerOptions?.importHelpers) {
+                const pkg: IPackage = await getProjectJson(projectPath)
+                const pkgData: IPackage = {
+                    dependencies: {
+                        ...pkg.dependencies,
+                        tslib: `^${await getNpmPackageVersion('tslib')}`,
+                    },
+                }
+                const newPkg = Object.assign({}, pkg, pkgData)
+                await saveProjectJson(projectPath, newPkg)
             }
         }
     } catch (error) {
