@@ -22,7 +22,11 @@ if (!Promise.any) {
 
 const GITHUB_API_URL = 'https://api.github.com'
 
-const NODEJS_URL = 'https://nodejs.org/zh-cn/download/'
+const NODEJS_URLS = [
+    'https://nodejs.org/zh-cn/download/',
+    'http://nodejs.cn/download/',
+]
+
 
 const REMOTES = [
     'https://github.com',
@@ -184,6 +188,7 @@ async function init(projectPath: string, answers: InitAnswers) {
             })
             loading.succeed('依赖安装成功！')
         } catch (error) {
+            console.error(error)
             loading.fail('依赖安装失败！')
             process.exit(1)
         }
@@ -622,7 +627,6 @@ async function initSemanticRelease(projectPath: string) {
         const devDependencies = {
             '@semantic-release/changelog': '^6.0.1',
             '@semantic-release/git': '^10.0.1',
-            // 'conventional-changelog-cli': '^2.1.1',
             'semantic-release': '^18.0.1',
         }
 
@@ -790,13 +794,35 @@ async function getAuthorWebsiteFromGithubAPI(githubUsername: string): Promise<st
         return ''
     }
 }
+async function getFastNodeUrl() {
+    const loading = ora('正在选择 Node.js 网址')
+    loading.start()
+    try {
+        const fast = await Promise.any(NODEJS_URLS.map((url) => {
+            return axios({
+                url,
+                method: 'HEAD',
+                timeout: 15 * 1000,
+            })
+        }))
+        loading.succeed(`成功选择了 Node.js 网址 - ${fast.config.url}`)
+        return fast.config.url
+    } catch (error) {
+        console.error(error)
+        loading.fail('选择 Node.js 网址失败！')
+    }
+}
 
 /**
          * 获取 Node.js lts 版本
          */
 async function getLtsNodeVersion(): Promise<string> {
     try {
-        const html = (await axios.get(NODEJS_URL)).data as string
+        const url = await getFastNodeUrl()
+        if (!url) {
+            return
+        }
+        const html = (await axios.get(url)).data as string
         const version = html.match(/<strong>(.*)<\/strong>/)?.[1]
         return version.split('.')?.[0] // 取第一位  例如 '16.13.1' 取 '16'
     } catch (error) {
