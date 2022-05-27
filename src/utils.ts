@@ -27,7 +27,6 @@ const NODEJS_URLS = [
     'http://nodejs.cn/download/',
 ]
 
-
 const REMOTES = [
     'https://github.com',
     'https://hub.fastgit.xyz',
@@ -798,13 +797,11 @@ async function getFastNodeUrl() {
     const loading = ora('正在选择 Node.js 网址')
     loading.start()
     try {
-        const fast = await Promise.any(NODEJS_URLS.map((url) => {
-            return axios({
-                url,
-                method: 'HEAD',
-                timeout: 15 * 1000,
-            })
-        }))
+        const fast = await Promise.any(NODEJS_URLS.map((url) => axios({
+            url,
+            method: 'HEAD',
+            timeout: 15 * 1000,
+        })))
         loading.succeed(`成功选择了 Node.js 网址 - ${fast.config.url}`)
         return fast.config.url
     } catch (error) {

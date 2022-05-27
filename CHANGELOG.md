@@ -1,5 +1,12 @@
 # cmyr-template-cli
 
+# [1.12.0](https://github.com/CaoMeiYouRen/cmyr-template-cli/compare/v1.11.0...v1.12.0) (2022-05-27)
+
+
+### ✨ 新功能
+
+* 优化 Node.js lts 版本，从多个网址选择最快的 ([6a18e6c](https://github.com/CaoMeiYouRen/cmyr-template-cli/commit/6a18e6c))
+
 # [1.11.0](https://github.com/CaoMeiYouRen/cmyr-template-cli/compare/v1.10.3...v1.11.0) (2022-03-29)
 
 
