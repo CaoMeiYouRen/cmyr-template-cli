@@ -821,6 +821,7 @@ async function getLtsNodeVersion(): Promise<string> {
         }
         const html = (await axios.get(url)).data as string
         const version = html.match(/<strong>(.*)<\/strong>/)?.[1]
+        console.log(`当前 Node.js 的 lts 版本为 ${version}`)
         return version.split('.')?.[0] // 取第一位  例如 '16.13.1' 取 '16'
     } catch (error) {
         console.error(error)
