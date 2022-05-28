@@ -1,5 +1,12 @@
 # cmyr-template-cli
 
+## [1.12.1](https://github.com/CaoMeiYouRen/cmyr-template-cli/compare/v1.12.0...v1.12.1) (2022-05-28)
+
+
+### 🐛 Bug 修复
+
+* 新增 提示 Node.js lts 版本 ([c3a703d](https://github.com/CaoMeiYouRen/cmyr-template-cli/commit/c3a703d))
+
 # [1.12.0](https://github.com/CaoMeiYouRen/cmyr-template-cli/compare/v1.11.0...v1.12.0) (2022-05-27)
 
 
