@@ -1,5 +1,12 @@
 # cmyr-template-cli
 
+## [1.12.3](https://github.com/CaoMeiYouRen/cmyr-template-cli/compare/v1.12.2...v1.12.3) (2022-06-18)
+
+
+### 🐛 Bug 修复
+
+* 优化 项目初始化时的文件复制和删除逻辑 ([06b74c8](https://github.com/CaoMeiYouRen/cmyr-template-cli/commit/06b74c8))
+
 ## [1.12.2](https://github.com/CaoMeiYouRen/cmyr-template-cli/compare/v1.12.1...v1.12.2) (2022-05-28)
 
 
