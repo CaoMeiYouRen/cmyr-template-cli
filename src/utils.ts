@@ -227,15 +227,9 @@ export async function sleep(time: number) {
 async function initDependabot(projectPath: string, answers: InitAnswers) {
     try {
         const { isOpenSource, isRemoveDependabot } = answers
-        const dependabotPath = path.join(projectPath, '.github/dependabot.yml')
-        const mergifyPath = path.join(projectPath, '.github/mergify.yml')
+        const files = ['.github/dependabot.yml', '.github/mergify.yml']
         if (!isOpenSource || isRemoveDependabot) { // 闭源 或者 直接指定移除
-            if (await fs.pathExists(dependabotPath)) { // 如果存在 dependabot.yml
-                await fs.remove(dependabotPath)
-            }
-            if (await fs.pathExists(mergifyPath)) { // 如果存在 mergify.yml
-                await fs.remove(mergifyPath)
-            }
+            await removeFiles(projectPath, files) // 如果存在 dependabot.yml/mergify.yml
         }
     } catch (error) {
         console.error(error)
@@ -245,11 +239,9 @@ async function initDependabot(projectPath: string, answers: InitAnswers) {
 async function initYarn(projectPath: string, answers: InitAnswers) {
     try {
         const { isRemoveYarn } = answers
-        const yarnPath = path.join(projectPath, 'yarn.lock')
+        const files = ['yarn.lock']// 如果存在 yarn.lock
         if (isRemoveYarn) {
-            if (await fs.pathExists(yarnPath)) { // 如果存在 yarn.lock
-                await fs.remove(yarnPath)
-            }
+            await removeFiles(projectPath, files)
         }
     } catch (error) {
         console.error(error)
@@ -458,9 +450,7 @@ async function initReadme(projectPath: string, projectInfos: any) {
             },
         )
 
-        if (await fs.pathExists(newReadmePath)) {
-            await fs.remove(newReadmePath)
-        }
+        await removeFiles(projectPath, ['README.md'])
         await fs.writeFile(newReadmePath, lintMd(unescape(readmeContent)))
 
         loading.succeed('README.md 初始化成功！')
@@ -481,9 +471,9 @@ async function initContributing(projectPath: string, projectInfos: any) {
 
         const templatePath = path.join(__dirname, '../templates/CONTRIBUTING.md')
         const template = (await fs.readFile(templatePath, 'utf8')).toString()
-        const newReadmePath = path.join(projectPath, 'CONTRIBUTING.md')
+        const newContributingPath = path.join(projectPath, 'CONTRIBUTING.md')
 
-        const readmeContent = await ejs.render(
+        const content = await ejs.render(
             template,
             projectInfos,
             {
@@ -492,10 +482,9 @@ async function initContributing(projectPath: string, projectInfos: any) {
             },
         )
 
-        if (await fs.pathExists(newReadmePath)) {
-            await fs.remove(newReadmePath)
-        }
-        await fs.writeFile(newReadmePath, lintMd(unescape(readmeContent)))
+        await removeFiles(projectPath, ['CONTRIBUTING.md'])
+
+        await fs.writeFile(newContributingPath, lintMd(unescape(content)))
 
         loading.succeed('贡献指南 初始化成功！')
     } catch (error) {
@@ -521,9 +510,9 @@ async function initLicense(projectPath: string, projectInfos: any) {
             return
         }
         const template = (await fs.readFile(templatePath, 'utf8')).toString()
-        const newReadmePath = path.join(projectPath, 'LICENSE')
+        const newPath = path.join(projectPath, 'LICENSE')
 
-        const readmeContent = await ejs.render(
+        const content = await ejs.render(
             template,
             projectInfos,
             {
@@ -532,10 +521,9 @@ async function initLicense(projectPath: string, projectInfos: any) {
             },
         )
 
-        if (await fs.pathExists(newReadmePath)) {
-            await fs.remove(newReadmePath)
-        }
-        await fs.writeFile(newReadmePath, unescape(readmeContent))
+        await removeFiles(projectPath, ['LICENSE'])
+
+        await fs.writeFile(newPath, unescape(content))
 
         loading.succeed('LICENSE 初始化成功！')
     } catch (error) {
@@ -551,14 +539,7 @@ async function initLicense(projectPath: string, projectInfos: any) {
 async function initConfig(projectPath: string) {
     try {
         const files = ['.editorconfig', 'commitlint.config.js']
-        files.forEach(async (file) => {
-            const templatePath = path.join(__dirname, '../templates/', file)
-            const newPath = path.join(projectPath, file)
-            if (await fs.pathExists(newPath)) {
-                await fs.remove(newPath)
-            }
-            await fs.copyFile(templatePath, newPath)
-        })
+        await copyFilesFromTemplates(projectPath, files)
     } catch (error) {
         console.error(error)
     }
@@ -582,25 +563,13 @@ async function initGithubWorkflows(projectPath: string, answers: InitAnswers) {
         if (isInitSemanticRelease) { // 如果初始化 semantic-release 则说明需要自动 release
             files.push(releaseYml)
         } else { // 否则就移除 release.yml
-            const oldReleaseYml = path.join(projectPath, releaseYml)
-            if (await fs.pathExists(oldReleaseYml)) {
-                await fs.remove(oldReleaseYml)
-            }
+            await removeFiles(projectPath, [releaseYml])
         }
 
-        const oldReleaseYml = path.join(projectPath, '.github/release.yml')
-        if (await fs.pathExists(oldReleaseYml)) {
-            await fs.remove(oldReleaseYml)
-        }
+        await removeFiles(projectPath, ['.github/workflows/auto-merge.yml', '.github/release.yml'])
 
-        files.forEach(async (file) => {
-            const templatePath = path.join(__dirname, '../templates/', file)
-            const newPath = path.join(projectPath, file)
-            if (await fs.pathExists(newPath)) {
-                await fs.remove(newPath)
-            }
-            await fs.copyFile(templatePath, newPath)
-        })
+        await copyFilesFromTemplates(projectPath, files)
+
         loading.succeed('Github Workflows 初始化成功！')
     } catch (error) {
         loading.fail('Github Workflows 初始化失败！')
@@ -612,14 +581,7 @@ async function initSemanticRelease(projectPath: string) {
     const loading = ora('正在初始化 semantic-release ……').start()
     try {
         const files = ['.releaserc.js']
-        files.forEach(async (file) => {
-            const templatePath = path.join(__dirname, '../templates/', file)
-            const newPath = path.join(projectPath, file)
-            if (await fs.pathExists(newPath)) {
-                await fs.remove(newPath)
-            }
-            await fs.copyFile(templatePath, newPath)
-        })
+        await copyFilesFromTemplates(projectPath, files)
 
         const pkg: IPackage = await getProjectJson(projectPath)
 
@@ -663,14 +625,7 @@ async function initHusky(projectPath: string) {
         if (!await fs.pathExists(dir)) {
             await fs.mkdirp(dir)
         }
-        files.forEach(async (file) => {
-            const templatePath = path.join(__dirname, '../templates/', file)
-            const newPath = path.join(projectPath, file)
-            if (await fs.pathExists(newPath)) {
-                await fs.remove(newPath)
-            }
-            await fs.copyFile(templatePath, newPath)
-        })
+        await copyFilesFromTemplates(projectPath, files)
 
         const extnames = ['js', 'ts']
         const pkg: IPackage = await getProjectJson(projectPath)
@@ -753,14 +708,7 @@ async function initDocker(projectPath: string) {
     const loading = ora('正在初始化 Docker ……').start()
     try {
         const files = ['.dockerignore', 'docker-compose.yml', 'Dockerfile']
-        files.forEach(async (file) => {
-            const templatePath = path.join(__dirname, '../templates/', file)
-            const newPath = path.join(projectPath, file)
-            if (await fs.pathExists(newPath)) {
-                await fs.remove(newPath)
-            }
-            await fs.copyFile(templatePath, newPath)
-        })
+        await copyFilesFromTemplates(projectPath, files)
         loading.succeed('Docker 初始化成功！')
     } catch (error) {
         loading.fail('Docker 初始化失败！')
@@ -871,4 +819,58 @@ async function saveProjectJson(projectPath: string, pkgData: IPackage) {
     const pkg: IPackage = await getProjectJson(projectPath)
     const newPkg = Object.assign({}, pkg, pkgData)
     await fs.writeFile(pkgPath, JSON.stringify(newPkg, null, 2))
+}
+
+/**
+ * 从 templates 复制文件到 项目根目录，如果文件已存在会先删除后更新
+ *
+ * @author CaoMeiYouRen
+ * @date 2022-06-18
+ * @param projectPath
+ * @param files
+ */
+async function copyFilesFromTemplates(projectPath: string, files: string[]) {
+    const loading = ora(`正在复制文件 ${files.join()} ……`).start()
+    try {
+        for await (const file of files) {
+            const templatePath = path.join(__dirname, '../templates/', file)
+            const newPath = path.join(projectPath, file)
+            if (await fs.pathExists(newPath)) {
+                await fs.remove(newPath)
+            }
+            await fs.copyFile(templatePath, newPath)
+        }
+        loading.succeed(`文件 ${files.join()} 复制成功！`)
+        return true
+    } catch (error) {
+        loading.fail(`文件 ${files.join()} 复制失败！`)
+        throw error
+    }
+}
+
+/**
+ * 删除根目录下的指定文件
+ *
+ * @author CaoMeiYouRen
+ * @date 2022-06-18
+ * @param projectPath
+ * @param files
+ */
+async function removeFiles(projectPath: string, files: string[]) {
+    const loading = ora(`正在删除文件 ${files.join()} ……`).start()
+    try {
+        for await (const file of files) {
+            const newPath = path.join(projectPath, file)
+            if (await fs.pathExists(newPath)) {
+                await fs.remove(newPath)
+                loading.succeed(`文件 ${file} 删除成功！`)
+            } else {
+                loading.succeed(`文件 ${file} 不存在，已跳过删除`)
+            }
+        }
+        return true
+    } catch (error) {
+        loading.fail(`文件 ${files.join()} 删除失败！`)
+        throw error
+    }
 }
