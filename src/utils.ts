@@ -189,7 +189,7 @@ async function init(projectPath: string, answers: InitAnswers) {
         } catch (error) {
             console.error(error)
             loading.fail('依赖安装失败！')
-            process.exit(1)
+            // process.exit(1)
         }
 
         await asyncExec('git add .', {
