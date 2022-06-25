@@ -1,5 +1,12 @@
 # cmyr-template-cli
 
+## [1.12.4](https://github.com/CaoMeiYouRen/cmyr-template-cli/compare/v1.12.3...v1.12.4) (2022-06-25)
+
+
+### 🐛 Bug 修复
+
+* 修改 依赖安装失败时不结束进程 ([e62d381](https://github.com/CaoMeiYouRen/cmyr-template-cli/commit/e62d381))
+
 ## [1.12.3](https://github.com/CaoMeiYouRen/cmyr-template-cli/compare/v1.12.2...v1.12.3) (2022-06-18)
 
 
