@@ -48,10 +48,9 @@ module.exports = function (plop: NodePlopAPI) {
                     message: '请选择项目模板',
                     choices() {
                         return [
-                            'vue',
-                            'vue3',
-                            'vite2',
+                            'vite3',
                             'vite2-vue2',
+                            'vite2',
                             'electron-vue',
                             'nuxt',
                             'uni',
@@ -66,6 +65,8 @@ module.exports = function (plop: NodePlopAPI) {
                             'rollup',
                             'webpack',
                             'github-action',
+                            'vue',
+                            'vue3',
                         ].map((e) => `${e}-template`)
                     },
                     default: __DEV__ ? 'ts-template' : '',
