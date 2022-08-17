@@ -98,7 +98,7 @@ export async function getFastGitRepo(repository: string) {
  */
 export async function asyncExec(cmd: string, options?: ExecOptions) {
     return new Promise((resolve, reject) => {
-        exec(cmd, options, (err, stdout: string, stderr: string) => {
+        const ls = exec(cmd, options, (err, stdout: string, stderr: string) => {
             if (err) {
                 return reject(err)
             }
@@ -106,6 +106,12 @@ export async function asyncExec(cmd: string, options?: ExecOptions) {
                 return reject(stderr)
             }
             resolve(stdout)
+        })
+        ls.stdout.on('data', (data) => {
+            console.log(data)
+        })
+        ls.stderr.on('data', (data) => {
+            console.log(colors.red(data))
         })
     })
 }
