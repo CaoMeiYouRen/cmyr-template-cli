@@ -1,5 +1,12 @@
 # cmyr-template-cli
 
+## [1.13.1](https://github.com/CaoMeiYouRen/cmyr-template-cli/compare/v1.13.0...v1.13.1) (2022-08-17)
+
+
+### 🐛 Bug 修复
+
+* 优化 控制台输出 ([3741a54](https://github.com/CaoMeiYouRen/cmyr-template-cli/commit/3741a54))
+
 # [1.13.0](https://github.com/CaoMeiYouRen/cmyr-template-cli/compare/v1.12.5...v1.13.0) (2022-08-03)
 
 
