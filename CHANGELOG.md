@@ -1,5 +1,12 @@
 # cmyr-template-cli
 
+# [1.13.0](https://github.com/CaoMeiYouRen/cmyr-template-cli/compare/v1.12.5...v1.13.0) (2022-08-03)
+
+
+### ✨ 新功能
+
+* 新增 vite3-template ([406e4eb](https://github.com/CaoMeiYouRen/cmyr-template-cli/commit/406e4eb))
+
 ## [1.12.5](https://github.com/CaoMeiYouRen/cmyr-template-cli/compare/v1.12.4...v1.12.5) (2022-06-25)
 
 
