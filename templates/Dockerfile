@@ -15,7 +15,7 @@ RUN echo "http://mirrors.aliyun.com/alpine/edge/main/" > /etc/apk/repositories \
 
 WORKDIR /home/app
 
-COPY package.json /home/app/
+COPY package.json .npmrc /home/app/
 
 RUN pnpm i
 
