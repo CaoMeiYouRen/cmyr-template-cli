@@ -186,17 +186,7 @@ async function init(projectPath: string, answers: InitAnswers) {
             cwd: projectPath,
         })
 
-        const loading = ora('正在安装依赖……').start()
-        try {
-            await asyncExec(`${PACKAGE_MANAGER} i`, {
-                cwd: projectPath,
-            })
-            loading.succeed('依赖安装成功！')
-        } catch (error) {
-            console.error(error)
-            loading.fail('依赖安装失败！')
-            // process.exit(1)
-        }
+        await installNpmPackages(projectPath)
 
         await asyncExec('git add .', {
             cwd: projectPath,
@@ -228,6 +218,22 @@ export async function getGitUserName() {
 
 export async function sleep(time: number) {
     return new Promise((resolve) => setTimeout(resolve, time))
+}
+
+async function installNpmPackages(projectPath: string) {
+    const loading = ora('正在安装依赖……').start()
+    try {
+        const files = ['.npmrc']
+        await copyFilesFromTemplates(projectPath, files)
+        await asyncExec(`${PACKAGE_MANAGER} i`, {
+            cwd: projectPath,
+        })
+        loading.succeed('依赖安装成功！')
+    } catch (error) {
+        console.error(error)
+        loading.fail('依赖安装失败！')
+        // process.exit(1)
+    }
 }
 
 async function initDependabot(projectPath: string, answers: InitAnswers) {
