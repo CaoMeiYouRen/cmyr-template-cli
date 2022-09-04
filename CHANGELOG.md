@@ -1,5 +1,12 @@
 # cmyr-template-cli
 
+## [1.13.3](https://github.com/CaoMeiYouRen/cmyr-template-cli/compare/v1.13.2...v1.13.3) (2022-09-02)
+
+
+### 🐛 Bug 修复
+
+* 修复 Dockerfile 缺失 .npmrc ([5f8f1ff](https://github.com/CaoMeiYouRen/cmyr-template-cli/commit/5f8f1ff))
+
 ## [1.13.2](https://github.com/CaoMeiYouRen/cmyr-template-cli/compare/v1.13.1...v1.13.2) (2022-09-02)
 
 
