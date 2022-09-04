@@ -16,7 +16,7 @@ docs
 .codecov.yml
 # .eslint*
 .prettier*
-.(yarn|npm|nvm)rc
+.(yarn|nvm)rc
 *.md
 process.json
 app.json
