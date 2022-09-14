@@ -1,5 +1,13 @@
 # cmyr-template-cli
 
+# [1.14.0](https://github.com/CaoMeiYouRen/cmyr-template-cli/compare/v1.13.4...v1.14.0) (2022-09-14)
+
+
+### ✨ 新功能
+
+* 新增 Gitee 自动创建远程仓库功能 ([b363adb](https://github.com/CaoMeiYouRen/cmyr-template-cli/commit/b363adb))
+* 新增 Github 自动创建远程仓库功能；更新文档；更新依赖 ([41419ba](https://github.com/CaoMeiYouRen/cmyr-template-cli/commit/41419ba))
+
 ## [1.13.4](https://github.com/CaoMeiYouRen/cmyr-template-cli/compare/v1.13.3...v1.13.4) (2022-09-04)
 
 
