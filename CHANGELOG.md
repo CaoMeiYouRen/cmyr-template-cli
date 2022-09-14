@@ -1,5 +1,12 @@
 # cmyr-template-cli
 
+## [1.13.4](https://github.com/CaoMeiYouRen/cmyr-template-cli/compare/v1.13.3...v1.13.4) (2022-09-04)
+
+
+### 🐛 Bug 修复
+
+* 修复 .npmrc 缺失 ([714ea04](https://github.com/CaoMeiYouRen/cmyr-template-cli/commit/714ea04))
+
 ## [1.13.3](https://github.com/CaoMeiYouRen/cmyr-template-cli/compare/v1.13.2...v1.13.3) (2022-09-02)
 
 
