@@ -53,6 +53,23 @@ ct
 ct create
 ```
 
+## 配置
+
+在当前目录下或 `HOME` 路径下创建 `.ctrc` 文件即可，格式为 `json`
+
+```json
+{
+    "GITHUB_TOKEN": "",
+    "GITEE_TOKEN": ""
+}
+```
+
+GITHUB_TOKEN 请参考： [创建用于命令行的个人访问令牌](https://help.github.com/cn/github/authenticating-to-github/creating-a-personal-access-token-for-the-command-line)
+
+GITEE_TOKEN 请参考：https://gitee.com/profile/personal_access_tokens
+
+**如果不使用自动初始化远程仓库功能，可以跳过该配置**
+
 ## 开发
 
 ```sh

@@ -40,6 +40,7 @@ type GiteeRepo = {
     access_token: string
     name: string
     description: string
+    private: boolean
 }
 /**
  * 创建 Gitee 项目
@@ -52,13 +53,44 @@ async function createGiteeRepo(data: GiteeRepo) {
     try {
         const formData = new URLSearchParams()
         Object.entries(data).forEach(([key, value]) => {
-            formData.append(key, value)
+            formData.append(key, String(value))
         })
         return await axios({
             url: '/user/repos',
             baseURL: GITEE_API_URL,
             method: 'POST',
             data: formData.toString(),
+        })
+    } catch (error) {
+        console.error(error)
+        return null
+    }
+}
+
+type GithubRepo = {
+    name: string
+    description: string
+    private: boolean
+}
+
+/**
+ * 创建 Github 项目
+ *
+ * @author CaoMeiYouRen
+ * @date 2022-09-15
+ * @param data
+ */
+async function createGithubRepo(authToken: string, data: GithubRepo) {
+    try {
+        return await axios({
+            url: '/user/repos',
+            baseURL: GITHUB_API_URL,
+            method: 'POST',
+            headers: {
+                Authorization: `Bearer ${authToken}`,
+                Accept: 'application/vnd.github+json',
+            },
+            data,
         })
     } catch (error) {
         console.error(error)
@@ -97,7 +129,6 @@ async function loadToken(type: TokenType): Promise<string> {
             console.error(error)
         }
     }
-    console.error(colors.red(`未找到 ${type} token ！`))
     return ''
 }
 
@@ -287,12 +318,12 @@ export async function sleep(time: number) {
 async function initRemoteGitRepo(projectPath: string, answers: InitAnswers) {
     const loading = ora('正在初始化远程 Git 仓库……').start()
     try {
-        const { name, description, gitRemoteUrl } = answers
-        if (gitRemoteUrl) {
-            await asyncExec(`git remote add origin ${gitRemoteUrl}`, {
-                cwd: projectPath,
-            })
-        }
+        const { name, description, gitRemoteUrl, isOpenSource } = answers
+
+        await asyncExec(`git remote add origin ${gitRemoteUrl}`, {
+            cwd: projectPath,
+        })
+
         // 判断 remote 类型
         let type = ''
         if (/github\.com/.test(gitRemoteUrl)) {
@@ -303,14 +334,15 @@ async function initRemoteGitRepo(projectPath: string, answers: InitAnswers) {
 
         switch (type) {
             case 'github': {
-                break
-            }
-            case 'gitee': {
-                const access_token = await loadToken(type)
-                const resp = await createGiteeRepo({
-                    access_token,
+                const authToken = await loadToken(type)
+                if (!authToken) {
+                    console.error(colors.red(`未找到 ${type} token ！跳过初始化！`))
+                    break
+                }
+                const resp = await createGithubRepo(authToken, {
                     name,
                     description,
+                    private: isOpenSource,
                 })
                 if (resp?.status >= 200) {
                     loading.succeed('远程 Git 仓库初始化成功！')
@@ -318,14 +350,34 @@ async function initRemoteGitRepo(projectPath: string, answers: InitAnswers) {
                 } else {
                     loading.fail('远程 Git 仓库初始化失败！')
                 }
-                break
+                return
+            }
+            case 'gitee': {
+                const access_token = await loadToken(type)
+                if (!access_token) {
+                    console.error(colors.red(`未找到 ${type} token ！跳过初始化！`))
+                    break
+                }
+                const resp = await createGiteeRepo({
+                    access_token,
+                    name,
+                    description,
+                    private: true,
+                })
+                if (resp?.status >= 200) {
+                    loading.succeed('远程 Git 仓库初始化成功！')
+                    console.info(colors.green(`远程 Git 仓库地址 ${resp.data?.html_url}`))
+                } else {
+                    loading.fail('远程 Git 仓库初始化失败！')
+                }
+                return
             }
             default: {
-                loading.stop()
-                console.info(colors.green(`请在远程 Git 仓库初始化 ${gitRemoteUrl}`))
                 break
             }
         }
+        loading.stop()
+        console.info(colors.green(`请在远程 Git 仓库初始化 ${gitRemoteUrl}`))
     } catch (error) {
         loading.fail('远程 Git 仓库初始化失败！')
         console.error(error)
