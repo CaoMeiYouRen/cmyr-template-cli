@@ -21,6 +21,7 @@ if (!Promise.any) {
 }
 
 const GITHUB_API_URL = 'https://api.github.com'
+const GITEE_API_URL = 'https://gitee.com/api/v5'
 
 const NODEJS_URLS = [
     'https://nodejs.org/zh-cn/download/',
@@ -32,6 +33,73 @@ const REMOTES = [
     'https://hub.fastgit.xyz',
     'https://download.fastgit.org',
 ]
+
+type TokenType = 'github' | 'gitee'
+
+type GiteeRepo = {
+    access_token: string
+    name: string
+    description: string
+}
+/**
+ * 创建 Gitee 项目
+ *
+ * @author CaoMeiYouRen
+ * @date 2022-09-14
+ * @param data
+ */
+async function createGiteeRepo(data: GiteeRepo) {
+    try {
+        const formData = new URLSearchParams()
+        Object.entries(data).forEach(([key, value]) => {
+            formData.append(key, value)
+        })
+        return await axios({
+            url: '/user/repos',
+            baseURL: GITEE_API_URL,
+            method: 'POST',
+            data: formData.toString(),
+        })
+    } catch (error) {
+        console.error(error)
+        return null
+    }
+}
+
+/**
+ * 载入 token，优先寻找当前目录下的 .ctrc 文件，其次寻找 HOME 路径下的 .ctrc。
+ * github 和 gitee 的 token 各自独立寻找，不为空即为找到
+ * @author CaoMeiYouRen
+ * @date 2022-09-14
+ */
+async function loadToken(type: TokenType): Promise<string> {
+    const paths = [process.cwd(), process.env.HOME].map((e) => path.join(e, '.ctrc'))
+    let CONFIG_KEY = ''
+    switch (type) {
+        case 'github':
+            CONFIG_KEY = 'GITHUB_TOKEN'
+            break
+        case 'gitee':
+            CONFIG_KEY = 'GITEE_TOKEN'
+            break
+        default:
+            throw new Error(`无效的 token 类型：${type}`)
+    }
+    for await (const p of paths) {
+        try {
+            if (await fs.pathExists(p)) {
+                const config = await fs.readJSON(p)
+                if (config?.[CONFIG_KEY]) {
+                    return config[CONFIG_KEY]
+                }
+            }
+        } catch (error) {
+            console.error(error)
+        }
+    }
+    console.error(colors.red(`未找到 ${type} token ！`))
+    return ''
+}
 
 /**
  * 下载 git 库。repository例子如下：
@@ -125,7 +193,7 @@ export async function initProject(answers: InitAnswers) {
 }
 
 async function init(projectPath: string, answers: InitAnswers) {
-    const { isOpenSource, gitRemoteUrl, isInitReadme, isInitContributing, isInitHusky, isInitSemanticRelease, isInitDocker } = answers
+    const { isOpenSource, gitRemoteUrl, isInitRemoteRepo, isInitReadme, isInitContributing, isInitHusky, isInitSemanticRelease, isInitDocker } = answers
 
     try {
         await asyncExec('git --version', {
@@ -159,12 +227,8 @@ async function init(projectPath: string, answers: InitAnswers) {
             }
             await initGithubWorkflows(projectPath, answers)
         }
-
-        if (gitRemoteUrl) {
-            await asyncExec(`git remote add origin ${gitRemoteUrl}`, {
-                cwd: projectPath,
-            })
-            console.info(colors.green(`请在远程 Git 仓库初始化 ${gitRemoteUrl}`))
+        if (isInitRemoteRepo && gitRemoteUrl) {
+            await initRemoteGitRepo(projectPath, answers)
         }
 
         if (isInitSemanticRelease) {
@@ -218,6 +282,54 @@ export async function getGitUserName() {
 
 export async function sleep(time: number) {
     return new Promise((resolve) => setTimeout(resolve, time))
+}
+
+async function initRemoteGitRepo(projectPath: string, answers: InitAnswers) {
+    const loading = ora('正在初始化远程 Git 仓库……').start()
+    try {
+        const { name, description, gitRemoteUrl } = answers
+        if (gitRemoteUrl) {
+            await asyncExec(`git remote add origin ${gitRemoteUrl}`, {
+                cwd: projectPath,
+            })
+        }
+        // 判断 remote 类型
+        let type = ''
+        if (/github\.com/.test(gitRemoteUrl)) {
+            type = 'github'
+        } else if (/gitee\.com/.test(gitRemoteUrl)) {
+            type = 'gitee'
+        }
+
+        switch (type) {
+            case 'github': {
+                break
+            }
+            case 'gitee': {
+                const access_token = await loadToken(type)
+                const resp = await createGiteeRepo({
+                    access_token,
+                    name,
+                    description,
+                })
+                if (resp?.status >= 200) {
+                    loading.succeed('远程 Git 仓库初始化成功！')
+                    console.info(colors.green(`远程 Git 仓库地址 ${resp.data?.html_url}`))
+                } else {
+                    loading.fail('远程 Git 仓库初始化失败！')
+                }
+                break
+            }
+            default: {
+                loading.stop()
+                console.info(colors.green(`请在远程 Git 仓库初始化 ${gitRemoteUrl}`))
+                break
+            }
+        }
+    } catch (error) {
+        loading.fail('远程 Git 仓库初始化失败！')
+        console.error(error)
+    }
 }
 
 async function installNpmPackages(projectPath: string) {
