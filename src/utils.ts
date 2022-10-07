@@ -34,7 +34,7 @@ const REMOTES = [
     'https://download.fastgit.org',
 ]
 
-type TokenType = 'github' | 'gitee'
+type TokenType = 'GITHUB_TOKEN' | 'GITEE_TOKEN'
 
 type GiteeRepo = {
     access_token: string
@@ -106,17 +106,10 @@ async function createGithubRepo(authToken: string, data: GithubRepo) {
  */
 async function loadToken(type: TokenType): Promise<string> {
     const paths = [process.cwd(), process.env.HOME].map((e) => path.join(e, '.ctrc'))
-    let CONFIG_KEY = ''
-    switch (type) {
-        case 'github':
-            CONFIG_KEY = 'GITHUB_TOKEN'
-            break
-        case 'gitee':
-            CONFIG_KEY = 'GITEE_TOKEN'
-            break
-        default:
-            throw new Error(`无效的 token 类型：${type}`)
+    if (!['GITHUB_TOKEN', 'GITEE_TOKEN'].includes(type)) {
+        throw new Error(`无效的 token 类型：${type}`)
     }
+    const CONFIG_KEY = type
     for await (const p of paths) {
         try {
             if (await fs.pathExists(p)) {
@@ -334,7 +327,7 @@ async function initRemoteGitRepo(projectPath: string, answers: InitAnswers) {
 
         switch (type) {
             case 'github': {
-                const authToken = await loadToken(type)
+                const authToken = await loadToken('GITHUB_TOKEN')
                 if (!authToken) {
                     console.error(colors.red(`未找到 ${type} token ！跳过初始化！`))
                     break
@@ -353,7 +346,7 @@ async function initRemoteGitRepo(projectPath: string, answers: InitAnswers) {
                 return
             }
             case 'gitee': {
-                const access_token = await loadToken(type)
+                const access_token = await loadToken('GITEE_TOKEN')
                 if (!access_token) {
                     console.error(colors.red(`未找到 ${type} token ！跳过初始化！`))
                     break
