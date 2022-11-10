@@ -5,7 +5,7 @@ import download from 'download-git-repo'
 import axios from 'axios'
 import { exec, ExecOptions } from 'child_process'
 import { PACKAGE_MANAGER } from './env'
-import { InitAnswers, IPackage } from './interfaces'
+import { InitAnswers, IPackage, NodeIndexJson } from './interfaces'
 import colors from 'colors'
 import ejs from 'ejs'
 import { unescape } from 'lodash'
@@ -27,6 +27,8 @@ const NODEJS_URLS = [
     'https://nodejs.org/zh-cn/download/',
     'http://nodejs.cn/download/',
 ]
+
+const NODE_INDEX_URL = 'https://cdn.npmmirror.com/binaries/node/index.json'
 
 const REMOTES = [
     'https://github.com',
@@ -162,16 +164,9 @@ export async function getFastGitRepo(repository: string) {
     const loading = ora(`正在选择镜像源 - ${repository}`)
     loading.start()
     try {
-        const fast = await Promise.any(REMOTES.map((remote) => {
-            const url = `${remote}/${repository}/archive/refs/heads/master.zip`
-            return axios({
-                url,
-                method: 'HEAD',
-                timeout: 15 * 1000,
-            })
-        }))
-        loading.succeed(`成功选择了镜像源 - ${fast.config.url}`)
-        return `direct:${fast.config.url}`
+        const fastUrl = await getFastUrl(REMOTES.map((remote) => `${remote}/${repository}/archive/refs/heads/master.zip`))
+        loading.succeed(`成功选择了镜像源 - ${fastUrl}`)
+        return `direct:${fastUrl}`
     } catch (error) {
         console.error(error)
         loading.fail('选择镜像源失败！')
@@ -910,40 +905,58 @@ async function getAuthorWebsiteFromGithubAPI(githubUsername: string): Promise<st
         return ''
     }
 }
-async function getFastNodeUrl() {
-    const loading = ora('正在选择 Node.js 网址')
+
+async function getLtsNodeVersionByIndexJson() {
+    const resp = await axios.get<NodeIndexJson>(NODE_INDEX_URL)
+    return resp.data?.find((e) => e.lts)?.version?.replace('v', '')
+}
+
+async function getLtsNodeVersionByHtml(url: string) {
+    const html = (await axios.get(url)).data as string
+    return html.match(/<strong>(.*)<\/strong>/)?.[1]?.trim()
+}
+
+/**
+ * 获取 Node.js lts 版本号。取第一位，例如 '16.13.1' 取 '16'
+ */
+async function getLtsNodeVersion(): Promise<string> {
+    const loading = ora('正在获取 Node.js lts 版本号')
     loading.start()
     try {
-        const fast = await Promise.any(NODEJS_URLS.map((url) => axios({
-            url,
-            method: 'HEAD',
-            timeout: 15 * 1000,
-        })))
-        loading.succeed(`成功选择了 Node.js 网址 - ${fast.config.url}`)
-        return fast.config.url
+        const fastUrl = await getFastUrl([...NODEJS_URLS, NODE_INDEX_URL])
+        loading.succeed(`成功选择了 Node.js 网址 - ${fastUrl}`)
+        let version = ''
+        if (fastUrl === NODE_INDEX_URL) {
+            version = await getLtsNodeVersionByIndexJson()
+        } else {
+            version = await getLtsNodeVersionByHtml(fastUrl)
+        }
+        console.log(`获取 Node.js lts 版本号成功，版本号为 ${version}`)
+        return version?.split('.')?.[0] // 取第一位  例如 '16.13.1' 取 '16'
     } catch (error) {
         console.error(error)
-        loading.fail('选择 Node.js 网址失败！')
+        loading.fail('获取 Node.js lts 版本号失败')
+        return ''
     }
 }
 
 /**
-         * 获取 Node.js lts 版本
-         */
-async function getLtsNodeVersion(): Promise<string> {
-    try {
-        const url = await getFastNodeUrl()
-        if (!url) {
-            return
-        }
-        const html = (await axios.get(url)).data as string
-        const version = html.match(/<strong>(.*)<\/strong>/)?.[1]?.trim()
-        console.log(`当前 Node.js 的 lts 版本为 ${version}`)
-        return version?.split('.')?.[0] // 取第一位  例如 '16.13.1' 取 '16'
-    } catch (error) {
-        console.error(error)
-        return ''
-    }
+ * 获取响应速度最快的 URL
+ *
+ * @author CaoMeiYouRen
+ * @date 2022-11-10
+ * @param urls
+ */
+async function getFastUrl(urls: string[]) {
+    const fast = await Promise.any(urls.map((url) => axios({
+        url,
+        method: 'HEAD',
+        timeout: 15 * 1000,
+        headers: {
+            'Accept-Encoding': '',
+        },
+    })))
+    return fast?.config?.url
 }
 
 async function getNpmPackageVersion(name: string) {
