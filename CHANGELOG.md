@@ -1,5 +1,12 @@
 # cmyr-template-cli
 
+## [1.14.1](https://github.com/CaoMeiYouRen/cmyr-template-cli/compare/v1.14.0...v1.14.1) (2022-10-07)
+
+
+### 🐛 Bug 修复
+
+* 优化 token 加载 ([0865bfa](https://github.com/CaoMeiYouRen/cmyr-template-cli/commit/0865bfa))
+
 # [1.14.0](https://github.com/CaoMeiYouRen/cmyr-template-cli/compare/v1.13.4...v1.14.0) (2022-09-14)
 
 
