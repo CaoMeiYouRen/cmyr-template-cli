@@ -1,5 +1,12 @@
 # cmyr-template-cli
 
+## [1.14.2](https://github.com/CaoMeiYouRen/cmyr-template-cli/compare/v1.14.1...v1.14.2) (2022-11-10)
+
+
+### 🐛 Bug 修复
+
+* 优化 Node.js lts 版本号 的获取 ([7c258a6](https://github.com/CaoMeiYouRen/cmyr-template-cli/commit/7c258a6))
+
 ## [1.14.1](https://github.com/CaoMeiYouRen/cmyr-template-cli/compare/v1.14.0...v1.14.1) (2022-10-07)
 
 
