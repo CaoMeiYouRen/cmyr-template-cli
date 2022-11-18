@@ -34,6 +34,16 @@ const REMOTES = [
     'https://github.com',
     'https://hub.fastgit.xyz',
     'https://download.fastgit.org',
+    'https://ghproxy.com/https://github.com',
+    'https://gh.ddlc.top/https://github.com',
+    'https://gh.flyinbug.top/gh/https://github.com',
+    'https://gh.con.sh/https://github.com',
+    'https://cors.isteed.cc/github.com',
+    'https://ghps.cc/https://github.com',
+    'https://download.nuaa.cf',
+    'https://kgithub.com',
+    'https://github.moeyy.xyz/https://github.com',
+    'https://hub.njuu.cf',
 ]
 
 type TokenType = 'GITHUB_TOKEN' | 'GITEE_TOKEN'
@@ -1045,11 +1055,11 @@ async function removeFiles(projectPath: string, files: string[]) {
             const newPath = path.join(projectPath, file)
             if (await fs.pathExists(newPath)) {
                 await fs.remove(newPath)
-                loading.succeed(`文件 ${file} 删除成功！`)
             } else {
-                loading.succeed(`文件 ${file} 不存在，已跳过删除`)
+                console.log(`文件 ${file} 不存在，已跳过删除`)
             }
         }
+        loading.succeed(`文件 ${files.join()} 删除成功！`)
         return true
     } catch (error) {
         loading.fail(`文件 ${files.join()} 删除失败！`)
