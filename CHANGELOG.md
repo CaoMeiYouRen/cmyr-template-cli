@@ -1,5 +1,12 @@
 # cmyr-template-cli
 
+## [1.14.4](https://github.com/CaoMeiYouRen/cmyr-template-cli/compare/v1.14.3...v1.14.4) (2022-11-20)
+
+
+### 🐛 Bug 修复
+
+* 修复 GitHub 仓库初始化时的可见性错误 ([77d0299](https://github.com/CaoMeiYouRen/cmyr-template-cli/commit/77d0299))
+
 ## [1.14.3](https://github.com/CaoMeiYouRen/cmyr-template-cli/compare/v1.14.2...v1.14.3) (2022-11-18)
 
 
