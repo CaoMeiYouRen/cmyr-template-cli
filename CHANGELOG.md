@@ -1,5 +1,12 @@
 # cmyr-template-cli
 
+## [1.14.3](https://github.com/CaoMeiYouRen/cmyr-template-cli/compare/v1.14.2...v1.14.3) (2022-11-18)
+
+
+### 🐛 Bug 修复
+
+* 新增 GitHub 下载镜像源；优化删除文件 log ([9ef6dbd](https://github.com/CaoMeiYouRen/cmyr-template-cli/commit/9ef6dbd))
+
 ## [1.14.2](https://github.com/CaoMeiYouRen/cmyr-template-cli/compare/v1.14.1...v1.14.2) (2022-11-10)
 
 
