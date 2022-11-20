@@ -340,7 +340,7 @@ async function initRemoteGitRepo(projectPath: string, answers: InitAnswers) {
                 const resp = await createGithubRepo(authToken, {
                     name,
                     description,
-                    private: isOpenSource,
+                    private: !isOpenSource,
                 })
                 if (resp?.status >= 200) {
                     loading.succeed('远程 Git 仓库初始化成功！')
