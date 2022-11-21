@@ -1,16 +1,16 @@
 import { NodePlopAPI, ActionType } from 'plop'
-import { QuestionCollection, Answers } from 'inquirer'
+import { QuestionCollection } from 'inquirer'
 import { kebabCase } from 'lodash'
 import { __DEV__ } from './env'
 import { InitAnswers } from './interfaces'
-import { getGitUserName, initProject } from './utils'
+import { COMMON_DEPENDENCIES, getGitUserName, initProject, VUE_DEPENDENCIES } from './utils'
 
 module.exports = function (plop: NodePlopAPI) {
     plop.setActionType('initProject', initProject)
     plop.setGenerator('create', {
         description: '草梅项目创建器',
         async prompts(inquirer) {
-            const questions: QuestionCollection<Answers> = [
+            const questions: QuestionCollection<InitAnswers> = [
                 {
                     type: 'input',
                     name: 'name',
@@ -20,15 +20,11 @@ module.exports = function (plop: NodePlopAPI) {
                     },
                     default: __DEV__ ? 'temp' : '',
                     filter: (e: string) => kebabCase(e.trim()),
-                    // transformer: (e: string) => kebabCase(e),
                 },
                 {
                     type: 'input',
                     name: 'description',
                     message: '请输入项目简介',
-                    // validate(input: string) {
-                    //     return input.trim().length !== 0
-                    // },
                     default: __DEV__ ? '' : '',
                     filter: (e: string) => e.trim(),
                 },
@@ -70,6 +66,19 @@ module.exports = function (plop: NodePlopAPI) {
                         ].map((e) => `${e}-template`)
                     },
                     default: __DEV__ ? 'ts-template' : '',
+                },
+                {
+                    type: 'checkbox',
+                    name: 'commonDependencies',
+                    message: '请选择需要安装的常见依赖',
+                    default: [],
+                    choices(answers: InitAnswers) {
+                        const choices = Object.keys(COMMON_DEPENDENCIES.dependencies)
+                        if (/(vue|vite)/.test(answers.template)) {
+                            choices.push(...Object.keys(VUE_DEPENDENCIES.dependencies))
+                        }
+                        return choices
+                    },
                 },
                 {
                     type: 'confirm',

@@ -77,6 +77,10 @@ export interface InitAnswers {
      *初始化 Docker
     */
     isInitDocker: boolean
+    /**
+ * 需要安装的 常见依赖
+    */
+    commonDependencies?: string[]
 }
 
 export interface NodeIndexItem {

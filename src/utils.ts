@@ -46,6 +46,34 @@ const REMOTES = [
     'https://hub.njuu.cf',
 ]
 
+// 常见依赖 map
+export const COMMON_DEPENDENCIES = {
+    devDependencies: {
+        '@types/fs-extra': '^9.0.4',
+        '@types/lodash': '^4.14.165',
+        '@types/md5': '^2.3.1',
+    },
+    dependencies: {
+        axios: '^1.0.0',
+        'cmyr-error-collection': '^1.5.0',
+        dayjs: '^1.9.6',
+        'fs-extra': '^10.0.0',
+        'isomorphic-unfetch': '^3.1.0',
+        lodash: '^4.17.20',
+        md5: '^2.3.0',
+        'push-all-in-one': '^2.2.0',
+    },
+}
+
+export const VUE_DEPENDENCIES = {
+    devDependencies: {},
+    dependencies: {
+        'vite-plugin-fast-cdn-import': '^1.1.0',
+        'element-ui': '^2.15.7',
+        vuetify: '^2.6.3',
+    },
+}
+
 type TokenType = 'GITHUB_TOKEN' | 'GITEE_TOKEN'
 
 type GiteeRepo = {
@@ -223,7 +251,6 @@ export async function initProject(answers: InitAnswers) {
 
 async function init(projectPath: string, answers: InitAnswers) {
     const { isOpenSource, gitRemoteUrl, isInitRemoteRepo, isInitReadme, isInitContributing, isInitHusky, isInitSemanticRelease, isInitDocker } = answers
-
     try {
         await asyncExec('git --version', {
             cwd: projectPath,
@@ -267,13 +294,15 @@ async function init(projectPath: string, answers: InitAnswers) {
             await initHusky(projectPath)
         }
 
+        await initCommonDependencies(projectPath, answers)
+
+        await initTsconfig(projectPath)
+
         await sortProjectJson(projectPath)
 
         await initDependabot(projectPath, answers)
 
         await initYarn(projectPath, answers)
-
-        await initTsconfig(projectPath)
 
         await asyncExec('git add .', {
             cwd: projectPath,
@@ -295,7 +324,7 @@ async function init(projectPath: string, answers: InitAnswers) {
             cwd: projectPath,
         })
 
-        await asyncExec('git commit -m "chore: init"', {
+        await asyncExec('git commit -m "chore: init" --no-gpg', {
             cwd: projectPath,
         })
 
@@ -398,6 +427,50 @@ async function installNpmPackages(projectPath: string) {
     }
 }
 
+async function initCommonDependencies(projectPath: string, answers: InitAnswers) {
+    const loading = ora('正在初始化 常见依赖……').start()
+    try {
+        const { commonDependencies = [] } = answers
+        const pkg: IPackage = await getProjectJson(projectPath)
+        const dependencies: Record<string, string> = Object.fromEntries(
+            await Promise.all(
+                commonDependencies.map(async (name) => [
+                    name,
+                    `^${await getNpmPackageVersion(name)}`,
+                ]),
+            ),
+        )
+        const devDependencies: Record<string, string> = Object.fromEntries(
+            await Promise.all(
+                commonDependencies
+                    .map((name) => {
+                        return `@types/${name}`
+                    })
+                    .filter((name) => COMMON_DEPENDENCIES?.devDependencies?.[name] || VUE_DEPENDENCIES?.devDependencies?.[name])
+                    .map(async (name) => [
+                        name,
+                        `^${await getNpmPackageVersion(name)}`,
+                    ]),
+            ),
+        )
+        const newPkg: IPackage = {
+            dependencies: {
+                ...dependencies,
+                ...pkg?.dependencies,
+            },
+            devDependencies: {
+                ...devDependencies,
+                ...pkg?.devDependencies,
+            },
+        }
+        await saveProjectJson(projectPath, newPkg)
+        loading.succeed('常见依赖初始化成功！')
+    } catch (error) {
+        console.error(error)
+        loading.fail('常见依赖安装失败！')
+    }
+}
+
 async function initDependabot(projectPath: string, answers: InitAnswers) {
     try {
         const { isOpenSource, isRemoveDependabot } = answers
@@ -433,8 +506,8 @@ async function initTsconfig(projectPath: string) {
                 const pkg: IPackage = await getProjectJson(projectPath)
                 const pkgData: IPackage = {
                     dependencies: {
-                        ...pkg.dependencies,
                         tslib: `^${await getNpmPackageVersion('tslib')}`,
+                        ...pkg.dependencies,
                     },
                 }
                 const newPkg = Object.assign({}, pkg, pkgData)
