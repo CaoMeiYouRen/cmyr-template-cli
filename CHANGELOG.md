@@ -1,5 +1,12 @@
 # cmyr-template-cli
 
+# [1.15.0](https://github.com/CaoMeiYouRen/cmyr-template-cli/compare/v1.14.4...v1.15.0) (2022-11-21)
+
+
+### ✨ 新功能
+
+* 新增 常见依赖的初始化；修复 tsconfig 初始化顺序 ([df9cbd4](https://github.com/CaoMeiYouRen/cmyr-template-cli/commit/df9cbd4))
+
 ## [1.14.4](https://github.com/CaoMeiYouRen/cmyr-template-cli/compare/v1.14.3...v1.14.4) (2022-11-20)
 
 

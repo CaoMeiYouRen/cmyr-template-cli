@@ -443,9 +443,7 @@ async function initCommonDependencies(projectPath: string, answers: InitAnswers)
         const devDependencies: Record<string, string> = Object.fromEntries(
             await Promise.all(
                 commonDependencies
-                    .map((name) => {
-                        return `@types/${name}`
-                    })
+                    .map((name) => `@types/${name}`)
                     .filter((name) => COMMON_DEPENDENCIES?.devDependencies?.[name] || VUE_DEPENDENCIES?.devDependencies?.[name])
                     .map(async (name) => [
                         name,
