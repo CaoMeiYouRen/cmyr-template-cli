@@ -1,5 +1,12 @@
 # cmyr-template-cli
 
+## [1.15.2](https://github.com/CaoMeiYouRen/cmyr-template-cli/compare/v1.15.1...v1.15.2) (2022-11-25)
+
+
+### 🐛 Bug 修复
+
+* 移除 nodejs 版本更新缓慢的 nodejs.cn，不再作为镜像源 ([f9c3398](https://github.com/CaoMeiYouRen/cmyr-template-cli/commit/f9c3398))
+
 ## [1.15.1](https://github.com/CaoMeiYouRen/cmyr-template-cli/compare/v1.15.0...v1.15.1) (2022-11-25)
 
 
