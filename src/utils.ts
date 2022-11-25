@@ -25,7 +25,7 @@ const GITEE_API_URL = 'https://gitee.com/api/v5'
 
 const NODEJS_URLS = [
     'https://nodejs.org/zh-cn/download/',
-    'http://nodejs.cn/download/',
+    // 'http://nodejs.cn/download/',
 ]
 
 const NODE_INDEX_URL = 'https://cdn.npmmirror.com/binaries/node/index.json'
