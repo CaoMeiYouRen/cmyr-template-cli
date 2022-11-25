@@ -443,9 +443,7 @@ async function initCommonDependencies(projectPath: string, answers: InitAnswers)
         const devDependencies: Record<string, string> = Object.fromEntries(
             await Promise.all(
                 commonDependencies
-                    .map((name) => {
-                        return `@types/${name}`
-                    })
+                    .map((name) => `@types/${name}`)
                     .filter((name) => COMMON_DEPENDENCIES?.devDependencies?.[name] || VUE_DEPENDENCIES?.devDependencies?.[name])
                     .map(async (name) => [
                         name,
@@ -528,13 +526,13 @@ async function initProjectJson(projectPath: string, answers: InitAnswers) {
     const loading = ora('正在初始化 package.json ……').start()
     try {
 
-        const { name, author, description, isOpenSource, isPublishToNpm = false } = answers
+        const { name, author, description, keywords = [], isOpenSource, isPublishToNpm = false } = answers
 
         const repositoryUrl = `https://github.com/${author}/${name}`
         const homepage = `${repositoryUrl}#readme`
         const issuesUrl = `${repositoryUrl}/issues`
         const gitUrl = `git+${repositoryUrl}.git`
-        const nodeVersion = await getLtsNodeVersion() || '16'
+        const nodeVersion = await getLtsNodeVersion() || '18'
         const node = Number(nodeVersion) - 4 // lts 减 4 为最旧支持的版本
 
         const pkg: IPackage = await getProjectJson(projectPath)
@@ -542,6 +540,7 @@ async function initProjectJson(projectPath: string, answers: InitAnswers) {
             name,
             author,
             description,
+            keywords,
             private: !isPublishToNpm,
             license: 'UNLICENSED',
             engines: {
@@ -886,7 +885,7 @@ async function initHusky(projectPath: string) {
         const devDependencies = {
             '@commitlint/cli': '^15.0.0',
             '@commitlint/config-conventional': '^15.0.0',
-            husky: '^7.0.4',
+            husky: '^8.0.1',
             'lint-staged': '^12.1.2',
         }
         const pkgData: IPackage = {

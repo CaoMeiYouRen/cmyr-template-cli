@@ -21,9 +21,25 @@ export interface Package {
 export type IPackage = Partial<Package>
 
 export interface InitAnswers {
+    /**
+     * 项目名称
+     */
     name: string
+    /**
+     * 项目介绍
+     */
     description: string
+    /**
+     * 作者
+     */
     author: string
+    /**
+     * 关键词
+     */
+    keywords: string[]
+    /**
+     * 项目模板
+     */
     template: string
     /**
      * 是否开源
@@ -80,7 +96,7 @@ export interface InitAnswers {
     /**
  * 需要安装的 常见依赖
     */
-    commonDependencies?: string[]
+    commonDependencies: string[]
 }
 
 export interface NodeIndexItem {

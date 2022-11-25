@@ -39,6 +39,13 @@ module.exports = function (plop: NodePlopAPI) {
                     filter: (e: string) => e.trim(),
                 },
                 {
+                    type: 'input',
+                    name: 'keywords',
+                    message: '请输入项目关键词(用空格分割)',
+                    default: '',
+                    filter: (e: string) => e.trim().split(' ').filter(Boolean),
+                },
+                {
                     type: 'list',
                     name: 'template',
                     message: '请选择项目模板',
