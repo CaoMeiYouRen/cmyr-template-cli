@@ -1,5 +1,12 @@
 # cmyr-template-cli
 
+## [1.15.1](https://github.com/CaoMeiYouRen/cmyr-template-cli/compare/v1.15.0...v1.15.1) (2022-11-25)
+
+
+### 🐛 Bug 修复
+
+* 新增 关键词 选项；优化 husky 版本号；优化 项目注释 ([3ef1ceb](https://github.com/CaoMeiYouRen/cmyr-template-cli/commit/3ef1ceb))
+
 # [1.15.0](https://github.com/CaoMeiYouRen/cmyr-template-cli/compare/v1.14.4...v1.15.0) (2022-11-21)
 
 
