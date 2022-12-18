@@ -10,7 +10,7 @@
 <% } -%>
 <% if (isGithubRepos && isInitSemanticRelease) { -%>
   <a href="<%= repositoryUrl %>/actions?query=workflow%3ARelease" target="_blank">
-    <img alt="GitHub Workflow Status" src="https://img.shields.io/github/workflow/status/<%= authorGithubUsername %>/<%= projectName %>/Release">
+    <img alt="GitHub Workflow Status" src="https://img.shields.io/github/actions/workflow/status/<%= authorGithubUsername %>/<%= projectName %>/release.yml?branch=master">
   </a>
 <% } -%>
 <% if (projectPrerequisites) { -%>

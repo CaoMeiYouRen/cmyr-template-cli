@@ -4,7 +4,7 @@
     <img alt="Version" src="https://img.shields.io/npm/v/cmyr-template-cli.svg">
   </a>
   <a href="https://github.com/CaoMeiYouRen/cmyr-template-cli/actions?query=workflow%3ARelease" target="_blank">
-    <img alt="GitHub Workflow Status" src="https://img.shields.io/github/workflow/status/CaoMeiYouRen/cmyr-template-cli/Release">
+    <img alt="GitHub Workflow Status" src="https://img.shields.io/github/actions/workflow/status/CaoMeiYouRen/cmyr-template-cli/release.yml?branch=master">
   </a>
   <img src="https://img.shields.io/badge/node-%3E%3D12-blue.svg" />
   <a href="https://github.com/CaoMeiYouRen/cmyr-template-cli#readme" target="_blank">
@@ -17,6 +17,7 @@
     <img alt="License: MIT" src="https://img.shields.io/badge/License-MIT-yellow.svg" />
   </a>
 </p>
+
 
 
 > 草梅友仁自制的项目模板创建器
