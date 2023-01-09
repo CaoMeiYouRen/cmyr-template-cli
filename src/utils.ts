@@ -298,6 +298,8 @@ async function init(projectPath: string, answers: InitAnswers) {
 
         await initTsconfig(projectPath)
 
+        await initStylelint(projectPath)
+
         await sortProjectJson(projectPath)
 
         await initDependabot(projectPath, answers)
@@ -914,6 +916,67 @@ async function initHusky(projectPath: string) {
         console.error(error)
     }
 }
+
+/**
+ * 初始化 stylelint 相关配置
+ * @param projectPath
+ */
+async function initStylelint(projectPath: string) {
+    const loading = ora('正在初始化 stylelint ……').start()
+    try {
+        const pkg: IPackage = await getProjectJson(projectPath)
+
+        const extnames = ['html', 'css', 'scss', 'sass']
+        if (pkg?.dependencies?.vue) {
+            extnames.push('vue')
+        } else if (pkg?.dependencies?.react) {
+            extnames.push('jsx', 'tsx')
+        } else {
+            loading.stopAndPersist({
+                text: '非前端项目，无需初始化 stylelint',
+            })
+            return
+        }
+
+        const files = ['.stylelintignore']
+        if (pkg.type === 'module') {
+            files.push('.stylelintrc.cjs')
+        } else {
+            files.push('.stylelintrc.js')
+        }
+        await copyFilesFromTemplates(projectPath, files)
+
+        const devDependencies = {
+            'postcss-html': '^1.5.0',
+            sass: '^1.57.1',
+            stylelint: '^14.16.1',
+            'stylelint-config-cmyr': '^0.2.1',
+            'stylelint-config-rational-order': '^0.1.2',
+            'stylelint-config-standard': '^29.0.0',
+            'stylelint-order': '^6.0.1',
+            'stylelint-scss': '^4.3.0',
+        }
+
+        const pkgData: IPackage = {
+            scripts: {
+                'lint:css': `stylelint src/**/*.{${extnames.join(',')}} --fix --custom-syntax postcss-html`,
+                ...pkg?.scripts,
+            },
+            devDependencies: {
+                ...devDependencies,
+                ...pkg?.devDependencies,
+            },
+        }
+
+        await saveProjectJson(projectPath, pkgData)
+
+        loading.succeed('stylelint 初始化成功！')
+    } catch (error) {
+        loading.fail('stylelint 初始化失败！')
+        console.error(error)
+    }
+}
+
 /**
  * 初始化 Commitizen 相关配置
  * @param projectPath

@@ -6,7 +6,7 @@ export interface Package {
     private: boolean
     license: string
     main: string
-    bin: Record<string, string>
+    bin?: Record<string, string>
     files: string[]
     scripts: Record<string, string>
     devDependencies: Record<string, string>
@@ -15,6 +15,7 @@ export interface Package {
     homepage: string
     bugs: Record<string, string>
     config: Record<string, unknown>
+    type: string
     [k: string]: unknown
 }
 

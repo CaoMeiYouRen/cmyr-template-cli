@@ -51,6 +51,7 @@ module.exports = function (plop: NodePlopAPI) {
                     message: '请选择项目模板',
                     choices() {
                         return [
+                            'vite4',
                             'vite3',
                             'vite2-vue2',
                             'vite2',
