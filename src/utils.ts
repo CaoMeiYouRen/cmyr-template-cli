@@ -298,6 +298,8 @@ async function init(projectPath: string, answers: InitAnswers) {
 
         await initTsconfig(projectPath)
 
+        await initEslint(projectPath)
+
         await initStylelint(projectPath)
 
         await sortProjectJson(projectPath)
@@ -551,7 +553,7 @@ async function initProjectJson(projectPath: string, answers: InitAnswers) {
             },
             devDependencies: {
                 ...pkg?.devDependencies,
-                'eslint-config-cmyr': `^${await getNpmPackageVersion('eslint-config-cmyr')}`,
+                // 'eslint-config-cmyr': `^${await getNpmPackageVersion('eslint-config-cmyr')}`,
             },
         }
         let extData: IPackage = {}
@@ -918,6 +920,74 @@ async function initHusky(projectPath: string) {
 }
 
 /**
+ *  初始化 eslint
+ * @param projectPath
+ */
+async function initEslint(projectPath: string) {
+    const loading = ora('正在初始化 eslint ……').start()
+    try {
+        const pkg: IPackage = await getProjectJson(projectPath)
+
+        const devDependencies: Record<string, string> = {
+            '@typescript-eslint/eslint-plugin': '^5.48.0',
+            '@typescript-eslint/parser': '^5.48.0',
+            'cross-env': '^7.0.3',
+            eslint: '^8.31.0',
+        }
+        let eslintType = 'cmyr'
+        const extnames = ['js', 'ts']
+
+        if (pkg?.dependencies?.vue) {
+            Object.assign(devDependencies, {
+                '@vue/eslint-config-typescript': '^11.0.2',
+                'eslint-plugin-vue': '^9.8.0',
+            })
+            extnames.push('vue')
+            eslintType = 'cmyr/vue'
+            if (pkg?.dependencies?.vue?.startsWith('^3')) { // vue3
+                eslintType = 'cmyr/vue3'
+            }
+        }
+
+        if (pkg?.dependencies?.react) {
+            extnames.push('jsx', 'tsx')
+            eslintType = 'cmyr/react'
+        }
+
+        const pkgData: IPackage = {
+            scripts: {
+                lint: `cross-env NODE_ENV=production eslint src --fix --ext ${extnames.join(',')}`,
+                ...pkg?.scripts,
+            },
+            devDependencies: {
+                ...devDependencies,
+                ...pkg?.devDependencies,
+                'eslint-config-cmyr': `^${await getNpmPackageVersion('eslint-config-cmyr')}`,
+            },
+        }
+
+        await saveProjectJson(projectPath, pkgData)
+
+        const files = ['.eslintignore']
+        await copyFilesFromTemplates(projectPath, files, true)
+
+        const eslintrc = `module.exports = {
+    root: true,
+    extends: '${eslintType}',
+}`
+        const filename = pkg.type === 'module' ? '.eslintrc.cjs' : '.eslintrc.js'
+        const toPath = path.join(projectPath, filename)
+        if (!await fs.pathExists(toPath)) { // 如果不存在就写入
+            await fs.writeFile(toPath, eslintrc)
+        }
+        loading.succeed('eslint 初始化成功！')
+    } catch (error) {
+        loading.fail('eslint 初始化失败！')
+        console.error(error)
+    }
+}
+
+/**
  * 初始化 stylelint 相关配置
  * @param projectPath
  */
@@ -1155,14 +1225,18 @@ async function saveProjectJson(projectPath: string, pkgData: IPackage) {
  * @date 2022-06-18
  * @param projectPath
  * @param files
+ * @param [lazy=false] 为 true 时在文件已存在的情况下不会更新文件
  */
-async function copyFilesFromTemplates(projectPath: string, files: string[]) {
+async function copyFilesFromTemplates(projectPath: string, files: string[], lazy = false) {
     const loading = ora(`正在复制文件 ${files.join()} ……`).start()
     try {
         for await (const file of files) {
             const templatePath = path.join(__dirname, '../templates/', file)
             const newPath = path.join(projectPath, file)
             if (await fs.pathExists(newPath)) {
+                if (lazy) {
+                    continue
+                }
                 await fs.remove(newPath)
             }
             await fs.copyFile(templatePath, newPath)
