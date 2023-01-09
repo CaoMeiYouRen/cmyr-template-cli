@@ -1,5 +1,12 @@
 # cmyr-template-cli
 
+# [1.16.0](https://github.com/CaoMeiYouRen/cmyr-template-cli/compare/v1.15.3...v1.16.0) (2023-01-09)
+
+
+### ✨ 新功能
+
+* 新增 初始化 stylelint 相关配置 ([652c46d](https://github.com/CaoMeiYouRen/cmyr-template-cli/commit/652c46d))
+
 ## [1.15.3](https://github.com/CaoMeiYouRen/cmyr-template-cli/compare/v1.15.2...v1.15.3) (2022-12-18)
 
 
