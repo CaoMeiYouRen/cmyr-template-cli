@@ -215,7 +215,7 @@ module.exports = function (plop: NodePlopAPI) {
                     },
                 },
             ]
-            return inquirer.prompt(questions)
+            return inquirer.prompt(questions as any)
         },
         actions() {
             const actions: ActionType[] = []
