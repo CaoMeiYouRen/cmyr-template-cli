@@ -1,5 +1,13 @@
 # cmyr-template-cli
 
+## [1.17.2](https://github.com/CaoMeiYouRen/cmyr-template-cli/compare/v1.17.1...v1.17.2) (2023-03-24)
+
+
+### 🐛 Bug 修复
+
+* 优化 eslint 新增 cjs、mjs 支持 ([a979302](https://github.com/CaoMeiYouRen/cmyr-template-cli/commit/a979302))
+* 修复 eslint-config-cmyr 版本造成的 bug ([9a2c08c](https://github.com/CaoMeiYouRen/cmyr-template-cli/commit/9a2c08c))
+
 ## [1.17.1](https://github.com/CaoMeiYouRen/cmyr-template-cli/compare/v1.17.0...v1.17.1) (2023-03-15)
 
 
