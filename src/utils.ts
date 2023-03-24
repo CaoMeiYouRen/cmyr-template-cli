@@ -935,7 +935,7 @@ async function initEslint(projectPath: string) {
             eslint: '^8.31.0',
         }
         let eslintType = 'cmyr'
-        const extnames = ['js', 'ts']
+        const extnames = ['js', 'mjs', 'cjs', 'ts']
 
         if (pkg?.dependencies?.vue) {
             Object.assign(devDependencies, {
