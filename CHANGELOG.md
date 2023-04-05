@@ -1,5 +1,12 @@
 # cmyr-template-cli
 
+## [1.17.3](https://github.com/CaoMeiYouRen/cmyr-template-cli/compare/v1.17.2...v1.17.3) (2023-04-05)
+
+
+### 🐛 Bug 修复
+
+* 修复 版本号的读取错误 ([e9f69d1](https://github.com/CaoMeiYouRen/cmyr-template-cli/commit/e9f69d1))
+
 ## [1.17.2](https://github.com/CaoMeiYouRen/cmyr-template-cli/compare/v1.17.1...v1.17.2) (2023-03-24)
 
 
