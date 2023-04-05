@@ -1,5 +1,12 @@
 # cmyr-template-cli
 
+## [1.17.4](https://github.com/CaoMeiYouRen/cmyr-template-cli/compare/v1.17.3...v1.17.4) (2023-04-05)
+
+
+### 🐛 Bug 修复
+
+* 设置 persist-credentials: false ([083496d](https://github.com/CaoMeiYouRen/cmyr-template-cli/commit/083496d))
+
 ## [1.17.3](https://github.com/CaoMeiYouRen/cmyr-template-cli/compare/v1.17.2...v1.17.3) (2023-04-05)
 
 
