@@ -2,10 +2,13 @@ import { Plop, run } from 'plop'
 import { Command } from 'commander'
 import minimist from 'minimist'
 import path from 'path'
+import fs from 'fs-extra'
+
 const program = new Command('ct')
     .description('草梅项目创建器')
 
-program.version(process.env.VERSION || '1.0.0', '-v, --version')
+const pkg = fs.readJSONSync(path.join(__dirname, '../package.json'))
+program.version(pkg?.version || '1.0.0', '-v, --version')
 
 const args = process.argv.slice(2)
 
