@@ -1,5 +1,12 @@
 # cmyr-template-cli
 
+## [1.17.6](https://github.com/CaoMeiYouRen/cmyr-template-cli/compare/v1.17.5...v1.17.6) (2023-04-19)
+
+
+### 🐛 Bug 修复
+
+* 优化 GitHub Actions 的配置 ([7f4cd09](https://github.com/CaoMeiYouRen/cmyr-template-cli/commit/7f4cd09))
+
 ## [1.17.5](https://github.com/CaoMeiYouRen/cmyr-template-cli/compare/v1.17.4...v1.17.5) (2023-04-10)
 
 
