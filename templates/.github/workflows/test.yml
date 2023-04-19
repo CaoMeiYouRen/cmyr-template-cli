@@ -5,21 +5,20 @@ jobs:
     name: Test
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v3
       - name: Setup Node.js@lts environment
-        uses: actions/setup-node@v2
+        uses: actions/setup-node@v3
         with:
           node-version: "lts/*"
-          # cache: "yarn"
-      - name: Cache multiple paths
-        uses: actions/cache@v2
+      - name: Get yarn cache directory path
+        id: yarn-cache-dir-path
+        run: echo "dir=$(yarn cache dir)" >> $GITHUB_OUTPUT
+      - uses: actions/cache@v3
+        id: yarn-cache
         with:
-          path: |
-            ~/.npm
-            ~/cache
-            !~/cache/exclude
-            **/node_modules
-          key: npm-${{ runner.os }}-${{ hashFiles('package.json') }}
+          path: ${{ steps.yarn-cache-dir-path.outputs.dir }}
+          key: ${{ runner.os }}-yarn-${{ hashFiles('package.json') }}
+          restore-keys: ${{ runner.os }}-yarn-
       - run: yarn
       - run: yarn run lint
       - run: yarn run build
