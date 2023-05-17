@@ -55,6 +55,7 @@ module.exports = function (plop: NodePlopAPI) {
                             'vite3',
                             'vite2-vue2',
                             'vite2',
+                            'electron-vite',
                             'electron-vue',
                             'nuxt',
                             'uni',
