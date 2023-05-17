@@ -1,5 +1,12 @@
 # cmyr-template-cli
 
+# [1.18.0](https://github.com/CaoMeiYouRen/cmyr-template-cli/compare/v1.17.6...v1.18.0) (2023-05-17)
+
+
+### ✨ 新功能
+
+* 新增 electron-vite 模板 ([0449879](https://github.com/CaoMeiYouRen/cmyr-template-cli/commit/0449879))
+
 ## [1.17.6](https://github.com/CaoMeiYouRen/cmyr-template-cli/compare/v1.17.5...v1.17.6) (2023-04-19)
 
 
