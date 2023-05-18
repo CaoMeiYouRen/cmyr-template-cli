@@ -1,5 +1,12 @@
 # cmyr-template-cli
 
+# [1.19.0](https://github.com/CaoMeiYouRen/cmyr-template-cli/compare/v1.18.1...v1.19.0) (2023-05-18)
+
+
+### ✨ 新功能
+
+* 新增 Star History 支持；优化 README.md 模板的 emoji ([5206dcd](https://github.com/CaoMeiYouRen/cmyr-template-cli/commit/5206dcd))
+
 ## [1.18.1](https://github.com/CaoMeiYouRen/cmyr-template-cli/compare/v1.18.0...v1.18.1) (2023-05-18)
 
 
