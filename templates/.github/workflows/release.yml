@@ -11,23 +11,28 @@ jobs:
       - uses: actions/checkout@v3
         with:
           persist-credentials: false
+      - name: Setup pnpm
+        uses: pnpm/action-setup@v2
+        with:
+          version: "latest"
       - name: Setup Node.js environment
         uses: actions/setup-node@v3
         with:
           node-version: "lts/*"
-      - name: Get yarn cache directory path
-        id: yarn-cache-dir-path
-        run: echo "dir=$(yarn cache dir)" >> $GITHUB_OUTPUT
-      - uses: actions/cache@v3
-        id: yarn-cache
+      - name: Cache Dependency
+        uses: actions/cache@v3
         with:
-          path: ${{ steps.yarn-cache-dir-path.outputs.dir }}
-          key: ${{ runner.os }}-yarn-${{ hashFiles('package.json') }}
-          restore-keys: ${{ runner.os }}-yarn-
-      - run: yarn
-      - run: yarn run lint
-      - run: yarn run build
+          path: |
+            ~/.npm
+            ~/cache
+            !~/cache/exclude
+            **/node_modules
+          key: pnpm-${{ runner.os }}-${{ hashFiles('package.json') }}
+          restore-keys: pnpm-${{ runner.os }}
+      - run: pnpm i --fix-lockfile
+      - run: pnpm run lint
+      - run: pnpm run build
       - env:
           GH_TOKEN: ${{ secrets.GH_TOKEN }}
           NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
-        run: yarn run release
+        run: pnpm run release
