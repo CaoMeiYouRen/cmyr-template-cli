@@ -208,6 +208,15 @@ module.exports = function (plop: NodePlopAPI) {
                 },
                 {
                     type: 'confirm',
+                    name: 'isEnableStarHistory',
+                    message: '是否启用 Star History ？',
+                    default: false,
+                    when(answers: InitAnswers) {
+                        return answers.isOpenSource
+                    },
+                },
+                {
+                    type: 'confirm',
                     name: 'isEnableAfdian',
                     message: '是否启用爱发电 ？',
                     default: false,

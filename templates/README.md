@@ -41,21 +41,15 @@
 <% } -%>
 <% if (projectHomepage) { -%>
 
-### 🏠 [主页](<%= projectHomepage %>)
+## 🏠 主页
 
 [<%= projectHomepage %>](<%= projectHomepage %>)
 
 <% } -%>
-<% if (projectDemoUrl) { -%>
 
-### ✨ [Demo](<%= projectDemoUrl %>)
-
-[<%= projectDemoUrl %>](<%= projectDemoUrl %>)
-
-<% } -%>
 <% if (projectPrerequisites && projectPrerequisites.length) { -%>
 
-## 依赖要求
+## 📦 依赖要求
 
 <% projectPrerequisites.map(({ name, value }) => { -%>
 
@@ -64,7 +58,7 @@
 <% } -%>
 <% if (installCommand) { -%>
 
-## 安装
+## 🚀 安装
 
 ```sh
 <%= installCommand %>
@@ -72,7 +66,7 @@
 <% } -%>
 <% if (usage) { -%>
 
-## 使用
+## 👨‍💻 使用
 
 ```sh
 <%= usage %>
@@ -80,7 +74,7 @@
 <% } -%>
 <% if (devCommand) { -%>
 
-## 开发
+## 🛠️ 开发
 
 ```sh
 <%= devCommand %>
@@ -88,7 +82,7 @@
 <% } -%>
 <% if (buildCommand) { -%>
 
-## 编译
+## 🔧 编译
 
 ```sh
 <%= buildCommand %>
@@ -96,7 +90,7 @@
 <% } -%>
 <% if (testCommand) { -%>
 
-## 测试
+## 🧪 测试
 
 ```sh
 <%= testCommand %>
@@ -104,7 +98,7 @@
 <% } -%>
 <% if (lintCommand) { -%>
 
-## Lint
+## 🔍 Lint
 
 ```sh
 <%= lintCommand %>
@@ -112,7 +106,7 @@
 <% } -%>
 <% if (commitCommand) { -%>
 
-## Commit
+## 💾 Commit
 
 ```sh
 <%= commitCommand %>
@@ -121,12 +115,13 @@
 
 <% if (authorName || authorGithubUsername) { -%>
 
-## 作者
+## 👤 作者
 
 <% if (authorName) { %>
-👤 **<%= authorName %>**
+ **<%= authorName %>**
 <% } %>
 <% if (authorWebsite) { -%>
+
 * Website: [<%= authorWebsite %>](<%= authorWebsite %>)
 <% } -%>
 <% if (authorGithubUsername) { -%>
@@ -135,12 +130,12 @@
 <% } %>
 <% if (issuesUrl) { -%>
 
-## 🤝贡献
+## 🤝 贡献
 
 欢迎 贡献、提问或提出新功能！<br />如有问题请查看 [issues page](<%= issuesUrl %>). <br/><%= contributingUrl ? `贡献或提出新功能可以查看[contributing guide](${contributingUrl}).` : '' %>
 <% } -%>
 
-## 💰支持
+## 💰 支持
 
 如果觉得这个项目有用的话请给一颗⭐️，非常感谢
 <% if (isEnableAfdian) { -%>
@@ -150,7 +145,11 @@
 </a>
 <% } -%>
 <% if (licenseName && licenseUrl) { -%>
+<% if (isEnableStarHistory) { -%>
+## 🌟 Star History
 
+[![Star History Chart](https://api.star-history.com/svg?repos=<%= authorGithubUsername %>/<%= projectName %>&type=Date)](https://star-history.com/#<%= authorGithubUsername %>/<%= projectName %>&Date)
+<% } -%>
 ## 📝 License
 
 <% if (authorName && authorGithubUsername) { -%>
