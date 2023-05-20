@@ -1,5 +1,12 @@
 # cmyr-template-cli
 
+## [1.19.2](https://github.com/CaoMeiYouRen/cmyr-template-cli/compare/v1.19.1...v1.19.2) (2023-05-20)
+
+
+### 🐛 Bug 修复
+
+* 优化 kebabCase 的实现 ([5a9d785](https://github.com/CaoMeiYouRen/cmyr-template-cli/commit/5a9d785))
+
 ## [1.19.1](https://github.com/CaoMeiYouRen/cmyr-template-cli/compare/v1.19.0...v1.19.1) (2023-05-20)
 
 
