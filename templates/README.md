@@ -144,12 +144,14 @@
   <img src="https://cdn.jsdelivr.net/gh/CaoMeiYouRen/image-hosting-01@master/images/202112181214695.png">
 </a>
 <% } -%>
-<% if (licenseName && licenseUrl) { -%>
+
 <% if (isEnableStarHistory) { -%>
 ## 🌟 Star History
 
 [![Star History Chart](https://api.star-history.com/svg?repos=<%= authorGithubUsername %>/<%= projectName %>&type=Date)](https://star-history.com/#<%= authorGithubUsername %>/<%= projectName %>&Date)
 <% } -%>
+
+<% if (licenseName && licenseUrl) { -%>
 ## 📝 License
 
 <% if (authorName && authorGithubUsername) { -%>
