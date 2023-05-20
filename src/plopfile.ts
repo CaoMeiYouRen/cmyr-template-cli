@@ -1,9 +1,8 @@
 import { NodePlopAPI, ActionType } from 'plop'
 import { QuestionCollection } from 'inquirer'
-import { kebabCase } from 'lodash'
 import { __DEV__ } from './env'
 import { InitAnswers } from './interfaces'
-import { COMMON_DEPENDENCIES, getGitUserName, initProject, VUE_DEPENDENCIES } from './utils'
+import { COMMON_DEPENDENCIES, getGitUserName, initProject, VUE_DEPENDENCIES, kebabCase } from './utils'
 
 module.exports = function (plop: NodePlopAPI) {
     plop.setActionType('initProject', initProject)

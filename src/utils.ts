@@ -1275,3 +1275,7 @@ async function removeFiles(projectPath: string, files: string[]) {
         throw error
     }
 }
+
+export function kebabCase(str: string) {
+    return str.replace(/([a-z])([A-Z])/g, '$1-$2').replace(/_+/g, '-').replace(/\s+/g, '-').toLowerCase()
+}
