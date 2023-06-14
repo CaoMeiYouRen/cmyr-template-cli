@@ -19,6 +19,8 @@ jobs:
         with:
           path: |
             ~/.npm
+            ~/.yarn
+            ~/.cache/pnpm
             ~/cache
             !~/cache/exclude
             **/node_modules
