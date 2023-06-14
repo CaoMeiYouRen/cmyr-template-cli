@@ -216,8 +216,8 @@ module.exports = function (plop: NodePlopAPI) {
                 },
                 {
                     type: 'confirm',
-                    name: 'isEnableAfdian',
-                    message: '是否启用爱发电 ？',
+                    name: 'isEnableSupport',
+                    message: '是否启用赞助支持 ？',
                     default: false,
                     when(answers: InitAnswers) {
                         return answers.isOpenSource

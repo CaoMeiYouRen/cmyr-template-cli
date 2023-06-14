@@ -138,14 +138,18 @@
 ## 💰 支持
 
 如果觉得这个项目有用的话请给一颗⭐️，非常感谢
-<% if (isEnableAfdian) { -%>
+<% if (isEnableSupport) { -%>
 
 <a href="https://afdian.net/@<%= authorName %>">
-  <img src="https://cdn.jsdelivr.net/gh/CaoMeiYouRen/image-hosting-01@master/images/202112181214695.png">
+  <img src="https://cdn.jsdelivr.net/gh/CaoMeiYouRen/image-hosting-01@master/images/202112181214695.png" width="312px" >
+</a>
+
+<a href="https://patreon.com/<%= authorName %>">
+    <img src="https://cdn.jsdelivr.net/gh/CaoMeiYouRen/image-hosting-01@master/images/202306142054108.svg" width="312px" height="78px" />
 </a>
 <% } -%>
-
 <% if (isEnableStarHistory) { -%>
+
 ## 🌟 Star History
 
 [![Star History Chart](https://api.star-history.com/svg?repos=<%= authorGithubUsername %>/<%= projectName %>&type=Date)](https://star-history.com/#<%= authorGithubUsername %>/<%= projectName %>&Date)

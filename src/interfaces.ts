@@ -80,11 +80,10 @@ export interface InitAnswers {
      * 是否初始化 semantic-release
      */
     isInitSemanticRelease: boolean
-
     /**
-     * 是否启用爱发电
+     * 是否启用赞助
      */
-    isEnableAfdian: boolean
+    isEnableSupport?: boolean
     /**
      * 是否启用 Star History
      */
