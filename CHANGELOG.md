@@ -1,5 +1,15 @@
 # cmyr-template-cli
 
+## [1.19.3](https://github.com/CaoMeiYouRen/cmyr-template-cli/compare/v1.19.2...v1.19.3) (2023-06-14)
+
+
+### 🐛 Bug 修复
+
+* 优化：test.yml 支持手动执行 ([7f35259](https://github.com/CaoMeiYouRen/cmyr-template-cli/commit/7f35259))
+* 优化：新增 patreon 赞助渠道 ([3fc7f7e](https://github.com/CaoMeiYouRen/cmyr-template-cli/commit/3fc7f7e))
+* 修复 tsconfig.json 问题 ([9597147](https://github.com/CaoMeiYouRen/cmyr-template-cli/commit/9597147))
+* 升级 eslint 相关版本 ([6e78d9b](https://github.com/CaoMeiYouRen/cmyr-template-cli/commit/6e78d9b))
+
 ## [1.19.2](https://github.com/CaoMeiYouRen/cmyr-template-cli/compare/v1.19.1...v1.19.2) (2023-05-20)
 
 
