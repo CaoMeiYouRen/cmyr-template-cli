@@ -8,7 +8,7 @@ import { PACKAGE_MANAGER } from './env'
 import { InitAnswers, IPackage, NodeIndexJson } from './interfaces'
 import colors from 'colors'
 import ejs from 'ejs'
-import { unescape } from 'lodash'
+import { unescape, cloneDeep } from 'lodash'
 import { fix } from '@lint-md/core'
 import JSON5 from 'json5'
 
@@ -514,6 +514,12 @@ async function initTsconfig(projectPath: string) {
                 }
                 const newPkg = Object.assign({}, pkg, pkgData)
                 await saveProjectJson(projectPath, newPkg)
+            }
+            if (typeof tsconfig?.compilerOptions?.watch === 'boolean') {
+                // 修复 tsconfig watch 选项的问题
+                const newTsconfig = cloneDeep(tsconfig)
+                newTsconfig.compilerOptions.watch = undefined
+                await fs.writeFile(tsconfigPath, JSON.stringify(newTsconfig, null, 4))
             }
         }
     } catch (error) {

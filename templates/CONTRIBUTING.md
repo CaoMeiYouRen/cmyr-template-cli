@@ -30,9 +30,9 @@
 <% if (devCommand) { -%>
 3.  运行开发环境
 
-```sh
-<%= devCommand %>
-```
+    ```sh
+    <%= devCommand %>
+    ```
 <% } -%>
 
 ## 问题和功能请求
