@@ -1,5 +1,15 @@
 # cmyr-template-cli
 
+## [1.19.4](https://github.com/CaoMeiYouRen/cmyr-template-cli/compare/v1.19.3...v1.19.4) (2023-06-15)
+
+
+### 🐛 Bug 修复
+
+* 修复 tsconfig watch 选项的问题；修复 贡献指南 排版 ([fc6a6b0](https://github.com/CaoMeiYouRen/cmyr-template-cli/commit/fc6a6b0))
+
+
+* Merge pull request #59 from CaoMeiYouRen/dependabot/npm_and_yarn/conventional-changelog-cli-3.0.0 ([6c0fb33](https://github.com/CaoMeiYouRen/cmyr-template-cli/commit/6c0fb33)), closes [#59](https://github.com/CaoMeiYouRen/cmyr-template-cli/issues/59)
+
 ## [1.19.3](https://github.com/CaoMeiYouRen/cmyr-template-cli/compare/v1.19.2...v1.19.3) (2023-06-14)
 
 
