@@ -1,5 +1,16 @@
 # cmyr-template-cli
 
+## [1.19.5](https://github.com/CaoMeiYouRen/cmyr-template-cli/compare/v1.19.4...v1.19.5) (2023-06-19)
+
+
+### 🐛 Bug 修复
+
+* 优化 爱发电图片 ([b9afb16](https://github.com/CaoMeiYouRen/cmyr-template-cli/commit/b9afb16))
+
+
+* Merge branch 'master' of github.com:CaoMeiYouRen/cmyr-template-cli ([a18a67e](https://github.com/CaoMeiYouRen/cmyr-template-cli/commit/a18a67e))
+* Merge pull request #60 from CaoMeiYouRen/dependabot/npm_and_yarn/commander-11.0.0 ([4fc2020](https://github.com/CaoMeiYouRen/cmyr-template-cli/commit/4fc2020)), closes [#60](https://github.com/CaoMeiYouRen/cmyr-template-cli/issues/60)
+
 ## [1.19.4](https://github.com/CaoMeiYouRen/cmyr-template-cli/compare/v1.19.3...v1.19.4) (2023-06-15)
 
 
