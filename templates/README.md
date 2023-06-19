@@ -141,12 +141,13 @@
 <% if (isEnableSupport) { -%>
 
 <a href="https://afdian.net/@<%= authorName %>">
-  <img src="https://cdn.jsdelivr.net/gh/CaoMeiYouRen/image-hosting-01@master/images/202112181214695.png" width="312px" >
+  <img src="https://cdn.jsdelivr.net/gh/CaoMeiYouRen/image-hosting-01@master/images/202306192324870.png" width="312px" height="78px" alt="在爱发电支持我">
 </a>
 
 <a href="https://patreon.com/<%= authorName %>">
-    <img src="https://cdn.jsdelivr.net/gh/CaoMeiYouRen/image-hosting-01@master/images/202306142054108.svg" width="312px" height="78px" />
+    <img src="https://cdn.jsdelivr.net/gh/CaoMeiYouRen/image-hosting-01@master/images/202306142054108.svg" width="312px" height="78px" alt="become a patreon"/>
 </a>
+
 <% } -%>
 <% if (isEnableStarHistory) { -%>
 
