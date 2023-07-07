@@ -1,5 +1,12 @@
 # cmyr-template-cli
 
+## [1.19.6](https://github.com/CaoMeiYouRen/cmyr-template-cli/compare/v1.19.5...v1.19.6) (2023-07-07)
+
+
+### 🐛 Bug 修复
+
+* 更新 conventional-changelog-cmyr-config 版本错误 ([ef3294b](https://github.com/CaoMeiYouRen/cmyr-template-cli/commit/ef3294b))
+
 ## [1.19.5](https://github.com/CaoMeiYouRen/cmyr-template-cli/compare/v1.19.4...v1.19.5) (2023-06-19)
 
 
