@@ -1,5 +1,13 @@
 # cmyr-template-cli
 
+## [1.19.7](https://github.com/CaoMeiYouRen/cmyr-template-cli/compare/v1.19.6...v1.19.7) (2023-08-30)
+
+
+### 🐛 Bug 修复
+
+* 修复 commitlint 在 type 为 module 时的错误 ([5635b68](https://github.com/CaoMeiYouRen/cmyr-template-cli/commit/5635b68))
+* 增加 commitlint 旧配置的删除 ([69980fc](https://github.com/CaoMeiYouRen/cmyr-template-cli/commit/69980fc))
+
 ## [1.19.6](https://github.com/CaoMeiYouRen/cmyr-template-cli/compare/v1.19.5...v1.19.6) (2023-07-07)
 
 
