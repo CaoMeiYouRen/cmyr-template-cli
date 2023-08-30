@@ -794,6 +794,7 @@ async function initLicense(projectPath: string, projectInfos: any) {
  */
 async function initConfig(projectPath: string) {
     try {
+        await removeFiles(projectPath, ['commitlint.config.cjs', 'commitlint.config.js'])
         const pkg: IPackage = await getProjectJson(projectPath)
         const files = ['.editorconfig']
         if (pkg.type === 'module') {
