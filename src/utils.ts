@@ -794,7 +794,13 @@ async function initLicense(projectPath: string, projectInfos: any) {
  */
 async function initConfig(projectPath: string) {
     try {
-        const files = ['.editorconfig', 'commitlint.config.js']
+        const pkg: IPackage = await getProjectJson(projectPath)
+        const files = ['.editorconfig']
+        if (pkg.type === 'module') {
+            files.push('commitlint.config.cjs')
+        } else {
+            files.push('commitlint.config.js')
+        }
         await copyFilesFromTemplates(projectPath, files)
     } catch (error) {
         console.error(error)
