@@ -11,6 +11,7 @@ import ejs from 'ejs'
 import { unescape, cloneDeep } from 'lodash'
 import { fix } from '@lint-md/core'
 import JSON5 from 'json5'
+import os from 'os'
 
 axios.defaults.timeout = 10 * 1000
 
@@ -145,7 +146,7 @@ async function createGithubRepo(authToken: string, data: GithubRepo) {
  * @date 2022-09-14
  */
 async function loadToken(type: TokenType): Promise<string> {
-    const paths = [process.cwd(), process.env.HOME].map((e) => path.join(e, '.ctrc'))
+    const paths = [process.cwd(), os.homedir()].map((e) => path.join(e, '.ctrc'))
     if (!['GITHUB_TOKEN', 'GITEE_TOKEN'].includes(type)) {
         throw new Error(`无效的 token 类型：${type}`)
     }
