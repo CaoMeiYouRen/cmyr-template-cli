@@ -113,21 +113,30 @@
 ```
 <% } -%>
 
-<% if (authorName || authorGithubUsername) { -%>
 
 ## 👤 作者
 
 <% if (authorName) { %>
- **<%= authorName %>**
-<% } %>
-<% if (authorWebsite) { -%>
+**<%= authorName %>**
+<% } -%>
 
+<% if (authorWebsite) { -%>
 * Website: [<%= authorWebsite %>](<%= authorWebsite %>)
+
 <% } -%>
 <% if (authorGithubUsername) { -%>
 * GitHub: [@<%= authorGithubUsername %>](https://github.com/<%= authorGithubUsername %>)
 <% } -%>
-<% } %>
+<% if (giteeUsername) { -%> 
+* Gitee: [@<%= giteeUsername %>](https://gitee.com/<%= giteeUsername %>)
+<% } -%>
+<% if (twitterUsername) { -%> 
+* Twitter: [@<%= twitterUsername %>](https://twitter.com/<%= twitterUsername %>)
+<% } -%>
+<% if (weiboUsername) { -%> 
+* Weibo: [@<%= weiboUsername %>](https://weibo.com/<%= weiboUsername %>)
+<% } -%>
+
 <% if (issuesUrl) { -%>
 
 ## 🤝 贡献
@@ -139,15 +148,16 @@
 
 如果觉得这个项目有用的话请给一颗⭐️，非常感谢
 <% if (isEnableSupport) { -%>
-
-<a href="https://afdian.net/@<%= authorName %>">
+<% if (afdianUsername) { -%>
+<a href="https://afdian.net/@<%= afdianUsername %>">
   <img src="https://cdn.jsdelivr.net/gh/CaoMeiYouRen/image-hosting-01@master/images/202306192324870.png" width="312px" height="78px" alt="在爱发电支持我">
 </a>
-
-<a href="https://patreon.com/<%= authorName %>">
+<% } -%>
+<% if (patreonUsername) { -%>
+<a href="https://patreon.com/<%= patreonUsername %>">
     <img src="https://cdn.jsdelivr.net/gh/CaoMeiYouRen/image-hosting-01@master/images/202306142054108.svg" width="312px" height="78px" alt="become a patreon"/>
 </a>
-
+<% } -%>
 <% } -%>
 <% if (isEnableStarHistory) { -%>
 

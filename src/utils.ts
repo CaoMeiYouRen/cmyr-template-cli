@@ -8,7 +8,7 @@ import { PACKAGE_MANAGER } from './env'
 import { InitAnswers, IPackage, NodeIndexJson } from './interfaces'
 import colors from 'colors'
 import ejs from 'ejs'
-import { unescape, cloneDeep } from 'lodash'
+import { unescape, cloneDeep, mergeWith } from 'lodash'
 import { fix } from '@lint-md/core'
 import JSON5 from 'json5'
 import os from 'os'
@@ -57,6 +57,7 @@ export const COMMON_DEPENDENCIES = {
     dependencies: {
         axios: '^1.0.0',
         'cmyr-error-collection': '^1.5.0',
+        'cmyr-sign': '^1.1.0',
         dayjs: '^1.9.6',
         'fs-extra': '^10.0.0',
         'isomorphic-unfetch': '^3.1.0',
@@ -69,13 +70,22 @@ export const COMMON_DEPENDENCIES = {
 export const VUE_DEPENDENCIES = {
     devDependencies: {},
     dependencies: {
-        'vite-plugin-fast-cdn-import': '^1.1.0',
+        // 'vite-plugin-fast-cdn-import': '^1.1.0',
         'element-ui': '^2.15.7',
         vuetify: '^2.6.3',
     },
 }
 
-type TokenType = 'GITHUB_TOKEN' | 'GITEE_TOKEN'
+type TemplateCliConfig = {
+    GITHUB_TOKEN: string
+    GITEE_TOKEN: string
+    GITHUB_USERNAME: string
+    GITEE_USERNAME: string
+    AFDIAN_USERNAME: string
+    PATREON_USERNAME: string
+    WEIBO_USERNAME: string
+    TWITTER_USERNAME: string
+}
 
 type GiteeRepo = {
     access_token: string
@@ -140,30 +150,34 @@ async function createGithubRepo(authToken: string, data: GithubRepo) {
 }
 
 /**
- * 载入 token，优先寻找当前目录下的 .ctrc 文件，其次寻找 HOME 路径下的 .ctrc。
+ * 载入配置，优先寻找当前目录下的 .ctrc 文件，其次寻找 HOME 路径下的 .ctrc。
  * github 和 gitee 的 token 各自独立寻找，不为空即为找到
+ *
  * @author CaoMeiYouRen
- * @date 2022-09-14
+ * @date 2023-09-17
  */
-async function loadToken(type: TokenType): Promise<string> {
+async function loadTemplateCliConfig(): Promise<TemplateCliConfig> {
     const paths = [process.cwd(), os.homedir()].map((e) => path.join(e, '.ctrc'))
-    if (!['GITHUB_TOKEN', 'GITEE_TOKEN'].includes(type)) {
-        throw new Error(`无效的 token 类型：${type}`)
-    }
-    const CONFIG_KEY = type
-    for await (const p of paths) {
+    const [local, home]: TemplateCliConfig[] = (await Promise.all(paths.map(async (p) => {
         try {
             if (await fs.pathExists(p)) {
-                const config = await fs.readJSON(p)
-                if (config?.[CONFIG_KEY]) {
-                    return config[CONFIG_KEY]
-                }
+                return fs.readJSON(p)
             }
+            return null
         } catch (error) {
             console.error(error)
+            return null
         }
-    }
-    return ''
+    }))).filter(Boolean)
+    return mergeWith(home, local, (objValue, srcValue) => {
+        if (typeof objValue === 'string' && srcValue === '') {
+            return objValue
+        }
+        if (typeof srcValue !== 'undefined' && srcValue !== null) {
+            return srcValue
+        }
+        return objValue
+    })
 }
 
 /**
@@ -251,7 +265,7 @@ export async function initProject(answers: InitAnswers) {
 }
 
 async function init(projectPath: string, answers: InitAnswers) {
-    const { isOpenSource, gitRemoteUrl, isInitRemoteRepo, isInitReadme, isInitContributing, isInitHusky, isInitSemanticRelease, isInitDocker } = answers
+    const { isOpenSource, isInitReadme, isInitContributing, isInitHusky, isInitSemanticRelease, isInitDocker } = answers
     try {
         await asyncExec('git --version', {
             cwd: projectPath,
@@ -284,9 +298,8 @@ async function init(projectPath: string, answers: InitAnswers) {
             }
             await initGithubWorkflows(projectPath, answers)
         }
-        if (isInitRemoteRepo && gitRemoteUrl) {
-            await initRemoteGitRepo(projectPath, answers)
-        }
+
+        await initRemoteGitRepo(projectPath, answers)
 
         if (isInitSemanticRelease) {
             await initSemanticRelease(projectPath)
@@ -340,7 +353,7 @@ async function init(projectPath: string, answers: InitAnswers) {
 
 export async function getGitUserName() {
     const username = (await asyncExec('git config user.name')) as string || ''
-    return username.trim()
+    return username?.trim()
 }
 
 export async function sleep(time: number) {
@@ -350,11 +363,22 @@ export async function sleep(time: number) {
 async function initRemoteGitRepo(projectPath: string, answers: InitAnswers) {
     const loading = ora('正在初始化远程 Git 仓库……').start()
     try {
-        const { name, description, gitRemoteUrl, isOpenSource } = answers
+        const { name, description, gitRemoteUrl, isOpenSource, isInitRemoteRepo } = answers
+
+        if (!gitRemoteUrl) {
+            loading.fail('未找到远程 Git 仓库地址，请自行初始化！')
+            return
+        }
 
         await asyncExec(`git remote add origin ${gitRemoteUrl}`, {
             cwd: projectPath,
         })
+
+        if (!isInitRemoteRepo) {
+            loading.stop()
+            console.info(colors.green(`请自行在远程 Git 仓库初始化 ${gitRemoteUrl}`))
+            return
+        }
 
         // 判断 remote 类型
         let type = ''
@@ -364,9 +388,11 @@ async function initRemoteGitRepo(projectPath: string, answers: InitAnswers) {
             type = 'gitee'
         }
 
+        const config = await loadTemplateCliConfig()
+
         switch (type) {
             case 'github': {
-                const authToken = await loadToken('GITHUB_TOKEN')
+                const authToken = config?.GITHUB_TOKEN
                 if (!authToken) {
                     console.error(colors.red(`未找到 ${type} token ！跳过初始化！`))
                     break
@@ -385,7 +411,7 @@ async function initRemoteGitRepo(projectPath: string, answers: InitAnswers) {
                 return
             }
             case 'gitee': {
-                const access_token = await loadToken('GITEE_TOKEN')
+                const access_token = config?.GITEE_TOKEN
                 if (!access_token) {
                     console.error(colors.red(`未找到 ${type} token ！跳过初始化！`))
                     break
@@ -405,11 +431,11 @@ async function initRemoteGitRepo(projectPath: string, answers: InitAnswers) {
                 return
             }
             default: {
-                break
+                loading.stop()
+                console.info(colors.green(`请在远程 Git 仓库初始化 ${gitRemoteUrl}`))
+
             }
         }
-        loading.stop()
-        console.info(colors.green(`请在远程 Git 仓库初始化 ${gitRemoteUrl}`))
     } catch (error) {
         loading.fail('远程 Git 仓库初始化失败！')
         console.error(error)
@@ -603,7 +629,7 @@ async function getProjectInfo(projectPath: string, answers: InitAnswers) {
     try {
         const { name, author, description, isOpenSource, isPublishToNpm } = answers
         const packageManager = 'npm'
-
+        const config = await loadTemplateCliConfig()
         const pkg: IPackage = await getProjectJson(projectPath)
         const engines = pkg?.engines || {}
         const license = pkg?.license
@@ -622,11 +648,16 @@ async function getProjectInfo(projectPath: string, answers: InitAnswers) {
         const documentationUrl = `${repositoryUrl}#readme`
         const demoUrl = `${repositoryUrl}#readme`
         const homepage = documentationUrl
-        const githubUsername = author
+        const githubUsername = config?.GITHUB_USERNAME || author
         const authorWebsite = await getAuthorWebsiteFromGithubAPI(githubUsername)
         const licenseUrl = `${repositoryUrl}/blob/master/LICENSE`
         const discussionsUrl = `${repositoryUrl}/discussions`
         const pullRequestsUrl = `${repositoryUrl}/pulls`
+        const giteeUsername = config?.GITEE_USERNAME
+        const weiboUsername = config?.WEIBO_USERNAME
+        const twitterUsername = config?.TWITTER_USERNAME
+        const afdianUsername = config?.AFDIAN_USERNAME || author
+        const patreonUsername = config?.PATREON_USERNAME || author
 
         const projectInfos = {
             ...answers,
@@ -674,6 +705,11 @@ async function getProjectInfo(projectPath: string, answers: InitAnswers) {
             })),
             discussionsUrl,
             pullRequestsUrl,
+            giteeUsername,
+            afdianUsername,
+            patreonUsername,
+            weiboUsername,
+            twitterUsername,
         }
         loading.succeed('项目信息 初始化成功！')
         return projectInfos
