@@ -156,7 +156,7 @@ async function createGithubRepo(authToken: string, data: GithubRepo) {
  * @author CaoMeiYouRen
  * @date 2023-09-17
  */
-async function loadTemplateCliConfig(): Promise<TemplateCliConfig> {
+export async function loadTemplateCliConfig(): Promise<TemplateCliConfig> {
     const paths = [process.cwd(), os.homedir()].map((e) => path.join(e, '.ctrc'))
     const [local, home]: TemplateCliConfig[] = (await Promise.all(paths.map(async (p) => {
         try {
@@ -656,8 +656,8 @@ async function getProjectInfo(projectPath: string, answers: InitAnswers) {
         const giteeUsername = config?.GITEE_USERNAME
         const weiboUsername = config?.WEIBO_USERNAME
         const twitterUsername = config?.TWITTER_USERNAME
-        const afdianUsername = config?.AFDIAN_USERNAME || author
-        const patreonUsername = config?.PATREON_USERNAME || author
+        const afdianUsername = config?.AFDIAN_USERNAME
+        const patreonUsername = config?.PATREON_USERNAME
 
         const projectInfos = {
             ...answers,

@@ -2,13 +2,14 @@ import { NodePlopAPI, ActionType } from 'plop'
 import { QuestionCollection } from 'inquirer'
 import { __DEV__ } from './env'
 import { InitAnswers } from './interfaces'
-import { COMMON_DEPENDENCIES, getGitUserName, initProject, VUE_DEPENDENCIES, kebabCase } from './utils'
+import { COMMON_DEPENDENCIES, getGitUserName, initProject, VUE_DEPENDENCIES, kebabCase, loadTemplateCliConfig } from './utils'
 
 module.exports = function (plop: NodePlopAPI) {
     plop.setActionType('initProject', initProject)
     plop.setGenerator('create', {
         description: '草梅项目创建器',
         async prompts(inquirer) {
+            const config = await loadTemplateCliConfig()
             const questions: QuestionCollection<InitAnswers> = [
                 {
                     type: 'input',
@@ -122,11 +123,14 @@ module.exports = function (plop: NodePlopAPI) {
                     },
                     default(answers: InitAnswers) {
                         const { isOpenSource, name, author } = answers
+                        const { GITHUB_USERNAME, GITEE_USERNAME } = config
+                        const githubUsername = GITHUB_USERNAME || author
+                        const giteeUsername = GITEE_USERNAME || author
                         // 如果是开源，则默认为 github，如果为闭源，则默认为 gitee
                         if (isOpenSource) {
-                            return `git@github.com:${author}/${name}.git`
+                            return `git@github.com:${githubUsername}/${name}.git`
                         }
-                        return `git@gitee.com:caomeiyouren/${name}.git`
+                        return `git@gitee.com:${giteeUsername}/${name}.git`
                     },
                     filter: (e: string) => e.trim(),
                     when(answers: InitAnswers) {

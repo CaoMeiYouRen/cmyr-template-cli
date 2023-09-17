@@ -61,13 +61,31 @@ ct create
 ```json
 {
     "GITHUB_TOKEN": "",
-    "GITEE_TOKEN": ""
+    "GITEE_TOKEN": "",
+    "GITHUB_USERNAME": "",
+    "GITEE_USERNAME": "",
+    "AFDIAN_USERNAME": "",
+    "PATREON_USERNAME": "",
+    "WEIBO_USERNAME": "",
+    "TWITTER_USERNAME": ""
 }
 ```
 
-GITHUB_TOKEN 请参考： [创建用于命令行的个人访问令牌](https://help.github.com/cn/github/authenticating-to-github/creating-a-personal-access-token-for-the-command-line)
+GITHUB_TOKEN：可空，默认值为空。请参考： [创建用于命令行的个人访问令牌](https://help.github.com/cn/github/authenticating-to-github/creating-a-personal-access-token-for-the-command-line)
 
-GITEE_TOKEN 请参考：https://gitee.com/profile/personal_access_tokens
+GITEE_TOKEN：可空，默认值为空。请参考：https://gitee.com/profile/personal_access_tokens
+
+GITHUB_USERNAME：GitHub 用户名，可空，默认会使用 `git config user.name` 的用户名
+
+GITEE_USERNAME：码云用户名，可空，默认值为空
+
+AFDIAN_USERNAME：爱发电用户名，可空，默认值为空
+
+PATREON_USERNAME：Patreon 用户名，可空，默认值为空
+
+WEIBO_USERNAME：微博用户名，可空，默认值为空
+
+TWITTER_USERNAME：Twitter 用户名，可空，默认值为空
 
 **如果不使用自动初始化远程仓库功能，可以跳过该配置**
 

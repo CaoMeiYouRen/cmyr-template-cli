@@ -127,9 +127,6 @@
 <% if (authorGithubUsername) { -%>
 * GitHub: [@<%= authorGithubUsername %>](https://github.com/<%= authorGithubUsername %>)
 <% } -%>
-<% if (giteeUsername) { -%> 
-* Gitee: [@<%= giteeUsername %>](https://gitee.com/<%= giteeUsername %>)
-<% } -%>
 <% if (twitterUsername) { -%> 
 * Twitter: [@<%= twitterUsername %>](https://twitter.com/<%= twitterUsername %>)
 <% } -%>
