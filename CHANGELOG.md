@@ -1,5 +1,18 @@
 # cmyr-template-cli
 
+# [1.20.0](https://github.com/CaoMeiYouRen/cmyr-template-cli/compare/v1.19.7...v1.20.0) (2023-09-17)
+
+
+### ✨ 新功能
+
+* 新增 GitHub/Gitee/Twitter/Patreon/微博/爱发电 等的自定义用户名；优化 README 页面 ([8ce7810](https://github.com/CaoMeiYouRen/cmyr-template-cli/commit/8ce7810))
+
+
+### 🐛 Bug 修复
+
+* 修复 HOME 路径的 bug ([fef444e](https://github.com/CaoMeiYouRen/cmyr-template-cli/commit/fef444e))
+* 更新 文档；优化部分逻辑 ([f0b47fe](https://github.com/CaoMeiYouRen/cmyr-template-cli/commit/f0b47fe))
+
 ## [1.19.7](https://github.com/CaoMeiYouRen/cmyr-template-cli/compare/v1.19.6...v1.19.7) (2023-08-30)
 
 
