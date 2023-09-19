@@ -9,9 +9,11 @@ import { InitAnswers, IPackage, NodeIndexJson } from './interfaces'
 import colors from 'colors'
 import ejs from 'ejs'
 import { unescape, cloneDeep, mergeWith } from 'lodash'
-import { fix } from '@lint-md/core'
+import { lintMarkdown, LintMdRulesConfig } from '@lint-md/core'
 import JSON5 from 'json5'
 import os from 'os'
+
+const fix = (markdown: string, rules?: LintMdRulesConfig) => lintMarkdown(markdown, rules, true)?.fixedResult?.result
 
 axios.defaults.timeout = 10 * 1000
 
