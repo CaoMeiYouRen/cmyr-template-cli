@@ -1,5 +1,14 @@
 # cmyr-template-cli
 
+## [1.20.1](https://github.com/CaoMeiYouRen/cmyr-template-cli/compare/v1.20.0...v1.20.1) (2023-09-19)
+
+
+### 🐛 Bug 修复
+
+* license 中增加 ISC ([5829aad](https://github.com/CaoMeiYouRen/cmyr-template-cli/commit/5829aad))
+* 修复 lint-md 问题；修复 conventional-changelog-cmyr-config 版本问题 ([715052b](https://github.com/CaoMeiYouRen/cmyr-template-cli/commit/715052b))
+* 回退 semantic-release 版本 ([a829822](https://github.com/CaoMeiYouRen/cmyr-template-cli/commit/a829822))
+
 # [1.20.0](https://github.com/CaoMeiYouRen/cmyr-template-cli/compare/v1.19.7...v1.20.0) (2023-09-17)
 
 
