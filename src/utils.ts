@@ -797,6 +797,8 @@ async function initLicense(projectPath: string, projectInfos: any) {
         let templatePath = ''
         if (projectInfos.licenseName === 'MIT') {
             templatePath = path.join(__dirname, '../templates/licenses/MIT')
+        } else if (projectInfos.licenseName === 'ISC') {
+            templatePath = path.join(__dirname, '../templates/licenses/ISC')
         }
         if (!templatePath) {
             loading.fail('无效的 LICENSE Name')
