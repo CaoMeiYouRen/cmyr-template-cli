@@ -16,3 +16,4 @@ updates:
       - dependency-name: "plop"
       - dependency-name: "ora"
       - dependency-name: "eslint"
+      - dependency-name: "semantic-release"
