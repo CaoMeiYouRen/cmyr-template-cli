@@ -1,5 +1,12 @@
 # cmyr-template-cli
 
+## [1.21.2](https://github.com/CaoMeiYouRen/cmyr-template-cli/compare/v1.21.1...v1.21.2) (2023-09-22)
+
+
+### 🐛 Bug 修复
+
+* 优化 Node 端常见依赖 ([b7c8fcc](https://github.com/CaoMeiYouRen/cmyr-template-cli/commit/b7c8fcc))
+
 ## [1.21.1](https://github.com/CaoMeiYouRen/cmyr-template-cli/compare/v1.21.0...v1.21.1) (2023-09-22)
 
 
