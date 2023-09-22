@@ -54,6 +54,7 @@ export const COMMON_DEPENDENCIES = {
     devDependencies: {
         '@types/fs-extra': '^9.0.4',
         '@types/lodash': '^4.14.165',
+        '@types/lodash-es': '^4.17.4',
         '@types/md5': '^2.3.1',
     },
     dependencies: {
@@ -64,19 +65,42 @@ export const COMMON_DEPENDENCIES = {
         'fs-extra': '^10.0.0',
         'isomorphic-unfetch': '^3.1.0',
         lodash: '^4.17.20',
+        'lodash-es': '^4.17.21',
         md5: '^2.3.0',
         'push-all-in-one': '^2.2.0',
     },
 }
 
-export const VUE_DEPENDENCIES = {
+export const VUE2_DEPENDENCIES = {
     devDependencies: {},
     dependencies: {
         // 'vite-plugin-fast-cdn-import': '^1.1.0',
+        '@smallwei/avue': '2.9.4',
+        '@vueuse/core': '^10.4.1',
         'element-ui': '^2.15.7',
         vuetify: '^2.6.3',
     },
 }
+
+export const VUE3_DEPENDENCIES = {
+    devDependencies: {},
+    dependencies: {
+        // 'vite-plugin-fast-cdn-import': '^1.1.0',
+        '@smallwei/avue': '^3.2.20',
+        '@vueuse/core': '^10.4.1',
+        'element-plus': '^2.3.14',
+        vuetify: '^3.3.14',
+    },
+}
+
+// export const WEB_DEPENDENCIES = {
+//     devDependencies: {},
+//     dependencies: {
+//         'animate.css': '^4.1.1',
+//         'normalize.css': '^8.0.1',
+//         nprogress: '^0.2.0',
+//     },
+// }
 
 type TemplateCliConfig = {
     GITHUB_TOKEN: string
@@ -477,7 +501,7 @@ async function initCommonDependencies(projectPath: string, answers: InitAnswers)
             await Promise.all(
                 commonDependencies
                     .map((name) => `@types/${name}`)
-                    .filter((name) => COMMON_DEPENDENCIES?.devDependencies?.[name] || VUE_DEPENDENCIES?.devDependencies?.[name])
+                    .filter((name) => COMMON_DEPENDENCIES?.devDependencies?.[name])
                     .map(async (name) => [
                         name,
                         `^${await getNpmPackageVersion(name)}`,

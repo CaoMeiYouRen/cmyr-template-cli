@@ -2,7 +2,7 @@ import { NodePlopAPI, ActionType } from 'plop'
 import { QuestionCollection } from 'inquirer'
 import { __DEV__ } from './env'
 import { InitAnswers } from './interfaces'
-import { COMMON_DEPENDENCIES, getGitUserName, initProject, VUE_DEPENDENCIES, kebabCase, loadTemplateCliConfig } from './utils'
+import { COMMON_DEPENDENCIES, getGitUserName, initProject, VUE2_DEPENDENCIES, VUE3_DEPENDENCIES, kebabCase, loadTemplateCliConfig } from './utils'
 
 module.exports = function (plop: NodePlopAPI) {
     plop.setActionType('initProject', initProject)
@@ -51,15 +51,15 @@ module.exports = function (plop: NodePlopAPI) {
                     message: '请选择项目模板',
                     choices() {
                         return [
-                            'vite4',
-                            'vite3',
-                            'vite2-vue2',
-                            'vite2',
-                            'electron-vite',
-                            'electron-vue',
-                            'nuxt',
-                            'uni',
-                            'uni-vite2',
+                            'vite4', // 3
+                            'vite3', // 3
+                            'vite2-vue2', // 2
+                            'vite2', // 3
+                            'electron-vite', // 3
+                            'electron-vue', // 3
+                            'nuxt', // 2
+                            'uni', // 2
+                            'uni-vite2', // 3
                             'react',
                             'react16',
                             'ts',
@@ -70,8 +70,8 @@ module.exports = function (plop: NodePlopAPI) {
                             'rollup',
                             'webpack',
                             'github-action',
-                            'vue',
-                            'vue3',
+                            'vue', // 2
+                            'vue3', // 3
                         ].map((e) => `${e}-template`)
                     },
                     default: __DEV__ ? 'ts-template' : '',
@@ -83,8 +83,11 @@ module.exports = function (plop: NodePlopAPI) {
                     default: [],
                     choices(answers: InitAnswers) {
                         const choices = Object.keys(COMMON_DEPENDENCIES.dependencies)
-                        if (/(vue|vite)/.test(answers.template)) {
-                            choices.push(...Object.keys(VUE_DEPENDENCIES.dependencies))
+                        const vue2List = ['vite2-vue2', 'nuxt', 'uni', 'vue'].map((e) => `${e}-template`)
+                        if (vue2List.includes(answers.template)) {
+                            choices.push(...Object.keys(VUE2_DEPENDENCIES.dependencies))
+                        } else if (/(vue|vite)/.test(answers.template)) {
+                            choices.push(...Object.keys(VUE3_DEPENDENCIES.dependencies))
                         }
                         return choices
                     },
