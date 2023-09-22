@@ -66,11 +66,19 @@ export const COMMON_DEPENDENCIES = {
         'isomorphic-unfetch': '^3.1.0',
         lodash: '^4.17.20',
         'lodash-es': '^4.17.21',
-        md5: '^2.3.0',
         'push-all-in-one': '^2.2.0',
-        // rimraf: '^5.0.0',
-        // dotenv: '^16.3.1',
         'leancloud-storage': '^4.15.0',
+        // md5: '^2.3.0',
+    },
+}
+
+export const NODE_DEPENDENCIES = {
+    devDependencies: {
+    },
+    dependencies: {
+        dotenv: '^16.3.1',
+        rimraf: '^5.0.0',
+        log4js: '^6.9.1',
     },
 }
 
@@ -501,7 +509,7 @@ async function initCommonDependencies(projectPath: string, answers: InitAnswers)
             await Promise.all(
                 commonDependencies
                     .map((name) => `@types/${name}`)
-                    .filter((name) => COMMON_DEPENDENCIES?.devDependencies?.[name])
+                    .filter((name) => COMMON_DEPENDENCIES?.devDependencies?.[name] || NODE_DEPENDENCIES?.devDependencies?.[name])
                     .map(async (name) => [
                         name,
                         `^${await getNpmPackageVersion(name)}`,

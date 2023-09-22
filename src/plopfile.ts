@@ -2,7 +2,7 @@ import { NodePlopAPI, ActionType } from 'plop'
 import { QuestionCollection } from 'inquirer'
 import { __DEV__ } from './env'
 import { InitAnswers } from './interfaces'
-import { COMMON_DEPENDENCIES, getGitUserName, initProject, VUE2_DEPENDENCIES, VUE3_DEPENDENCIES, kebabCase, loadTemplateCliConfig, WEB_DEPENDENCIES } from './utils'
+import { COMMON_DEPENDENCIES, getGitUserName, initProject, VUE2_DEPENDENCIES, VUE3_DEPENDENCIES, kebabCase, loadTemplateCliConfig, WEB_DEPENDENCIES, NODE_DEPENDENCIES } from './utils'
 
 module.exports = function (plop: NodePlopAPI) {
     plop.setActionType('initProject', initProject)
@@ -83,13 +83,24 @@ module.exports = function (plop: NodePlopAPI) {
                     default: [],
                     choices(answers: InitAnswers) {
                         const choices = Object.keys(COMMON_DEPENDENCIES.dependencies)
+                        const nodeList = ['ts',
+                            'express',
+                            'koa2',
+                            'nest',
+                            'auto-release',
+                            'rollup',
+                            'webpack',
+                            'github-action'].map((e) => `${e}-template`)
                         const vue2List = ['vite2-vue2', 'nuxt', 'uni', 'vue'].map((e) => `${e}-template`)
-                        if (vue2List.includes(answers.template)) {
-                            choices.push(...Object.keys(VUE2_DEPENDENCIES.dependencies))
-                        } else if (/(vue|vite)/.test(answers.template)) {
-                            choices.push(...Object.keys(VUE3_DEPENDENCIES.dependencies))
+                        if (nodeList.includes(answers.template)) {
+                            choices.push(...Object.keys(NODE_DEPENDENCIES.dependencies)) // node 端依赖
                         }
-                        if (/(vue|vite|react|nuxt)/.test(answers.template)) {
+                        if (vue2List.includes(answers.template)) {
+                            choices.push(...Object.keys(VUE2_DEPENDENCIES.dependencies)) // vue2 依赖
+                        } else if (/(vue|vite)/.test(answers.template)) {
+                            choices.push(...Object.keys(VUE3_DEPENDENCIES.dependencies)) // vue3 依赖
+                        }
+                        if (/(vue|vite|react|nuxt)/.test(answers.template)) { // web 端依赖
                             choices.push(...Object.keys(WEB_DEPENDENCIES.dependencies))
                         }
                         return choices
