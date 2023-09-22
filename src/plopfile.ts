@@ -2,7 +2,7 @@ import { NodePlopAPI, ActionType } from 'plop'
 import { QuestionCollection } from 'inquirer'
 import { __DEV__ } from './env'
 import { InitAnswers } from './interfaces'
-import { COMMON_DEPENDENCIES, getGitUserName, initProject, VUE2_DEPENDENCIES, VUE3_DEPENDENCIES, kebabCase, loadTemplateCliConfig } from './utils'
+import { COMMON_DEPENDENCIES, getGitUserName, initProject, VUE2_DEPENDENCIES, VUE3_DEPENDENCIES, kebabCase, loadTemplateCliConfig, WEB_DEPENDENCIES } from './utils'
 
 module.exports = function (plop: NodePlopAPI) {
     plop.setActionType('initProject', initProject)
@@ -88,6 +88,9 @@ module.exports = function (plop: NodePlopAPI) {
                             choices.push(...Object.keys(VUE2_DEPENDENCIES.dependencies))
                         } else if (/(vue|vite)/.test(answers.template)) {
                             choices.push(...Object.keys(VUE3_DEPENDENCIES.dependencies))
+                        }
+                        if (/(vue|vite|react|nuxt)/.test(answers.template)) {
+                            choices.push(...Object.keys(WEB_DEPENDENCIES.dependencies))
                         }
                         return choices
                     },
