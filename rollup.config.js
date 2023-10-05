@@ -26,7 +26,7 @@ function getPlugins({ isBrowser = false, isMin = false, isDeclaration = false })
             allowSyntheticDefaultImports: true,
             declaration: isDeclaration,
             sourceMap: false,
-            importHelpers: false,
+            importHelpers: true,
             removeComments: true,
         }),
     )

@@ -2,7 +2,8 @@ import { NodePlopAPI, ActionType } from 'plop'
 import { QuestionCollection } from 'inquirer'
 import { __DEV__ } from './env'
 import { InitAnswers } from './interfaces'
-import { COMMON_DEPENDENCIES, getGitUserName, initProject, VUE2_DEPENDENCIES, VUE3_DEPENDENCIES, kebabCase, loadTemplateCliConfig, WEB_DEPENDENCIES, NODE_DEPENDENCIES } from './utils'
+import { COMMON_DEPENDENCIES, getGitUserName, initProject, VUE2_DEPENDENCIES, VUE3_DEPENDENCIES, kebabCase, loadTemplateCliConfig, WEB_DEPENDENCIES, NODE_DEPENDENCIES, getTemplateMeta } from './utils'
+import { TEMPLATES_META_LIST } from './constants'
 
 module.exports = function (plop: NodePlopAPI) {
     plop.setActionType('initProject', initProject)
@@ -50,29 +51,7 @@ module.exports = function (plop: NodePlopAPI) {
                     name: 'template',
                     message: '请选择项目模板',
                     choices() {
-                        return [
-                            'vite4', // 3
-                            'vite3', // 3
-                            'vite2-vue2', // 2
-                            'vite2', // 3
-                            'electron-vite', // 3
-                            'electron-vue', // 3
-                            'nuxt', // 2
-                            'uni', // 2
-                            'uni-vite2', // 3
-                            'react',
-                            'react16',
-                            'ts',
-                            'express',
-                            'koa2',
-                            'nest',
-                            'auto-release',
-                            'rollup',
-                            'webpack',
-                            'github-action',
-                            'vue', // 2
-                            'vue3', // 3
-                        ].map((e) => `${e}-template`)
+                        return TEMPLATES_META_LIST.map((e) => e.name)
                     },
                     default: __DEV__ ? 'ts-template' : '',
                 },
@@ -82,28 +61,24 @@ module.exports = function (plop: NodePlopAPI) {
                     message: '请选择需要安装的常见依赖',
                     default: [],
                     choices(answers: InitAnswers) {
-                        const choices = Object.keys(COMMON_DEPENDENCIES.dependencies)
-                        const nodeList = ['ts',
-                            'express',
-                            'koa2',
-                            'nest',
-                            'auto-release',
-                            'rollup',
-                            'webpack',
-                            'github-action'].map((e) => `${e}-template`)
-                        const vue2List = ['vite2-vue2', 'nuxt', 'uni', 'vue'].map((e) => `${e}-template`)
-                        if (nodeList.includes(answers.template)) {
+                        const templateMeta = getTemplateMeta(answers.template)
+                        const choices = Object.keys(COMMON_DEPENDENCIES.dependencies) // 通用依赖
+                        if (templateMeta?.runtime === 'nodejs') {
                             choices.push(...Object.keys(NODE_DEPENDENCIES.dependencies)) // node 端依赖
                         }
-                        if (vue2List.includes(answers.template)) {
-                            choices.push(...Object.keys(VUE2_DEPENDENCIES.dependencies)) // vue2 依赖
-                        } else if (/(vue|vite)/.test(answers.template)) {
-                            choices.push(...Object.keys(VUE3_DEPENDENCIES.dependencies)) // vue3 依赖
-                        }
-                        if (/(vue|vite|react|nuxt)/.test(answers.template)) { // web 端依赖
+                        if (templateMeta?.runtime === 'browser') { // web 端依赖
                             choices.push(...Object.keys(WEB_DEPENDENCIES.dependencies))
                         }
+                        if (templateMeta?.vueVersion === 2) {
+                            choices.push(...Object.keys(VUE2_DEPENDENCIES.dependencies)) // vue2 依赖
+                        } else if (templateMeta?.vueVersion === 3) {
+                            choices.push(...Object.keys(VUE3_DEPENDENCIES.dependencies)) // vue3 依赖
+                        }
                         return choices
+                    },
+                    when(answers: InitAnswers) {
+                        const templateMeta = getTemplateMeta(answers.template)
+                        return ['nodejs', 'browser'].includes(templateMeta?.runtime)
                     },
                 },
                 {
@@ -112,11 +87,8 @@ module.exports = function (plop: NodePlopAPI) {
                     message: '是否初始化 Docker？',
                     default: false,
                     when(answers: InitAnswers) {
-                        return [
-                            'express',
-                            'koa2',
-                            'nest',
-                        ].map((e) => `${e}-template`).includes(answers.template)
+                        const templateMeta = getTemplateMeta(answers.template)
+                        return templateMeta?.docker
                     },
                 },
                 {
@@ -160,7 +132,8 @@ module.exports = function (plop: NodePlopAPI) {
                     message: '是否发布到 npm？',
                     default: false,
                     when(answers: InitAnswers) {
-                        return answers.isOpenSource
+                        const templateMeta = getTemplateMeta(answers.template)
+                        return answers.isOpenSource && templateMeta.npm
                     },
                 },
                 {

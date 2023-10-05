@@ -12,6 +12,7 @@ import { unescape, cloneDeep, mergeWith } from 'lodash'
 import { lintMarkdown, LintMdRulesConfig } from '@lint-md/core'
 import JSON5 from 'json5'
 import os from 'os'
+import { TEMPLATES_META_LIST } from './constants'
 
 const fix = (markdown: string, rules?: LintMdRulesConfig) => lintMarkdown(markdown, rules, true)?.fixedResult?.result
 
@@ -231,16 +232,19 @@ export async function downloadGitRepo(repository: string, destination: string, o
     const fastRepo = await getFastGitRepo(repository)
     const loading = ora(`正在下载模板 - ${repository}`)
     loading.start()
-    return new Promise((resolve) => {
-        download(fastRepo, destination, options, (err: any) => {
-            if (err) {
-                loading.fail('下载模板失败！')
-                process.exit(1) // 下载模板失败直接退出
-            }
-            loading.succeed(`成功下载模板 - ${repository}`)
-            resolve(true)
-        })
-    })
+    return Promise.any([
+        new Promise((resolve) => {
+            download(fastRepo, destination, options, (err: any) => {
+                if (err) {
+                    loading.fail('下载模板失败！')
+                    process.exit(1) // 下载模板失败直接退出
+                }
+                loading.succeed(`成功下载模板 - ${repository}`)
+                resolve(true)
+            })
+        }),
+        new Promise((resolve, reject) => setTimeout(reject, 60 * 1000)),
+    ])
 }
 
 /**
@@ -299,78 +303,149 @@ export async function initProject(answers: InitAnswers) {
 }
 
 async function init(projectPath: string, answers: InitAnswers) {
-    const { isOpenSource, isInitReadme, isInitContributing, isInitHusky, isInitSemanticRelease, isInitDocker } = answers
+    const { template, isOpenSource, isInitReadme, isInitContributing, isInitHusky, isInitSemanticRelease, isInitDocker } = answers
     try {
+        const templateMeta = getTemplateMeta(template)
         await asyncExec('git --version', {
-            cwd: projectPath,
-        })
-        await asyncExec(`${PACKAGE_MANAGER} -v`, {
             cwd: projectPath,
         })
         await asyncExec('git init', {
             cwd: projectPath,
         })
 
-        const newPkg = await initProjectJson(projectPath, answers)
+        if (['nodejs', 'browser'].includes(templateMeta?.runtime)) { // nodejs 项目
+            await asyncExec('node -v', {
+                cwd: projectPath,
+            })
+            await asyncExec(`${PACKAGE_MANAGER} -v`, {
+                cwd: projectPath,
+            })
 
-        await initConfig(projectPath)
-        await initCommitizen(projectPath)
-        if (isInitDocker) {
-            await initDocker(projectPath)
+            const newPkg = await initProjectJson(projectPath, answers)
+
+            await initConfig(projectPath)
+            await initCommitizen(projectPath)
+
+            if (isOpenSource) { // 只有开源的时候才初始化 REAMD
+                const info = await getProjectInfo(projectPath, answers)
+                if (info) {
+                    if (isInitReadme) {
+                        await initReadme(projectPath, info)
+                    }
+                    if (isInitContributing) {
+                        await initContributing(projectPath, info)
+                    }
+                    await initLicense(projectPath, info)
+                }
+                await initGithubWorkflows(projectPath, answers)
+            }
+
+            if (isInitSemanticRelease) {
+                await initSemanticRelease(projectPath)
+            }
+            if (isInitHusky) {
+                await initHusky(projectPath)
+            }
+
+            await initCommonDependencies(projectPath, answers)
+
+            await initTsconfig(projectPath)
+
+            await initEslint(projectPath)
+
+            await initStylelint(projectPath)
+
+            await sortProjectJson(projectPath)
+
+            await initYarn(projectPath, answers)
+
+            await asyncExec('git add .', {
+                cwd: projectPath,
+            })
+
+            await installNpmPackages(projectPath)
+
+            await asyncExec('git add .', {
+                cwd: projectPath,
+            })
+
+            if (newPkg?.scripts?.lint) {
+                await asyncExec(`${PACKAGE_MANAGER} run lint`, {
+                    cwd: projectPath,
+                })
+            }
         }
 
-        if (isOpenSource) { // 只有开源的时候才初始化 REAMD
-            const info = await getProjectInfo(projectPath, answers)
-            if (info) {
-                if (isInitReadme) {
-                    await initReadme(projectPath, info)
+        if (templateMeta?.runtime === 'java') {
+            try {
+                await asyncExec('java -version', {
+                    cwd: projectPath,
+                })
+            } catch (error) {
+                if (!(typeof error === 'string' && error.includes('java version'))) {
+                    throw error
                 }
-                if (isInitContributing) {
-                    await initContributing(projectPath, info)
-                }
-                await initLicense(projectPath, info)
             }
-            await initGithubWorkflows(projectPath, answers)
+            await asyncExec('mvn -version', {
+                cwd: projectPath,
+            })
+            await asyncExec('git add .', {
+                cwd: projectPath,
+            })
+            try {
+                await asyncExec('mvn clean package -Dmaven.test.skip=true', {
+                    cwd: projectPath,
+                })
+            } catch (error) {
+                console.error(error)
+            }
+        }
+
+        if (templateMeta?.runtime === 'python') {
+            await asyncExec('python -V', {
+                cwd: projectPath,
+            })
+            await asyncExec('pip -V', {
+                cwd: projectPath,
+            })
+            await asyncExec('git add .', {
+                cwd: projectPath,
+            })
+
+            try {
+                await asyncExec('pip install -r requirements.txt', {
+                    cwd: projectPath,
+                })
+            } catch (error) {
+                if (!(typeof error === 'string' && error.includes('[notice]'))) {
+                    throw error
+                }
+            }
+        }
+
+        if (templateMeta?.runtime === 'golang') {
+            await asyncExec('go version', {
+                cwd: projectPath,
+            })
+            await asyncExec('git add .', {
+                cwd: projectPath,
+            })
+            try {
+                await asyncExec('go get', {
+                    cwd: projectPath,
+                })
+            } catch (error) {
+                console.error(error)
+            }
         }
 
         await initRemoteGitRepo(projectPath, answers)
 
-        if (isInitSemanticRelease) {
-            await initSemanticRelease(projectPath)
+        if (isInitDocker) {
+            await initDocker(projectPath, answers)
         }
-        if (isInitHusky) {
-            await initHusky(projectPath)
-        }
-
-        await initCommonDependencies(projectPath, answers)
-
-        await initTsconfig(projectPath)
-
-        await initEslint(projectPath)
-
-        await initStylelint(projectPath)
-
-        await sortProjectJson(projectPath)
 
         await initDependabot(projectPath, answers)
-
-        await initYarn(projectPath, answers)
-
-        await asyncExec('git add .', {
-            cwd: projectPath,
-        })
-
-        await installNpmPackages(projectPath)
-
-        await asyncExec('git add .', {
-            cwd: projectPath,
-        })
-
-        if (newPkg?.scripts?.lint) {
-            await asyncExec(`${PACKAGE_MANAGER} run lint`, {
-                cwd: projectPath,
-            })
-        }
 
         await asyncExec('git add .', {
             cwd: projectPath,
@@ -381,7 +456,7 @@ async function init(projectPath: string, answers: InitAnswers) {
         })
 
     } catch (error) {
-        console.error(error)
+        console.error(colors.red(error))
     }
 }
 
@@ -1169,11 +1244,33 @@ async function initCommitizen(projectPath: string) {
     }
 }
 
-async function initDocker(projectPath: string) {
+async function initDocker(projectPath: string, answers: InitAnswers) {
     const loading = ora('正在初始化 Docker ……').start()
     try {
+        const templateMeta = getTemplateMeta(answers.template)
+
         const files = ['.dockerignore', 'docker-compose.yml', 'Dockerfile']
         await copyFilesFromTemplates(projectPath, files)
+
+        let dockerfilePath = ''
+        switch (templateMeta?.runtime) {
+            case 'java':
+                dockerfilePath = 'java/Dockerfile'
+                break
+            case 'python':
+                dockerfilePath = 'python/Dockerfile'
+                break
+            case 'golang':
+                dockerfilePath = 'golang/Dockerfile'
+                break
+            default:
+                break
+        }
+        const newPath = path.join(projectPath, 'Dockerfile')
+        if (await fs.pathExists(newPath)) {
+            await fs.remove(newPath)
+        }
+        await fs.copyFile(path.join(__dirname, '../templates/', dockerfilePath), newPath)
         loading.succeed('Docker 初始化成功！')
     } catch (error) {
         loading.fail('Docker 初始化失败！')
@@ -1364,4 +1461,8 @@ async function removeFiles(projectPath: string, files: string[]) {
 
 export function kebabCase(str: string) {
     return str.replace(/([a-z])([A-Z])/g, '$1-$2').replace(/_+/g, '-').replace(/\s+/g, '-').toLowerCase()
+}
+
+export function getTemplateMeta(template: string) {
+    return TEMPLATES_META_LIST.find((e) => e.name === template)
 }
