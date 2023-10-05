@@ -1,5 +1,12 @@
 # cmyr-template-cli
 
+# [1.22.0](https://github.com/CaoMeiYouRen/cmyr-template-cli/compare/v1.21.2...v1.22.0) (2023-10-05)
+
+
+### ✨ 新功能
+
+* 优化项目元信息；新增 java、python、golang 项目模板支持 ([ba600ee](https://github.com/CaoMeiYouRen/cmyr-template-cli/commit/ba600ee))
+
 ## [1.21.2](https://github.com/CaoMeiYouRen/cmyr-template-cli/compare/v1.21.1...v1.21.2) (2023-09-22)
 
 
