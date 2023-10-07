@@ -9,8 +9,8 @@ RUN echo "http://mirrors.aliyun.com/alpine/edge/main/" > /etc/apk/repositories \
 
 WORKDIR /home/app
 
-COPY . /home/app
+COPY ./target/main.jar /home/app
 
 EXPOSE 8080
 
-CMD ["java", "-jar","./target/main.jar"]
+CMD ["java", "-jar", "main.jar"]

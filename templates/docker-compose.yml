@@ -19,7 +19,10 @@ services:
       # MONGODB_PASSWORD: "123456"
       # REDIS_HOST: "redis"
       # REDIS_PORT: 6379
-
+      # depends_on:
+      #   - redis
+      #   - mongo
+      #   - mysql
       #   mongo:
       #     image: mongo:4.2
       #     restart: always
@@ -35,6 +38,16 @@ services:
       #     restart: always
       #     volumes:
       #       - redis-data:/data
+      #   mysql:
+      #     image: mysql:8
+      #     restart: always
+      #     environment:
+      #       MYSQL_ROOT_PASSWORD: "root"
+      #       MYSQL_ROOT_HOST: "%"
+      #       MYSQL_DATABASE: "test"
+      #     volumes:
+      #       - mysql-data:/data
       # volumes:
       #   mongo-data:
       #   redis-data:
+      #   mysql-data:
