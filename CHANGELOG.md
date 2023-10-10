@@ -1,5 +1,12 @@
 # cmyr-template-cli
 
+## [1.22.1](https://github.com/CaoMeiYouRen/cmyr-template-cli/compare/v1.22.0...v1.22.1) (2023-10-07)
+
+
+### 🐛 Bug 修复
+
+* 优化 docker 配置 ([caf1a6c](https://github.com/CaoMeiYouRen/cmyr-template-cli/commit/caf1a6c))
+
 # [1.22.0](https://github.com/CaoMeiYouRen/cmyr-template-cli/compare/v1.21.2...v1.22.0) (2023-10-05)
 
 
