@@ -1249,7 +1249,7 @@ async function initDocker(projectPath: string, answers: InitAnswers) {
     try {
         const templateMeta = getTemplateMeta(answers.template)
 
-        const files = ['.dockerignore', 'docker-compose.yml', 'Dockerfile']
+        const files = ['.dockerignore', 'docker-compose.yml']
         await copyFilesFromTemplates(projectPath, files)
 
         let dockerfilePath = ''
@@ -1264,6 +1264,7 @@ async function initDocker(projectPath: string, answers: InitAnswers) {
                 dockerfilePath = 'golang/Dockerfile'
                 break
             default:
+                dockerfilePath = 'Dockerfile'
                 break
         }
         const newPath = path.join(projectPath, 'Dockerfile')
