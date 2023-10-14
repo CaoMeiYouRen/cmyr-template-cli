@@ -1,5 +1,12 @@
 # cmyr-template-cli
 
+## [1.22.3](https://github.com/CaoMeiYouRen/cmyr-template-cli/compare/v1.22.2...v1.22.3) (2023-10-14)
+
+
+### 🐛 Bug 修复
+
+* 增加 react-vite-template 项目模板 ([ba40cf4](https://github.com/CaoMeiYouRen/cmyr-template-cli/commit/ba40cf4))
+
 ## [1.22.2](https://github.com/CaoMeiYouRen/cmyr-template-cli/compare/v1.22.1...v1.22.2) (2023-10-10)
 
 
