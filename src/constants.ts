@@ -14,11 +14,11 @@ export type TemplateMeta = {
     /**
      * Vue 版本，非 Vue 项目为0
      */
-    vueVersion: 0 | 2 | 3
+    vueVersion?: 0 | 2 | 3
     /**
      * 是否支持使用 Docker
      */
-    docker: boolean
+    docker?: boolean
     /**
      * 是否支持发布到 npm
      */
@@ -26,7 +26,7 @@ export type TemplateMeta = {
     /**
      * 优先级
      */
-    priority: number
+    priority?: number
 }
 
 export const TEMPLATES_META_LIST: TemplateMeta[] = [
@@ -99,6 +99,14 @@ export const TEMPLATES_META_LIST: TemplateMeta[] = [
         language: 'vue',
         runtime: 'browser',
         vueVersion: 3,
+        docker: false,
+        priority: 0,
+    },
+    {
+        name: 'react-vite-template',
+        language: 'react',
+        runtime: 'browser',
+        vueVersion: 0,
         docker: false,
         priority: 0,
     },
