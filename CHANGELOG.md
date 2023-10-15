@@ -1,5 +1,12 @@
 # cmyr-template-cli
 
+## [1.22.4](https://github.com/CaoMeiYouRen/cmyr-template-cli/compare/v1.22.3...v1.22.4) (2023-10-15)
+
+
+### 🐛 Bug 修复
+
+* 新增 spring-boot-v3-template 项目模板 ([7bdd1bd](https://github.com/CaoMeiYouRen/cmyr-template-cli/commit/7bdd1bd))
+
 ## [1.22.3](https://github.com/CaoMeiYouRen/cmyr-template-cli/compare/v1.22.2...v1.22.3) (2023-10-14)
 
 
