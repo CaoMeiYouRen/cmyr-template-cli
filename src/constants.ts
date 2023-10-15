@@ -233,4 +233,12 @@ export const TEMPLATES_META_LIST: TemplateMeta[] = [
         docker: true,
         priority: 0,
     },
+    {
+        name: 'spring-boot-v3-template',
+        language: 'java',
+        runtime: 'java',
+        vueVersion: 0,
+        docker: true,
+        priority: 0,
+    },
 ]
