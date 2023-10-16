@@ -1,5 +1,12 @@
 # cmyr-template-cli
 
+## [1.22.5](https://github.com/CaoMeiYouRen/cmyr-template-cli/compare/v1.22.4...v1.22.5) (2023-10-16)
+
+
+### 🐛 Bug 修复
+
+* 优化 eslint 初始化逻辑；增加 eslint-plugin-import 初始化逻辑 ([a4d8abf](https://github.com/CaoMeiYouRen/cmyr-template-cli/commit/a4d8abf))
+
 ## [1.22.4](https://github.com/CaoMeiYouRen/cmyr-template-cli/compare/v1.22.3...v1.22.4) (2023-10-15)
 
 
