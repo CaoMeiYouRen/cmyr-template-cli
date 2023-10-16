@@ -351,7 +351,7 @@ async function init(projectPath: string, answers: InitAnswers) {
 
             await initTsconfig(projectPath)
 
-            await initEslint(projectPath)
+            await initEslint(projectPath, answers)
 
             await initStylelint(projectPath)
 
@@ -1084,9 +1084,10 @@ async function initHusky(projectPath: string) {
  *  初始化 eslint
  * @param projectPath
  */
-async function initEslint(projectPath: string) {
+async function initEslint(projectPath: string, answers: InitAnswers) {
     const loading = ora('正在初始化 eslint ……').start()
     try {
+        const templateMeta = getTemplateMeta(answers.template)
         const pkg: IPackage = await getProjectJson(projectPath)
 
         const devDependencies: Record<string, string> = {
@@ -1098,29 +1099,31 @@ async function initEslint(projectPath: string) {
         let eslintType = 'cmyr'
         const extnames = ['js', 'mjs', 'cjs', 'ts']
 
-        if (pkg?.dependencies?.vue) {
+        if (templateMeta?.language === 'vue') {
             Object.assign(devDependencies, {
                 '@vue/eslint-config-typescript': '^11.0.2',
                 'eslint-plugin-vue': '^9.8.0',
             })
             extnames.push('vue')
-            eslintType = 'cmyr/vue'
-            if (pkg?.dependencies?.vue?.startsWith('^3')) { // vue3
+            if (templateMeta?.vueVersion === 3) { // vue3
                 eslintType = 'cmyr/vue3'
+            } else {
+                eslintType = 'cmyr/vue'
             }
-        }
-
-        if (pkg?.dependencies?.react) {
+        } else if (templateMeta?.language === 'react') {
             extnames.push('jsx', 'tsx')
             eslintType = 'cmyr/react'
+            Object.assign(devDependencies, {
+                'eslint-config-react-app': '^7.0.1',
+            })
         }
-
         const pkgData: IPackage = {
             scripts: {
                 lint: `cross-env NODE_ENV=production eslint src --fix --ext ${extnames.join(',')}`,
                 ...pkg?.scripts,
             },
             devDependencies: {
+                'eslint-plugin-import': '^2.28.1',
                 ...devDependencies,
                 ...pkg?.devDependencies,
                 'eslint-config-cmyr': `^${await getNpmPackageVersion('eslint-config-cmyr')}`,
