@@ -281,7 +281,7 @@ export async function asyncExec(cmd: string, options?: ExecOptions) {
                 return reject(err)
             }
             if (stderr) {
-                return reject(stderr)
+                return resolve(stderr)
             }
             resolve(stdout)
         })
@@ -377,15 +377,9 @@ async function init(projectPath: string, answers: InitAnswers) {
         }
 
         if (templateMeta?.runtime === 'java') {
-            try {
-                await asyncExec('java -version', {
-                    cwd: projectPath,
-                })
-            } catch (error) {
-                if (!(typeof error === 'string' && error.includes('java version'))) {
-                    throw error
-                }
-            }
+            await asyncExec('java -version', {
+                cwd: projectPath,
+            })
             await asyncExec('mvn -version', {
                 cwd: projectPath,
             })
@@ -393,7 +387,7 @@ async function init(projectPath: string, answers: InitAnswers) {
                 cwd: projectPath,
             })
             try {
-                await asyncExec('mvn clean package -Dmaven.test.skip=true', {
+                await asyncExec('mvn clean install -Dmaven.test.skip=true', {
                     cwd: projectPath,
                 })
             } catch (error) {
