@@ -1,5 +1,12 @@
 # cmyr-template-cli
 
+## [1.22.6](https://github.com/CaoMeiYouRen/cmyr-template-cli/compare/v1.22.5...v1.22.6) (2023-10-17)
+
+
+### 🐛 Bug 修复
+
+* 优化 执行命令行逻辑 ([591601c](https://github.com/CaoMeiYouRen/cmyr-template-cli/commit/591601c))
+
 ## [1.22.5](https://github.com/CaoMeiYouRen/cmyr-template-cli/compare/v1.22.4...v1.22.5) (2023-10-16)
 
 
