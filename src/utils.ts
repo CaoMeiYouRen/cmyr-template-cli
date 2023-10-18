@@ -735,8 +735,8 @@ async function getProjectInfo(projectPath: string, answers: InitAnswers) {
         const config = await loadTemplateCliConfig()
         const pkg: IPackage = await getProjectJson(projectPath)
         const engines = pkg?.engines || {}
-        const license = pkg?.license
-        const version = pkg?.version
+        const license = pkg?.license || 'MIT'
+        const version = pkg?.version || '0.1.0'
         const installCommand = isPublishToNpm ? `${packageManager} install ${name}` : `${packageManager} install`
         const startCommand = pkg?.scripts?.start && `${packageManager} run start`
         const devCommand = pkg?.scripts?.dev && `${packageManager} run dev`
