@@ -9,9 +9,9 @@ RUN echo "http://mirrors.aliyun.com/alpine/edge/main/" > /etc/apk/repositories \
     && ln -sf /usr/bin/pip3 /usr/bin/pip \
     && mkdir -p ~/.pip \
     && echo "[global]" > ~/.pip/pip.conf \
-    && echo "index-url=http://mirrors.cloud.aliyuncs.com/pypi/simple/" >> ~/.pip/pip.conf \
+    && echo "index-url=https://pypi.tuna.tsinghua.edu.cn/simple/" >> ~/.pip/pip.conf \
     && echo "[install]" >> ~/.pip/pip.conf \
-    && echo "trusted-host=mirrors.cloud.aliyuncs.com" >> ~/.pip/pip.conf \
+    && echo "trusted-host=pypi.tuna.tsinghua.edu.cn" >> ~/.pip/pip.conf \
     && pip install --upgrade pip && pip install wheel
 
 WORKDIR /home/app
