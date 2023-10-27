@@ -1,5 +1,12 @@
 # cmyr-template-cli
 
+## [1.22.7](https://github.com/CaoMeiYouRen/cmyr-template-cli/compare/v1.22.6...v1.22.7) (2023-10-27)
+
+
+### 🐛 Bug 修复
+
+* 修复 python 的 docker 配置错误 ([7f98f1b](https://github.com/CaoMeiYouRen/cmyr-template-cli/commit/7f98f1b))
+
 ## [1.22.6](https://github.com/CaoMeiYouRen/cmyr-template-cli/compare/v1.22.5...v1.22.6) (2023-10-17)
 
 
