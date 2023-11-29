@@ -46,7 +46,6 @@
 [<%= projectHomepage %>](<%= projectHomepage %>)
 
 <% } -%>
-
 <% if (projectPrerequisites && projectPrerequisites.length) { -%>
 
 ## 📦 依赖要求
