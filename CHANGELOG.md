@@ -1,5 +1,12 @@
 # cmyr-template-cli
 
+## [1.22.9](https://github.com/CaoMeiYouRen/cmyr-template-cli/compare/v1.22.8...v1.22.9) (2023-11-30)
+
+
+### 🐛 Bug 修复
+
+* 修复 semantic-release 版本问题；修复 dependabot 会自动升级问题 ([aa61717](https://github.com/CaoMeiYouRen/cmyr-template-cli/commit/aa61717))
+
 ## [1.22.8](https://github.com/CaoMeiYouRen/cmyr-template-cli/compare/v1.22.7...v1.22.8) (2023-11-09)
 
 
