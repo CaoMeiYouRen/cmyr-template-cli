@@ -81,7 +81,8 @@
     "ora": "^5.4.1",
     "plop": "^2.7.6",
     "promise.any": "^2.0.2",
-    "tslib": "^2.4.0"
+    "tslib": "^2.4.0",
+    "yaml": "^2.3.4"
   },
   "config": {
     "commitizen": {

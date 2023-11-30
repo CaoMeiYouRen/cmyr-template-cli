@@ -1,6 +1,5 @@
 FROM alpine:latest
-# FROM caomeiyouren/alpine-nodejs:1.0.1
-#
+# FROM caomeiyouren/alpine-nodejs:1.1.0
 
 # ENV NODE_ENV production
 

@@ -13,6 +13,7 @@ import { lintMarkdown, LintMdRulesConfig } from '@lint-md/core'
 import JSON5 from 'json5'
 import os from 'os'
 import { TEMPLATES_META_LIST } from './constants'
+import yaml from 'yaml'
 
 const fix = (markdown: string, rules?: LintMdRulesConfig) => lintMarkdown(markdown, rules, true)?.fixedResult?.result
 
@@ -605,12 +606,50 @@ async function initCommonDependencies(projectPath: string, answers: InitAnswers)
     }
 }
 
+interface Schedule {
+    interval: string
+    time: string
+    timezone: string
+}
+interface Ignore {
+    'dependency-name': string
+}
+interface Update {
+    'package-ecosystem': string
+    directory: string
+    'open-pull-requests-limit': number
+    schedule: Schedule
+    ignore: Ignore[]
+}
+interface Dependabot {
+    version: number
+    updates: Update[]
+}
+
 async function initDependabot(projectPath: string, answers: InitAnswers) {
     try {
         const { isOpenSource, isRemoveDependabot } = answers
         const files = ['.github/dependabot.yml', '.github/mergify.yml']
         if (!isOpenSource || isRemoveDependabot) { // 闭源 或者 直接指定移除
             await removeFiles(projectPath, files) // 如果存在 dependabot.yml/mergify.yml
+        } else {
+            const pkg: IPackage = await getProjectJson(projectPath)
+            if (pkg?.devDependencies?.['semantic-release']) { // 如果有 semantic-release 依赖
+                // 解决 semantic-release 高版本出错问题，禁用 semantic-release 版本更新
+                const dependabotPath = path.join(projectPath, '.github/dependabot.yml')
+                if (await fs.pathExists(dependabotPath)) { // 如果存在 dependabot
+                    const dependabot: Dependabot = yaml.parse(await fs.readFile(dependabotPath, 'utf-8'))
+                    if (dependabot?.updates?.[0]['package-ecosystem'] === 'npm') { // 如果为 npm
+                        dependabot.updates[0].ignore = [
+                            ...dependabot?.updates?.[0].ignore || [],
+                            {
+                                'dependency-name': 'semantic-release',
+                            },
+                        ]
+                        fs.writeFile(dependabotPath, yaml.stringify(dependabot))
+                    }
+                }
+            }
         }
     } catch (error) {
         console.error(error)
@@ -993,9 +1032,9 @@ async function initSemanticRelease(projectPath: string) {
         const pkg: IPackage = await getProjectJson(projectPath)
 
         const devDependencies = {
-            '@semantic-release/changelog': '^6.0.1',
+            '@semantic-release/changelog': '^6.0.3',
             '@semantic-release/git': '^10.0.1',
-            'semantic-release': '^18.0.1',
+            'semantic-release': '21.0.1',
         }
 
         const pkgData: IPackage = {
@@ -1007,6 +1046,7 @@ async function initSemanticRelease(projectPath: string) {
                 ...devDependencies,
                 ...pkg?.devDependencies,
                 'conventional-changelog-cmyr-config': `^${await getNpmPackageVersion('conventional-changelog-cmyr-config')}`,
+                'semantic-release': devDependencies['semantic-release'],
             },
         }
 
