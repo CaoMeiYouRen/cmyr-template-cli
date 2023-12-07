@@ -144,11 +144,13 @@
 
 如果觉得这个项目有用的话请给一颗⭐️，非常感谢
 <% if (isEnableSupport) { -%>
+
 <% if (afdianUsername) { -%>
 <a href="https://afdian.net/@<%= afdianUsername %>">
   <img src="https://cdn.jsdelivr.net/gh/CaoMeiYouRen/image-hosting-01@master/images/202306192324870.png" width="312px" height="78px" alt="在爱发电支持我">
 </a>
 <% } -%>
+
 <% if (patreonUsername) { -%>
 <a href="https://patreon.com/<%= patreonUsername %>">
     <img src="https://cdn.jsdelivr.net/gh/CaoMeiYouRen/image-hosting-01@master/images/202306142054108.svg" width="312px" height="78px" alt="become a patreon"/>

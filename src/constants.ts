@@ -132,6 +132,7 @@ export const TEMPLATES_META_LIST: TemplateMeta[] = [
         runtime: 'nodejs',
         vueVersion: 0,
         docker: true,
+        npm: true,
         priority: 0,
     },
     {

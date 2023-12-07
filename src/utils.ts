@@ -8,7 +8,7 @@ import { PACKAGE_MANAGER } from './env'
 import { InitAnswers, IPackage, NodeIndexJson } from './interfaces'
 import colors from 'colors'
 import ejs from 'ejs'
-import { unescape, cloneDeep, mergeWith } from 'lodash'
+import { unescape, cloneDeep, mergeWith, merge } from 'lodash'
 import { lintMarkdown, LintMdRulesConfig } from '@lint-md/core'
 import JSON5 from 'json5'
 import os from 'os'
@@ -1291,7 +1291,7 @@ async function initDocker(projectPath: string, answers: InitAnswers) {
         const files = ['.dockerignore', 'docker-compose.yml']
         await copyFilesFromTemplates(projectPath, files)
 
-        let dockerfilePath = ''
+        let dockerfilePath = 'Dockerfile'
         switch (templateMeta?.runtime) {
             case 'java':
                 dockerfilePath = 'java/Dockerfile'
@@ -1311,6 +1311,14 @@ async function initDocker(projectPath: string, answers: InitAnswers) {
             await fs.remove(newPath)
         }
         await fs.copyFile(path.join(__dirname, '../templates/', dockerfilePath), newPath)
+        // 解决 nodejs 依赖过大的问题
+        if (templateMeta?.runtime === 'nodejs') {
+            const scriptsDir = path.join(projectPath, 'scripts')
+            if (! await fs.pathExists(scriptsDir)) {
+                await fs.mkdir(scriptsDir)
+            }
+            await copyFilesFromTemplates(projectPath, ['scripts/minify-docker.js'])
+        }
         loading.succeed('Docker 初始化成功！')
     } catch (error) {
         loading.fail('Docker 初始化失败！')
