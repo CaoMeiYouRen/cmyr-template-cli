@@ -8,7 +8,7 @@ import { PACKAGE_MANAGER } from './env'
 import { InitAnswers, IPackage, NodeIndexJson } from './interfaces'
 import colors from 'colors'
 import ejs from 'ejs'
-import { unescape, cloneDeep, mergeWith, merge } from 'lodash'
+import { unescape, cloneDeep, mergeWith } from 'lodash'
 import { lintMarkdown, LintMdRulesConfig } from '@lint-md/core'
 import JSON5 from 'json5'
 import os from 'os'
@@ -686,11 +686,23 @@ async function initTsconfig(projectPath: string) {
                 const newPkg = Object.assign({}, pkg, pkgData)
                 await saveProjectJson(projectPath, newPkg)
             }
-            if (typeof tsconfig?.compilerOptions?.watch === 'boolean') {
-                // 修复 tsconfig watch 选项的问题
+
+            if (tsconfig?.compilerOptions) {
                 const newTsconfig = cloneDeep(tsconfig)
-                newTsconfig.compilerOptions.watch = undefined
-                await fs.writeFile(tsconfigPath, JSON.stringify(newTsconfig, null, 4))
+                let hasChanges = false
+                // 修复 tsconfig watch 选项的问题。 5.0 后不允许在配置里 watch
+                if (typeof newTsconfig.compilerOptions.watch === 'boolean') {
+                    newTsconfig.compilerOptions.watch = undefined
+                    hasChanges = true
+                }
+                // 修复 tsconfig skipLibCheck 选项的问题。 目前偶尔会出现依赖里类型校验出错，故暂时跳过依赖的类型校验
+                if (typeof newTsconfig.compilerOptions.skipLibCheck !== 'boolean') {
+                    newTsconfig.compilerOptions.skipLibCheck = true
+                    hasChanges = true
+                }
+                if (hasChanges) {
+                    await fs.writeFile(tsconfigPath, JSON.stringify(newTsconfig, null, 4))
+                }
             }
         }
     } catch (error) {
