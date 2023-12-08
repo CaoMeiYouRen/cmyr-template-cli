@@ -15,6 +15,11 @@ export type TemplateMeta = {
      * Vue 版本，非 Vue 项目为0
      */
     vueVersion?: 0 | 2 | 3
+
+    /**
+     * Java 版本，非 Java 项目为0
+     */
+    javaVersion?: 0 | 8 | 17
     /**
      * 是否支持使用 Docker
      */
@@ -231,6 +236,7 @@ export const TEMPLATES_META_LIST: TemplateMeta[] = [
         language: 'java',
         runtime: 'java',
         vueVersion: 0,
+        javaVersion: 8,
         docker: true,
         priority: 0,
     },
@@ -239,6 +245,7 @@ export const TEMPLATES_META_LIST: TemplateMeta[] = [
         language: 'java',
         runtime: 'java',
         vueVersion: 0,
+        javaVersion: 17,
         docker: true,
         priority: 0,
     },

@@ -1297,7 +1297,7 @@ async function initDocker(projectPath: string, answers: InitAnswers) {
         let dockerfilePath = 'Dockerfile'
         switch (templateMeta?.runtime) {
             case 'java':
-                dockerfilePath = 'java/Dockerfile'
+                dockerfilePath = templateMeta?.javaVersion === 8 ? 'java/jdk8/Dockerfile' : 'java/jdk17/Dockerfile'
                 break
             case 'python':
                 dockerfilePath = 'python/Dockerfile'
