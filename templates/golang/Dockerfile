@@ -5,18 +5,17 @@ WORKDIR /home/app
 
 COPY go.mod go.sum /home/app/
 
+ENV GO111MODULE=on
 ENV GOPROXY=https://mirrors.aliyun.com/goproxy/
 
 RUN go mod download
 
 # 阶段二：构建阶段
-FROM golang:alpine as builder
+FROM dependencies as builder
 
 WORKDIR /home/app
 
 COPY . /home/app
-
-ENV GOPROXY=https://mirrors.aliyun.com/goproxy/
 
 RUN CGO_ENABLED=0 GOOS=linux GOARCH=amd64 go build main.go
 
