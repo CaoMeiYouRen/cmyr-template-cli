@@ -1,5 +1,17 @@
 # cmyr-template-cli
 
+# [1.23.0](https://github.com/CaoMeiYouRen/cmyr-template-cli/compare/v1.22.9...v1.23.0) (2023-12-07)
+
+
+### ✨ 新功能
+
+* 优化 nodejs 在 docker 打包时的体积 ([f97eb67](https://github.com/CaoMeiYouRen/cmyr-template-cli/commit/f97eb67))
+
+
+### 🐛 Bug 修复
+
+* 修复 tsconfig skipLibCheck 选项的问题 ([b12ae7a](https://github.com/CaoMeiYouRen/cmyr-template-cli/commit/b12ae7a))
+
 ## [1.22.9](https://github.com/CaoMeiYouRen/cmyr-template-cli/compare/v1.22.8...v1.22.9) (2023-11-30)
 
 
