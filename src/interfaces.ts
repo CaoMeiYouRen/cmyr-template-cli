@@ -35,6 +35,10 @@ export interface InitAnswers {
      */
     author: string
     /**
+     * 开源协议
+     */
+    license: string
+    /**
      * 关键词
      */
     keywords: string[]

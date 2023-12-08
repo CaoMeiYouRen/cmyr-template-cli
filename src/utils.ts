@@ -377,9 +377,7 @@ async function init(projectPath: string, answers: InitAnswers) {
                     cwd: projectPath,
                 })
             }
-        }
-
-        if (templateMeta?.runtime === 'java') {
+        } else if (templateMeta?.runtime === 'java') {
             await asyncExec('java -version', {
                 cwd: projectPath,
             })
@@ -396,9 +394,7 @@ async function init(projectPath: string, answers: InitAnswers) {
             } catch (error) {
                 console.error(error)
             }
-        }
-
-        if (templateMeta?.runtime === 'python') {
+        } else if (templateMeta?.runtime === 'python') {
             await asyncExec('python -V', {
                 cwd: projectPath,
             })
@@ -418,9 +414,7 @@ async function init(projectPath: string, answers: InitAnswers) {
                     throw error
                 }
             }
-        }
-
-        if (templateMeta?.runtime === 'golang') {
+        } else if (templateMeta?.runtime === 'golang') {
             await asyncExec('go version', {
                 cwd: projectPath,
             })
@@ -783,13 +777,12 @@ const cleanText = (text: string) => text.replace(/-/g, '--').replace(/_/g, '__')
 async function getProjectInfo(projectPath: string, answers: InitAnswers) {
     const loading = ora('正在获取项目信息 ……').start()
     try {
-        const { name, author, description, isOpenSource, isPublishToNpm } = answers
+        const { name, author, description, isOpenSource, isPublishToNpm, license } = answers
         const packageManager = 'npm'
         const config = await loadTemplateCliConfig()
         const pkg: IPackage = await getProjectJson(projectPath)
         const packageName = name // npm 包的名称
         const engines = pkg?.engines || {}
-        const license = pkg?.license || 'MIT'
         const version = pkg?.version || '0.1.0'
         const installCommand = isPublishToNpm ? `${packageManager} install ${name}` : `${packageManager} install`
         const startCommand = pkg?.scripts?.start && `${packageManager} run start`
@@ -952,13 +945,9 @@ async function initContributing(projectPath: string, projectInfos: any) {
 async function initLicense(projectPath: string, projectInfos: any) {
     const loading = ora('正在初始化 LICENSE ……').start()
     try {
-        let templatePath = ''
-        if (projectInfos.licenseName === 'MIT') {
-            templatePath = path.join(__dirname, '../templates/licenses/MIT')
-        } else if (projectInfos.licenseName === 'ISC') {
-            templatePath = path.join(__dirname, '../templates/licenses/ISC')
-        }
-        if (!templatePath) {
+        const { license } = projectInfos
+        const templatePath = path.join(__dirname, '../templates/licenses/', license)
+        if (!await fs.pathExists(templatePath)) {
             loading.fail('无效的 LICENSE Name')
             return
         }

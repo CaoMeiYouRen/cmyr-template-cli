@@ -4,6 +4,8 @@ import { __DEV__ } from './env'
 import { InitAnswers } from './interfaces'
 import { COMMON_DEPENDENCIES, getGitUserName, initProject, VUE2_DEPENDENCIES, VUE3_DEPENDENCIES, kebabCase, loadTemplateCliConfig, WEB_DEPENDENCIES, NODE_DEPENDENCIES, getTemplateMeta } from './utils'
 import { TEMPLATES_META_LIST } from './constants'
+import fs from 'fs-extra'
+import path from 'path'
 
 module.exports = function (plop: NodePlopAPI) {
     plop.setActionType('initProject', initProject)
@@ -96,6 +98,18 @@ module.exports = function (plop: NodePlopAPI) {
                     name: 'isOpenSource',
                     message: '是否开源？',
                     default: false,
+                },
+                {
+                    type: 'list',
+                    name: 'license',
+                    message: '请选择开源协议',
+                    async choices() {
+                        return fs.readdir(path.join(__dirname, '../templates/licenses/'))
+                    },
+                    default: 'MIT',
+                    when(answers: InitAnswers) {
+                        return answers.isOpenSource
+                    },
                 },
                 {
                     type: 'confirm',
