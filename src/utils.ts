@@ -787,6 +787,7 @@ async function getProjectInfo(projectPath: string, answers: InitAnswers) {
         const packageManager = 'npm'
         const config = await loadTemplateCliConfig()
         const pkg: IPackage = await getProjectJson(projectPath)
+        const packageName = name // npm 包的名称
         const engines = pkg?.engines || {}
         const license = pkg?.license || 'MIT'
         const version = pkg?.version || '0.1.0'
@@ -849,6 +850,7 @@ async function getProjectInfo(projectPath: string, answers: InitAnswers) {
             packageManager,
             isProjectOnNpm: isPublishToNpm,
             isOpenSource,
+            packageName,
             projectName: name,
             projectVersion: version,
             projectDocumentationUrl: documentationUrl,

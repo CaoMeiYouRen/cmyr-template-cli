@@ -30,7 +30,7 @@
 <% } -%>
 <% if (licenseName) { -%>
   <a href="<%= licenseUrl ? licenseUrl : '#' %>" target="_blank">
-    <img alt="License: <%= licenseName %>" src="https://img.shields.io/<%= `badge/License-${licenseName}-yellow.svg` %>" />
+    <img alt="License: <%= licenseName %>" src="https://img.shields.io/github/license/<%= githubUsername %>/<%= projectName %>?color=yellow" />
   </a>
 <% } -%>
 </p>
