@@ -1,5 +1,13 @@
 # cmyr-template-cli
 
+## [1.24.1](https://github.com/CaoMeiYouRen/cmyr-template-cli/compare/v1.24.0...v1.24.1) (2023-12-09)
+
+
+### 🐛 Bug 修复
+
+* 优化 maven 的依赖下载 ([faa4b1a](https://github.com/CaoMeiYouRen/cmyr-template-cli/commit/faa4b1a))
+* 修复 GOPROXY 设置错误导致的构建失败 ([8d28177](https://github.com/CaoMeiYouRen/cmyr-template-cli/commit/8d28177))
+
 # [1.24.0](https://github.com/CaoMeiYouRen/cmyr-template-cli/compare/v1.23.0...v1.24.0) (2023-12-08)
 
 
