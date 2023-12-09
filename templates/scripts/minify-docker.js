@@ -1,15 +1,27 @@
 /* eslint-disable no-console, @typescript-eslint/no-var-requires */
 const fs = require('fs-extra')
 const path = require('path')
-const { nodeFileTrace } = require('@vercel/nft')
+const { nodeFileTrace } = require('@vercel/nft');
 // !!! if any new dependencies are added, update the Dockerfile !!!
 
-const projectRoot = path.resolve(process.env.PROJECT_ROOT || path.join(__dirname, '../'))
-const resultFolder = path.join(projectRoot, 'app-minimal') // no need to resolve, ProjectRoot is always absolute
-const pkg = fs.readJSONSync(path.join(projectRoot, 'package.json'))
-const files = [pkg.main || 'dist/index.js'].map((file) => path.join(projectRoot, file));
-
 (async () => {
+    const projectRoot = path.resolve(process.env.PROJECT_ROOT || path.join(__dirname, '../'))
+    const resultFolder = path.join(projectRoot, 'app-minimal') // no need to resolve, ProjectRoot is always absolute
+    const pkg = await fs.readJSON(path.join(projectRoot, 'package.json'))
+    let mainPath = pkg.main
+    if (!mainPath) {
+        const mainPaths = ['dist/index.js', 'dist/main.js']
+        for await (const key of mainPaths) {
+            mainPath = path.join(projectRoot, key)
+            if (await fs.pathExists(mainPath)) { // 如果找到了入口文件，则跳出循环
+                break
+            }
+        }
+    }
+    if (!mainPath) {
+        process.exit(1)
+    }
+    const files = [mainPath]
     console.log('Start analyzing, project root:', projectRoot)
     const { fileList: fileSet } = await nodeFileTrace(files, {
         base: projectRoot,
