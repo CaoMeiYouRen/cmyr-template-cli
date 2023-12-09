@@ -13,6 +13,9 @@ const files = [pkg.main || 'dist/index.js'].map((file) => path.join(projectRoot,
     console.log('Start analyzing, project root:', projectRoot)
     const { fileList: fileSet } = await nodeFileTrace(files, {
         base: projectRoot,
+        paths: {
+            '@/': 'dist/',
+        },
     })
     let fileList = Array.from(fileSet)
     console.log('Total touchable files:', fileList.length)
