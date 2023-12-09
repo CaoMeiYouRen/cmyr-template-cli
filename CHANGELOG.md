@@ -1,5 +1,23 @@
 # cmyr-template-cli
 
+# [1.24.0](https://github.com/CaoMeiYouRen/cmyr-template-cli/compare/v1.23.0...v1.24.0) (2023-12-08)
+
+
+### ✨ 新功能
+
+* 优化 java 项目的 docker 构建 ([65cc425](https://github.com/CaoMeiYouRen/cmyr-template-cli/commit/65cc425))
+
+
+### 🐛 Bug 修复
+
+* golang docker 增加 镜像源; 分离下载和构建阶段 ([fbc2f23](https://github.com/CaoMeiYouRen/cmyr-template-cli/commit/fbc2f23))
+* golang 的 docker 镜像改为分阶段构建 ([502c03e](https://github.com/CaoMeiYouRen/cmyr-template-cli/commit/502c03e))
+* 优化 golang dockerfile ([5fc7fd3](https://github.com/CaoMeiYouRen/cmyr-template-cli/commit/5fc7fd3))
+* 优化 License 指向；增加 License 的选择 ([ef9cd39](https://github.com/CaoMeiYouRen/cmyr-template-cli/commit/ef9cd39))
+* 优化 License 的指向 ([0ad7bed](https://github.com/CaoMeiYouRen/cmyr-template-cli/commit/0ad7bed))
+* 修复 java docker 配置 ([4ebc91e](https://github.com/CaoMeiYouRen/cmyr-template-cli/commit/4ebc91e))
+* 修复 minify-docker.js 路径问题 ([04a0c7c](https://github.com/CaoMeiYouRen/cmyr-template-cli/commit/04a0c7c))
+
 # [1.23.0](https://github.com/CaoMeiYouRen/cmyr-template-cli/compare/v1.22.9...v1.23.0) (2023-12-07)
 
 
