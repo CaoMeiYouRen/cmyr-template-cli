@@ -1,5 +1,18 @@
 # cmyr-template-cli
 
+# [1.25.0](https://github.com/CaoMeiYouRen/cmyr-template-cli/compare/v1.24.2...v1.25.0) (2023-12-09)
+
+
+### ✨ 新功能
+
+* 优化 初始化逻辑；增加 npm 私域包发布选项 ([320e753](https://github.com/CaoMeiYouRen/cmyr-template-cli/commit/320e753))
+
+
+### 🐛 Bug 修复
+
+* 优化 minify-docker.js ([7030fe2](https://github.com/CaoMeiYouRen/cmyr-template-cli/commit/7030fe2))
+* 优化 minify-docker.js；优化 saveProjectJson ([9347dbd](https://github.com/CaoMeiYouRen/cmyr-template-cli/commit/9347dbd))
+
 ## [1.24.2](https://github.com/CaoMeiYouRen/cmyr-template-cli/compare/v1.24.1...v1.24.2) (2023-12-09)
 
 
