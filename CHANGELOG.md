@@ -1,5 +1,13 @@
 # cmyr-template-cli
 
+## [1.24.2](https://github.com/CaoMeiYouRen/cmyr-template-cli/compare/v1.24.1...v1.24.2) (2023-12-09)
+
+
+### 🐛 Bug 修复
+
+* 修复 minify-docker 解析路径别名的问题 ([7ca6d9c](https://github.com/CaoMeiYouRen/cmyr-template-cli/commit/7ca6d9c))
+* 修复 python dockerfile ([1de9d1a](https://github.com/CaoMeiYouRen/cmyr-template-cli/commit/1de9d1a))
+
 ## [1.24.1](https://github.com/CaoMeiYouRen/cmyr-template-cli/compare/v1.24.0...v1.24.1) (2023-12-09)
 
 
