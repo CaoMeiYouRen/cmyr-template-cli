@@ -388,7 +388,7 @@ async function init(projectPath: string, answers: InitAnswers) {
                 cwd: projectPath,
             })
             try {
-                await asyncExec('mvn clean install -Dmaven.test.skip=true', {
+                await asyncExec('mvn dependency:go-offline -B -Dmaven.test.skip=true', {
                     cwd: projectPath,
                 })
             } catch (error) {
