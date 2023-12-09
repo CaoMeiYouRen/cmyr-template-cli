@@ -8,14 +8,13 @@ const { nodeFileTrace } = require('@vercel/nft');
     const projectRoot = path.resolve(process.env.PROJECT_ROOT || path.join(__dirname, '../'))
     const resultFolder = path.join(projectRoot, 'app-minimal') // no need to resolve, ProjectRoot is always absolute
     const pkg = await fs.readJSON(path.join(projectRoot, 'package.json'))
-    let mainPath = pkg.main
-    if (!mainPath) {
-        const mainPaths = ['dist/index.js', 'dist/main.js']
-        for await (const key of mainPaths) {
-            mainPath = path.join(projectRoot, key)
-            if (await fs.pathExists(mainPath)) { // 如果找到了入口文件，则跳出循环
-                break
-            }
+
+    let mainPath = ''
+    const mainPaths = [pkg.main, 'dist/index.js', 'dist/main.js']
+    for (const key of mainPaths) {
+        const fullPath = path.join(projectRoot, key)
+        if (await fs.pathExists(fullPath)) {
+            mainPath = fullPath
         }
     }
     if (!mainPath) {

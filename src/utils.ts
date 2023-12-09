@@ -1450,7 +1450,7 @@ async function getProjectJson(projectPath: string) {
 async function saveProjectJson(projectPath: string, pkgData: IPackage) {
     const pkgPath = path.join(projectPath, 'package.json')
     const pkg: IPackage = await getProjectJson(projectPath)
-    const newPkg = merge({}, pkg, pkgData)
+    const newPkg = Object.assign({}, pkg, pkgData)
     await fs.writeFile(pkgPath, JSON.stringify(newPkg, null, 2))
 }
 
