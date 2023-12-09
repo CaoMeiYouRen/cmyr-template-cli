@@ -5,15 +5,18 @@ import download from 'download-git-repo'
 import axios from 'axios'
 import { exec, ExecOptions } from 'child_process'
 import { PACKAGE_MANAGER } from './env'
-import { InitAnswers, IPackage, NodeIndexJson } from './interfaces'
+import { InitAnswers, IPackage, NodeIndexJson, UnwrapPromise } from './interfaces'
 import colors from 'colors'
 import ejs from 'ejs'
-import { unescape, cloneDeep, mergeWith } from 'lodash'
+import { unescape, cloneDeep, mergeWith, merge } from 'lodash'
 import { lintMarkdown, LintMdRulesConfig } from '@lint-md/core'
 import JSON5 from 'json5'
 import os from 'os'
 import { TEMPLATES_META_LIST } from './constants'
 import yaml from 'yaml'
+
+// 获取返回值类型并去除Promise的包裹
+type ProjectInfo = UnwrapPromise<ReturnType<typeof getProjectInfo>>
 
 const fix = (markdown: string, rules?: LintMdRulesConfig) => lintMarkdown(markdown, rules, true)?.fixedResult?.result
 
@@ -123,6 +126,7 @@ type TemplateCliConfig = {
     PATREON_USERNAME: string
     WEIBO_USERNAME: string
     TWITTER_USERNAME: string
+    NPM_USERNAME: string
 }
 
 type GiteeRepo = {
@@ -246,7 +250,7 @@ export async function downloadGitRepo(repository: string, destination: string, o
                 resolve(true)
             })
         }),
-        new Promise((resolve, reject) => setTimeout(reject, 60 * 1000)),
+        new Promise((_resolve, reject) => setTimeout(reject, 60 * 1000)),
     ])
 }
 
@@ -324,14 +328,13 @@ async function init(projectPath: string, answers: InitAnswers) {
                 cwd: projectPath,
             })
 
-            const newPkg = await initProjectJson(projectPath, answers)
-
             await initConfig(projectPath)
             await initCommitizen(projectPath)
 
             if (isOpenSource) { // 只有开源的时候才初始化 REAMD
                 const info = await getProjectInfo(projectPath, answers)
                 if (info) {
+                    await initProjectJson(projectPath, info)
                     if (isInitReadme) {
                         await initReadme(projectPath, info)
                     }
@@ -372,7 +375,8 @@ async function init(projectPath: string, answers: InitAnswers) {
                 cwd: projectPath,
             })
 
-            if (newPkg?.scripts?.lint) {
+            const pkg = await getProjectJson(projectPath)
+            if (pkg?.scripts?.lint) {
                 await asyncExec(`${PACKAGE_MANAGER} run lint`, {
                     cwd: projectPath,
                 })
@@ -709,40 +713,26 @@ async function initTsconfig(projectPath: string) {
  * @param projectPath
  * @param answers
  */
-async function initProjectJson(projectPath: string, answers: InitAnswers) {
+async function initProjectJson(projectPath: string, projectInfos: ProjectInfo) {
     const loading = ora('正在初始化 package.json ……').start()
     try {
 
-        const { name, author, description, keywords = [], isOpenSource, isPublishToNpm = false } = answers
-
-        const repositoryUrl = `https://github.com/${author}/${name}`
-        const homepage = `${repositoryUrl}#readme`
-        const issuesUrl = `${repositoryUrl}/issues`
-        const gitUrl = `git+${repositoryUrl}.git`
-        const nodeVersion = await getLtsNodeVersion() || '18'
-        const node = Number(nodeVersion) - 4 // lts 减 4 为最旧支持的版本
+        const { packageName, engines, license, homepage, issuesUrl, gitUrl, author, description, keywords = [], isOpenSource, isPublishToNpm = false } = projectInfos
 
         const pkg: IPackage = await getProjectJson(projectPath)
         const pkgData: IPackage = {
-            name,
+            name: packageName,
             author,
             description,
             keywords,
             private: !isPublishToNpm,
             license: 'UNLICENSED',
-            engines: {
-                ...pkg?.engines || {},
-                node: `>=${node}`,
-            },
-            devDependencies: {
-                ...pkg?.devDependencies,
-                // 'eslint-config-cmyr': `^${await getNpmPackageVersion('eslint-config-cmyr')}`,
-            },
+            engines,
         }
         let extData: IPackage = {}
         if (isOpenSource) {
             extData = {
-                license: 'MIT',
+                license,
                 homepage,
                 repository: {
                     type: 'git',
@@ -751,9 +741,6 @@ async function initProjectJson(projectPath: string, answers: InitAnswers) {
                 bugs: {
                     url: issuesUrl,
                 },
-                changelog: {
-                    language: 'zh',
-                },
             }
         }
         if (isPublishToNpm) {
@@ -761,7 +748,7 @@ async function initProjectJson(projectPath: string, answers: InitAnswers) {
                 access: 'public',
             }
         }
-        const newPkg = Object.assign({}, pkg, pkgData, extData)
+        const newPkg = merge({}, pkg, pkgData, extData)
         await saveProjectJson(projectPath, newPkg)
 
         loading.succeed('package.json 初始化成功！')
@@ -777,14 +764,20 @@ const cleanText = (text: string) => text.replace(/-/g, '--').replace(/_/g, '__')
 async function getProjectInfo(projectPath: string, answers: InitAnswers) {
     const loading = ora('正在获取项目信息 ……').start()
     try {
-        const { name, author, description, isOpenSource, isPublishToNpm, license } = answers
+        const { name, author, description, template, isOpenSource, isPublishToNpm, license, isPrivateScopePackage, scopeName } = answers
+        const templateMeta = getTemplateMeta(template)
+        const projectName = name
         const packageManager = 'npm'
         const config = await loadTemplateCliConfig()
         const pkg: IPackage = await getProjectJson(projectPath)
-        const packageName = name // npm 包的名称
-        const engines = pkg?.engines || {}
+
+        const nodeVersion = await getLtsNodeVersion() || '20'
+        const node = Number(nodeVersion) - 4 // lts 减 4 为最旧支持的版本
+
+        const packageName = isPrivateScopePackage ? `@${scopeName}/${name}` : name // npm 包的名称
+        const engines = merge({}, pkg?.engines, { node: `>=${node}` })
         const version = pkg?.version || '0.1.0'
-        const installCommand = isPublishToNpm ? `${packageManager} install ${name}` : `${packageManager} install`
+        const installCommand = isPublishToNpm ? `${packageManager} install ${packageName}` : `${packageManager} install`
         const startCommand = pkg?.scripts?.start && `${packageManager} run start`
         const devCommand = pkg?.scripts?.dev && `${packageManager} run dev`
         const buildCommand = pkg?.scripts?.build && `${packageManager} run build`
@@ -792,22 +785,25 @@ async function getProjectInfo(projectPath: string, answers: InitAnswers) {
         const lintCommand = pkg?.scripts?.lint && `${packageManager} run lint`
         const commitCommand = pkg?.scripts?.commit && `${packageManager} run commit`
 
-        const repositoryUrl = `https://github.com/${author}/${name}`
-        const issuesUrl = `${repositoryUrl}/issues`
-        const contributingUrl = `${repositoryUrl}/blob/master/CONTRIBUTING.md`
-        const documentationUrl = `${repositoryUrl}#readme`
-        const demoUrl = `${repositoryUrl}#readme`
-        const homepage = documentationUrl
         const githubUsername = config?.GITHUB_USERNAME || author
-        const authorWebsite = await getAuthorWebsiteFromGithubAPI(githubUsername)
-        const licenseUrl = `${repositoryUrl}/blob/master/LICENSE`
-        const discussionsUrl = `${repositoryUrl}/discussions`
-        const pullRequestsUrl = `${repositoryUrl}/pulls`
         const giteeUsername = config?.GITEE_USERNAME
         const weiboUsername = config?.WEIBO_USERNAME
         const twitterUsername = config?.TWITTER_USERNAME
         const afdianUsername = config?.AFDIAN_USERNAME
         const patreonUsername = config?.PATREON_USERNAME
+        const npmUsername = config?.NPM_USERNAME
+
+        const repositoryUrl = `https://github.com/${githubUsername}/${projectName}`
+        const gitUrl = `git+${repositoryUrl}.git`
+        const issuesUrl = `${repositoryUrl}/issues`
+        const contributingUrl = `${repositoryUrl}/blob/master/CONTRIBUTING.md`
+        const documentationUrl = `${repositoryUrl}#readme`
+        const demoUrl = `${repositoryUrl}#readme`
+        const homepage = documentationUrl
+        const licenseUrl = `${repositoryUrl}/blob/master/LICENSE`
+        const discussionsUrl = `${repositoryUrl}/discussions`
+        const pullRequestsUrl = `${repositoryUrl}/pulls`
+        const authorWebsite = await getAuthorWebsiteFromGithubAPI(githubUsername)
 
         const projectInfos = {
             ...answers,
@@ -819,6 +815,7 @@ async function getProjectInfo(projectPath: string, answers: InitAnswers) {
             authorWebsite,
             homepage,
             demoUrl,
+            gitUrl,
             repositoryUrl,
             issuesUrl,
             contributingUrl,
@@ -830,7 +827,7 @@ async function getProjectInfo(projectPath: string, answers: InitAnswers) {
             licenseName: cleanText(license),
             licenseUrl,
             documentationUrl,
-            isGithubRepos: true,
+            isGithubRepos: isOpenSource,
             installCommand,
             startCommand,
             usage: startCommand,
@@ -839,12 +836,12 @@ async function getProjectInfo(projectPath: string, answers: InitAnswers) {
             testCommand,
             lintCommand,
             commitCommand,
-            isJSProject: true,
+            isJSProject: ['nodejs', 'browser'].includes(templateMeta?.runtime),
             packageManager,
             isProjectOnNpm: isPublishToNpm,
             isOpenSource,
             packageName,
-            projectName: name,
+            projectName,
             projectVersion: version,
             projectDocumentationUrl: documentationUrl,
             projectDescription: description,
@@ -861,6 +858,8 @@ async function getProjectInfo(projectPath: string, answers: InitAnswers) {
             patreonUsername,
             weiboUsername,
             twitterUsername,
+            npmUsername,
+            templateMeta,
         }
         loading.succeed('项目信息 初始化成功！')
         return projectInfos
@@ -877,7 +876,7 @@ async function getProjectInfo(projectPath: string, answers: InitAnswers) {
  * @param projectPath
  * @param projectInfos
  */
-async function initReadme(projectPath: string, projectInfos: any) {
+async function initReadme(projectPath: string, projectInfos: ProjectInfo) {
     const loading = ora('正在初始化 README.md ……').start()
     try {
 
@@ -909,7 +908,7 @@ async function initReadme(projectPath: string, projectInfos: any) {
  * @param projectPath
  * @param projectInfos
  */
-async function initContributing(projectPath: string, projectInfos: any) {
+async function initContributing(projectPath: string, projectInfos: ProjectInfo) {
     const loading = ora('正在初始化 贡献指南 ……').start()
     try {
 
@@ -942,7 +941,7 @@ async function initContributing(projectPath: string, projectInfos: any) {
  * @param projectPath
  * @param projectInfos
  */
-async function initLicense(projectPath: string, projectInfos: any) {
+async function initLicense(projectPath: string, projectInfos: ProjectInfo) {
     const loading = ora('正在初始化 LICENSE ……').start()
     try {
         const { license } = projectInfos
@@ -1050,6 +1049,9 @@ async function initSemanticRelease(projectPath: string) {
                 ...pkg?.devDependencies,
                 'conventional-changelog-cmyr-config': `^${await getNpmPackageVersion('conventional-changelog-cmyr-config')}`,
                 'semantic-release': devDependencies['semantic-release'],
+            },
+            changelog: {
+                language: 'zh',
             },
         }
 
@@ -1274,7 +1276,7 @@ async function initCommitizen(projectPath: string) {
             config: {
                 ...pkg?.config,
                 commitizen: {
-                    path: './node_modules/cz-conventional-changelog-cmyr',
+                    path: 'cz-conventional-changelog-cmyr',
                 },
             },
         }
@@ -1448,7 +1450,7 @@ async function getProjectJson(projectPath: string) {
 async function saveProjectJson(projectPath: string, pkgData: IPackage) {
     const pkgPath = path.join(projectPath, 'package.json')
     const pkg: IPackage = await getProjectJson(projectPath)
-    const newPkg = Object.assign({}, pkg, pkgData)
+    const newPkg = merge({}, pkg, pkgData)
     await fs.writeFile(pkgPath, JSON.stringify(newPkg, null, 2))
 }
 

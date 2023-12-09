@@ -52,7 +52,7 @@
 
 ### 如何提交拉取请求
 
-1. 在我们的存储库中搜索 与您的提交相关的开放或关闭的 [Pull Requests](<%= pullRequestsUrl %>)。你不想重复努力。
+1. 在我们的存储库中搜索 与您的提交相关的开放或关闭的 [Pull Requests](<%= pullRequestsUrl %>)，如果你不想重复努力。
 
 2. Fork 本项目
 

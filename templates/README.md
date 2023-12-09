@@ -1,8 +1,8 @@
-<h1 align="center"><%= projectName %> </h1>
+<h1 align="center"><%= packageName %> </h1>
 <p>
 <% if (isProjectOnNpm) { -%>
-  <a href="https://www.npmjs.com/package/<%= projectName %>" target="_blank">
-    <img alt="Version" src="https://img.shields.io/npm/v/<%= projectName %>.svg">
+  <a href="https://www.npmjs.com/package/<%= packageName %>" target="_blank">
+    <img alt="Version" src="https://img.shields.io/npm/v/<%= packageName %>.svg">
   </a>
 <% } -%>
 <% if (projectVersion && !isProjectOnNpm) { -%>
@@ -121,10 +121,9 @@
 
 <% if (authorWebsite) { -%>
 * Website: [<%= authorWebsite %>](<%= authorWebsite %>)
-
 <% } -%>
-<% if (authorGithubUsername) { -%>
-* GitHub: [@<%= authorGithubUsername %>](https://github.com/<%= authorGithubUsername %>)
+<% if (githubUsername) { -%>
+* GitHub: [@<%= githubUsername %>](https://github.com/<%= githubUsername %>)
 <% } -%>
 <% if (twitterUsername) { -%> 
 * Twitter: [@<%= twitterUsername %>](https://twitter.com/<%= twitterUsername %>)

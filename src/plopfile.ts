@@ -44,9 +44,9 @@ module.exports = function (plop: NodePlopAPI) {
                 {
                     type: 'input',
                     name: 'keywords',
-                    message: '请输入项目关键词(用空格分割)',
+                    message: '请输入项目关键词(用,分割)',
                     default: '',
-                    filter: (e: string) => e.trim().split(' ').filter(Boolean),
+                    filter: (e: string) => e.trim().split(',').filter(Boolean),
                 },
                 {
                     type: 'list',
@@ -149,6 +149,25 @@ module.exports = function (plop: NodePlopAPI) {
                         const templateMeta = getTemplateMeta(answers.template)
                         return answers.isOpenSource && templateMeta.npm
                     },
+                },
+                {
+                    type: 'confirm',
+                    name: 'isPrivateScopePackage',
+                    message: '是否为私域包？',
+                    default: false,
+                    when(answers: InitAnswers) {
+                        return answers.isPublishToNpm
+                    },
+                },
+                {
+                    type: 'input',
+                    name: 'scopeName',
+                    message: '请输入私域名称',
+                    default: config.NPM_USERNAME,
+                    when(answers: InitAnswers) {
+                        return answers.isPrivateScopePackage
+                    },
+                    filter: (e: string) => e.trim(),
                 },
                 {
                     type: 'confirm',

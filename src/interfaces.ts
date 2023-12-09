@@ -1,3 +1,6 @@
+// 定义UnwrapPromise类型操作符
+export type UnwrapPromise<T> = T extends Promise<infer U> ? U : T
+
 export interface Package {
     name: string
     version: string
@@ -102,9 +105,20 @@ export interface InitAnswers {
     */
     isInitDocker: boolean
     /**
- * 需要安装的 常见依赖
+     * 需要安装的 常见依赖
     */
     commonDependencies: string[]
+
+    /**
+     * 是否为私域包？即使用自己的用户名
+     */
+    isPrivateScopePackage: boolean
+    /**
+     * 私域的名称，默认为 npm 用户名
+     */
+    scopeName: string
+
+    [k: string]: unknown
 }
 
 export interface NodeIndexItem {
