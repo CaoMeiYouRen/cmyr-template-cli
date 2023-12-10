@@ -791,7 +791,7 @@ async function getProjectInfo(projectPath: string, answers: InitAnswers) {
         const twitterUsername = config?.TWITTER_USERNAME
         const afdianUsername = config?.AFDIAN_USERNAME
         const patreonUsername = config?.PATREON_USERNAME
-        const npmUsername = config?.NPM_USERNAME
+        const npmUsername = config?.NPM_USERNAME || author
 
         const repositoryUrl = `https://github.com/${githubUsername}/${projectName}`
         const gitUrl = `git+${repositoryUrl}.git`

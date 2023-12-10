@@ -67,7 +67,8 @@ ct create
     "AFDIAN_USERNAME": "",
     "PATREON_USERNAME": "",
     "WEIBO_USERNAME": "",
-    "TWITTER_USERNAME": ""
+    "TWITTER_USERNAME": "",
+    "NPM_USERNAME": ""
 }
 ```
 
@@ -86,6 +87,8 @@ PATREON_USERNAME：Patreon 用户名，可空，默认值为空
 WEIBO_USERNAME：微博用户名，可空，默认值为空
 
 TWITTER_USERNAME：Twitter 用户名，可空，默认值为空
+
+NPM_USERNAME：Npm 用户名，可空，默认会使用 `GITHUB_USERNAME` 的用户名
 
 **如果不使用自动初始化远程仓库功能，可以跳过该配置**
 

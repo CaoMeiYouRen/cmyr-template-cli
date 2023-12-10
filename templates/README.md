@@ -121,6 +121,7 @@
 
 <% if (authorWebsite) { -%>
 * Website: [<%= authorWebsite %>](<%= authorWebsite %>)
+
 <% } -%>
 <% if (githubUsername) { -%>
 * GitHub: [@<%= githubUsername %>](https://github.com/<%= githubUsername %>)
