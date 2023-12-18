@@ -1,5 +1,13 @@
 # cmyr-template-cli
 
+## [1.25.1](https://github.com/CaoMeiYouRen/cmyr-template-cli/compare/v1.25.0...v1.25.1) (2023-12-18)
+
+
+### 🐛 Bug 修复
+
+* 优化 nodejs 的 dockerfile 配置 ([8611340](https://github.com/CaoMeiYouRen/cmyr-template-cli/commit/8611340))
+* 优化 npmUsername 的设置；更新文档 ([87ce5f7](https://github.com/CaoMeiYouRen/cmyr-template-cli/commit/87ce5f7))
+
 # [1.25.0](https://github.com/CaoMeiYouRen/cmyr-template-cli/compare/v1.24.2...v1.25.0) (2023-12-09)
 
 
