@@ -27,7 +27,7 @@ RUN export PROJECT_ROOT=/home/app/ && \
     rm -rf /home/app/app-minimal
 
 # 阶段三：生产阶段
-FROM caomeiyouren/alpine-nodejs:1.1.0
+FROM caomeiyouren/alpine-nodejs-minimize:1.0.0
 
 ENV NODE_ENV production
 
@@ -37,4 +37,5 @@ COPY --from=docker-minifier /home/app /home/app
 
 EXPOSE 3000
 
-CMD ["pnpm","run", "start"]
+CMD ["node", "dist/main.js"]
+# CMD ["node", "dist/index.js"]
