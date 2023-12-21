@@ -1,5 +1,12 @@
 # cmyr-template-cli
 
+## [1.25.2](https://github.com/CaoMeiYouRen/cmyr-template-cli/compare/v1.25.1...v1.25.2) (2023-12-21)
+
+
+### 🐛 Bug 修复
+
+* 优化 maven 的镜像源 ([6029b4d](https://github.com/CaoMeiYouRen/cmyr-template-cli/commit/6029b4d))
+
 ## [1.25.1](https://github.com/CaoMeiYouRen/cmyr-template-cli/compare/v1.25.0...v1.25.1) (2023-12-18)
 
 
