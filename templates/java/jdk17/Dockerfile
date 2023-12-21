@@ -1,9 +1,10 @@
 # 阶段一：安装依赖
 FROM maven:3-eclipse-temurin-17-alpine as dependencies
 
-RUN java -version && mvn -version
-
 WORKDIR /home/app
+
+RUN java -version && mvn -version && \
+    echo '<?xml version="1.0" encoding="UTF-8"?><settings xmlns="http://maven.apache.org/SETTINGS/1.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/SETTINGS/1.0.0 http://maven.apache.org/xsd/settings-1.0.0.xsd"><mirrors><mirror><id>alimaven</id><mirrorOf>central</mirrorOf><name>aliyun maven</name><url>https://maven.aliyun.com/repository/public/</url></mirror></mirrors></settings>' > /usr/share/maven/conf/settings.xml
 
 COPY pom.xml /home/app/pom.xml
 
