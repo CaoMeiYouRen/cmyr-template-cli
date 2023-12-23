@@ -1,5 +1,12 @@
 # cmyr-template-cli
 
+## [1.25.3](https://github.com/CaoMeiYouRen/cmyr-template-cli/compare/v1.25.2...v1.25.3) (2023-12-23)
+
+
+### 🐛 Bug 修复
+
+* 修复 闭源项目未初始化 项目信息的 bug ([9ca82d8](https://github.com/CaoMeiYouRen/cmyr-template-cli/commit/9ca82d8))
+
 ## [1.25.2](https://github.com/CaoMeiYouRen/cmyr-template-cli/compare/v1.25.1...v1.25.2) (2023-12-21)
 
 
