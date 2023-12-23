@@ -331,10 +331,12 @@ async function init(projectPath: string, answers: InitAnswers) {
             await initConfig(projectPath)
             await initCommitizen(projectPath)
 
+            const info = await getProjectInfo(projectPath, answers)
+            if (info) {
+                await initProjectJson(projectPath, info)
+            }
             if (isOpenSource) { // 只有开源的时候才初始化 REAMD
-                const info = await getProjectInfo(projectPath, answers)
                 if (info) {
-                    await initProjectJson(projectPath, info)
                     if (isInitReadme) {
                         await initReadme(projectPath, info)
                     }
@@ -764,7 +766,7 @@ const cleanText = (text: string) => text.replace(/-/g, '--').replace(/_/g, '__')
 async function getProjectInfo(projectPath: string, answers: InitAnswers) {
     const loading = ora('正在获取项目信息 ……').start()
     try {
-        const { name, author, description, template, isOpenSource, isPublishToNpm, license, isPrivateScopePackage, scopeName } = answers
+        const { name, author, description, template, isOpenSource, isPublishToNpm, license = 'UNLICENSED', isPrivateScopePackage, scopeName } = answers
         const templateMeta = getTemplateMeta(template)
         const projectName = name
         const packageManager = 'npm'
@@ -803,7 +805,7 @@ async function getProjectInfo(projectPath: string, answers: InitAnswers) {
         const licenseUrl = `${repositoryUrl}/blob/master/LICENSE`
         const discussionsUrl = `${repositoryUrl}/discussions`
         const pullRequestsUrl = `${repositoryUrl}/pulls`
-        const authorWebsite = await getAuthorWebsiteFromGithubAPI(githubUsername)
+        const authorWebsite = isOpenSource ? await getAuthorWebsiteFromGithubAPI(githubUsername) : ''
 
         const projectInfos = {
             ...answers,
