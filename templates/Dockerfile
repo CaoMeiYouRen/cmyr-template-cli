@@ -37,5 +37,4 @@ COPY --from=docker-minifier /home/app /home/app
 
 EXPOSE 3000
 
-CMD ["node", "dist/main.js"]
-# CMD ["node", "dist/index.js"]
+CMD ["node", "<%= mainFile %>"]

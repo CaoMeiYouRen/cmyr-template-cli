@@ -387,14 +387,14 @@ async function init(projectPath: string, answers: InitAnswers) {
             await asyncExec('java -version', {
                 cwd: projectPath,
             })
-            await asyncExec('mvn -version', {
+            await asyncExec('gradle -v', {
                 cwd: projectPath,
             })
             await asyncExec('git add .', {
                 cwd: projectPath,
             })
             try {
-                await asyncExec('mvn dependency:go-offline -B -Dmaven.test.skip=true', {
+                await asyncExec('gradle dependencies --no-daemon', {
                     cwd: projectPath,
                 })
             } catch (error) {
@@ -786,6 +786,7 @@ async function getProjectInfo(projectPath: string, answers: InitAnswers) {
         const testCommand = pkg?.scripts?.test && `${packageManager} run test`
         const lintCommand = pkg?.scripts?.lint && `${packageManager} run lint`
         const commitCommand = pkg?.scripts?.commit && `${packageManager} run commit`
+        const mainFile = pkg?.main
 
         const githubUsername = config?.GITHUB_USERNAME || author
         const giteeUsername = config?.GITEE_USERNAME
@@ -862,6 +863,7 @@ async function getProjectInfo(projectPath: string, answers: InitAnswers) {
             twitterUsername,
             npmUsername,
             templateMeta,
+            mainFile,
         }
         loading.succeed('项目信息 初始化成功！')
         return projectInfos
@@ -1298,34 +1300,50 @@ async function initDocker(projectPath: string, answers: InitAnswers) {
         const files = ['.dockerignore', 'docker-compose.yml']
         await copyFilesFromTemplates(projectPath, files)
 
-        let dockerfilePath = 'Dockerfile'
-        switch (templateMeta?.runtime) {
-            case 'java':
-                dockerfilePath = templateMeta?.javaVersion === 8 ? 'java/jdk8/Dockerfile' : 'java/jdk17/Dockerfile'
-                break
-            case 'python':
-                dockerfilePath = 'python/Dockerfile'
-                break
-            case 'golang':
-                dockerfilePath = 'golang/Dockerfile'
-                break
-            default:
-                dockerfilePath = 'Dockerfile'
-                break
-        }
+        let dockerfile = 'Dockerfile'
         const newPath = path.join(projectPath, 'Dockerfile')
         if (await fs.pathExists(newPath)) {
             await fs.remove(newPath)
         }
-        await fs.copyFile(path.join(__dirname, '../templates/', dockerfilePath), newPath)
-        // 解决 nodejs 依赖过大的问题
-        if (templateMeta?.runtime === 'nodejs') {
-            const scriptsDir = path.join(projectPath, 'scripts')
-            if (! await fs.pathExists(scriptsDir)) {
-                await fs.mkdir(scriptsDir)
-            }
-            await copyFilesFromTemplates(projectPath, ['scripts/minify-docker.js'])
+        if (templateMeta?.runtime === 'java') {
+            const templatePath = path.join(__dirname, '../templates/java/Dockerfile.ejs')
+
+            await ejsRender(templatePath, { javaVersion: templateMeta?.javaVersion }, newPath)
+
+            loading.succeed('Docker 初始化成功！')
+            return
         }
+        if (templateMeta?.runtime === 'nodejs') {
+            // 解决 nodejs 依赖过大的问题
+            if (templateMeta?.runtime === 'nodejs') {
+                const scriptsDir = path.join(projectPath, 'scripts')
+                if (! await fs.pathExists(scriptsDir)) {
+                    await fs.mkdir(scriptsDir)
+                }
+                await copyFilesFromTemplates(projectPath, ['scripts/minify-docker.js'])
+            }
+
+            const pkg: IPackage = await getProjectJson(projectPath)
+            const mainFile = pkg?.main
+            const templatePath = path.join(__dirname, '../templates/Dockerfile')
+            await ejsRender(templatePath, { mainFile }, newPath)
+
+            loading.succeed('Docker 初始化成功！')
+            return
+        }
+        switch (templateMeta?.runtime) {
+            case 'python':
+                dockerfile = 'python/Dockerfile'
+                break
+            case 'golang':
+                dockerfile = 'golang/Dockerfile'
+                break
+            default:
+                dockerfile = 'Dockerfile'
+                break
+        }
+        const dockerfilePath = path.join(__dirname, '../templates/', dockerfile)
+        await fs.copyFile(dockerfilePath, newPath)
         loading.succeed('Docker 初始化成功！')
     } catch (error) {
         loading.fail('Docker 初始化失败！')
@@ -1520,4 +1538,26 @@ export function kebabCase(str: string) {
 
 export function getTemplateMeta(template: string) {
     return TEMPLATES_META_LIST.find((e) => e.name === template)
+}
+
+/**
+ * ejs 渲染
+ *
+ * @author CaoMeiYouRen
+ * @date 2023-12-26
+ * @param templatePath
+ * @param data
+ * @param outputPath
+ */
+async function ejsRender(templatePath: string, data: any, outputPath: string) {
+    const template = (await fs.readFile(templatePath, 'utf8')).toString()
+    const content = await ejs.render(
+        template,
+        data,
+        {
+            debug: false,
+            async: true,
+        },
+    )
+    await fs.writeFile(outputPath, content)
 }
