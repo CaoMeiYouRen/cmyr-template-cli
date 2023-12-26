@@ -1,5 +1,12 @@
 # cmyr-template-cli
 
+## [1.25.4](https://github.com/CaoMeiYouRen/cmyr-template-cli/compare/v1.25.3...v1.25.4) (2023-12-26)
+
+
+### 🐛 Bug 修复
+
+* 迁移 maven 到 gradle；优化 java 的 docker 构建；优化 nodejs 的 docker 构建 ([8633113](https://github.com/CaoMeiYouRen/cmyr-template-cli/commit/8633113))
+
 ## [1.25.3](https://github.com/CaoMeiYouRen/cmyr-template-cli/compare/v1.25.2...v1.25.3) (2023-12-23)
 
 
