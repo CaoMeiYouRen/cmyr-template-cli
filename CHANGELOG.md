@@ -1,5 +1,12 @@
 # cmyr-template-cli
 
+# [1.26.0](https://github.com/CaoMeiYouRen/cmyr-template-cli/compare/v1.25.4...v1.26.0) (2024-01-05)
+
+
+### ✨ 新功能
+
+* 修改 vite 相关模板；弃用部分 vite 模板 ([a929fc2](https://github.com/CaoMeiYouRen/cmyr-template-cli/commit/a929fc2))
+
 ## [1.25.4](https://github.com/CaoMeiYouRen/cmyr-template-cli/compare/v1.25.3...v1.25.4) (2023-12-26)
 
 
