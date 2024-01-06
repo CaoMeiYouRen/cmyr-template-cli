@@ -1440,7 +1440,7 @@ async function getNpmPackageVersion(name: string) {
          * @param markdown
          * @returns
          */
-function lintMd(markdown: string) {
+export function lintMd(markdown: string) {
     const rules = {
         'no-empty-code': 0,
         'no-trailing-punctuation': 0,

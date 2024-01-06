@@ -2,7 +2,7 @@ import { NodePlopAPI, ActionType } from 'plop'
 import { QuestionCollection } from 'inquirer'
 import { __DEV__ } from './env'
 import { InitAnswers } from './interfaces'
-import { COMMON_DEPENDENCIES, getGitUserName, initProject, VUE2_DEPENDENCIES, VUE3_DEPENDENCIES, kebabCase, loadTemplateCliConfig, WEB_DEPENDENCIES, NODE_DEPENDENCIES, getTemplateMeta } from './utils'
+import { COMMON_DEPENDENCIES, getGitUserName, initProject, VUE2_DEPENDENCIES, VUE3_DEPENDENCIES, kebabCase, loadTemplateCliConfig, WEB_DEPENDENCIES, NODE_DEPENDENCIES, getTemplateMeta, lintMd } from './utils'
 import { TEMPLATES_META_LIST } from './constants'
 import fs from 'fs-extra'
 import path from 'path'
@@ -29,7 +29,7 @@ module.exports = function (plop: NodePlopAPI) {
                     name: 'description',
                     message: '请输入项目简介',
                     default: __DEV__ ? '' : '',
-                    filter: (e: string) => e.trim(),
+                    filter: (e: string) => lintMd(e.trim()),
                 },
                 {
                     type: 'input',
