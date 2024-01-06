@@ -19,6 +19,7 @@ jobs:
         uses: actions/setup-node@v3
         with:
           node-version: "lts/*"
+          cache: "pnpm"
       - name: Cache Dependency
         uses: actions/cache@v3
         with:

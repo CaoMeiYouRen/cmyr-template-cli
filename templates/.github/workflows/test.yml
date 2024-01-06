@@ -14,9 +14,10 @@ jobs:
         with:
           version: "latest"
       - name: Setup Node.js@lts environment
-        uses: actions/setup-node@v3
+        uses: actions/setup-node@v4
         with:
           node-version: "lts/*"
+          cache: "pnpm"
       - name: Cache Dependency
         uses: actions/cache@v3
         with:
