@@ -1,5 +1,12 @@
 # cmyr-template-cli
 
+# [1.27.0](https://github.com/CaoMeiYouRen/cmyr-template-cli/compare/v1.26.1...v1.27.0) (2024-03-31)
+
+
+### ✨ 新功能
+
+* 新增 tsup-template ([cb9a01e](https://github.com/CaoMeiYouRen/cmyr-template-cli/commit/cb9a01e))
+
 ## [1.26.1](https://github.com/CaoMeiYouRen/cmyr-template-cli/compare/v1.26.0...v1.26.1) (2024-01-06)
 
 
