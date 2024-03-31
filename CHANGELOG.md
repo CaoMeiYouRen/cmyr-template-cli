@@ -1,5 +1,13 @@
 # cmyr-template-cli
 
+## [1.26.1](https://github.com/CaoMeiYouRen/cmyr-template-cli/compare/v1.26.0...v1.26.1) (2024-01-06)
+
+
+### 🐛 Bug 修复
+
+* 优化 pnpm 在 GitHub Action 的 cache ([a5c426e](https://github.com/CaoMeiYouRen/cmyr-template-cli/commit/a5c426e))
+* 项目简介 增加 lintMd ([f8fd75e](https://github.com/CaoMeiYouRen/cmyr-template-cli/commit/f8fd75e))
+
 # [1.26.0](https://github.com/CaoMeiYouRen/cmyr-template-cli/compare/v1.25.4...v1.26.0) (2024-01-05)
 
 
