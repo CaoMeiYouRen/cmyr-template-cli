@@ -613,6 +613,7 @@ interface Schedule {
 }
 interface Ignore {
     'dependency-name': string
+    versions?: string[]
 }
 interface Update {
     'package-ecosystem': string
@@ -644,6 +645,10 @@ async function initDependabot(projectPath: string, answers: InitAnswers) {
                             ...dependabot?.updates?.[0].ignore || [],
                             {
                                 'dependency-name': 'semantic-release',
+                            },
+                            {
+                                'dependency-name': '@commitlint/config-conventional',
+                                versions: ['>= 19.0.0'],
                             },
                         ]
                         fs.writeFile(dependabotPath, yaml.stringify(dependabot))
@@ -1093,10 +1098,10 @@ async function initHusky(projectPath: string) {
         }
         const keyname = `*.{${extnames.join(',')}}`
         const devDependencies = {
-            // '@commitlint/cli': '^15.0.0',
-            '@commitlint/config-conventional': '^15.0.0',
-            husky: '^8.0.1',
-            'lint-staged': '^12.1.2',
+            // commitlint: '18.6.1',
+            '@commitlint/config-conventional': '18.6.3',
+            husky: '^9.0.11',
+            'lint-staged': '^15.2.2',
         }
         const pkgData: IPackage = {
             scripts: {
