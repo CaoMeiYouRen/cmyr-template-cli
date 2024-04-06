@@ -1281,6 +1281,7 @@ async function initCommitizen(projectPath: string) {
             devDependencies: {
                 ...devDependencies,
                 ...pkg?.devDependencies,
+                '@commitlint/config-conventional': '^18.6.3',
             },
             config: {
                 ...pkg?.config,
