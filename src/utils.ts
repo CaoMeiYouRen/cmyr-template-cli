@@ -1098,8 +1098,6 @@ async function initHusky(projectPath: string) {
         }
         const keyname = `*.{${extnames.join(',')}}`
         const devDependencies = {
-            // commitlint: '18.6.1',
-            '@commitlint/config-conventional': '18.6.3',
             husky: '^9.0.11',
             'lint-staged': '^15.2.2',
         }
