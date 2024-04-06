@@ -1,5 +1,12 @@
 # cmyr-template-cli
 
+## [1.27.3](https://github.com/CaoMeiYouRen/cmyr-template-cli/compare/v1.27.2...v1.27.3) (2024-04-06)
+
+
+### 🐛 Bug 修复
+
+* 修改 @commitlint/config-conventional 的位置 ([40b640e](https://github.com/CaoMeiYouRen/cmyr-template-cli/commit/40b640e))
+
 ## [1.27.2](https://github.com/CaoMeiYouRen/cmyr-template-cli/compare/v1.27.1...v1.27.2) (2024-04-06)
 
 
