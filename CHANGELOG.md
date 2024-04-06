@@ -1,5 +1,12 @@
 # cmyr-template-cli
 
+## [1.27.4](https://github.com/CaoMeiYouRen/cmyr-template-cli/compare/v1.27.3...v1.27.4) (2024-04-06)
+
+
+### 🐛 Bug 修复
+
+* 修复 @commitlint/cli 版本问题；修改 依赖安装时的 --frozen-lockfile ([96257ab](https://github.com/CaoMeiYouRen/cmyr-template-cli/commit/96257ab))
+
 ## [1.27.3](https://github.com/CaoMeiYouRen/cmyr-template-cli/compare/v1.27.2...v1.27.3) (2024-04-06)
 
 
