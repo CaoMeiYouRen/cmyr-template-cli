@@ -647,6 +647,10 @@ async function initDependabot(projectPath: string, answers: InitAnswers) {
                                 'dependency-name': 'semantic-release',
                             },
                             {
+                                'dependency-name': '@commitlint/cli',
+                                versions: ['>= 19.0.0'],
+                            },
+                            {
                                 'dependency-name': '@commitlint/config-conventional',
                                 versions: ['>= 19.0.0'],
                             },
@@ -1279,6 +1283,7 @@ async function initCommitizen(projectPath: string) {
             devDependencies: {
                 ...devDependencies,
                 ...pkg?.devDependencies,
+                '@commitlint/cli': '^18.6.1',
                 '@commitlint/config-conventional': '^18.6.3',
             },
             config: {
