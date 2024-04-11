@@ -1,6 +1,6 @@
 {
   "name": "cmyr-template-cli",
-  "version": "1.27.3",
+  "version": "1.27.4",
   "description": "草梅友仁自制的项目模板创建器",
   "author": "CaoMeiYouRen",
   "license": "MIT",
@@ -47,7 +47,7 @@
     "@types/node": "^20.0.0",
     "@types/promise.any": "^2.0.0",
     "@typescript-eslint/eslint-plugin": "7.5.0",
-    "@typescript-eslint/parser": "7.5.0",
+    "@typescript-eslint/parser": "7.6.0",
     "commitizen": "^4.2.2",
     "conventional-changelog-cli": "^4.0.0",
     "conventional-changelog-cmyr-config": "^2.1.1",
