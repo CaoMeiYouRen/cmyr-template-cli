@@ -1,5 +1,12 @@
 # cmyr-template-cli
 
+## [1.27.5](https://github.com/CaoMeiYouRen/cmyr-template-cli/compare/v1.27.4...v1.27.5) (2024-04-27)
+
+
+### 🐛 Bug 修复
+
+* 优化 commitlint 配置 ([87ab16b](https://github.com/CaoMeiYouRen/cmyr-template-cli/commit/87ab16b))
+
 ## [1.27.4](https://github.com/CaoMeiYouRen/cmyr-template-cli/compare/v1.27.3...v1.27.4) (2024-04-06)
 
 
