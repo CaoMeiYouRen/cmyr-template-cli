@@ -310,7 +310,7 @@ export async function initProject(answers: InitAnswers) {
 }
 
 async function init(projectPath: string, answers: InitAnswers) {
-    const { template, isOpenSource, isInitReadme, isInitContributing, isInitHusky, isInitSemanticRelease, isInitDocker } = answers
+    const { template, isOpenSource, isInitReadme, isInitContributing, isInitHusky, isInitSemanticRelease, isInitDocker, isInitJest } = answers
     try {
         const templateMeta = getTemplateMeta(template)
         await asyncExec('git --version', {
@@ -362,6 +362,10 @@ async function init(projectPath: string, answers: InitAnswers) {
             await initEslint(projectPath, answers)
 
             await initStylelint(projectPath)
+
+            if (isInitJest) {
+                await initJest(projectPath)
+            }
 
             await sortProjectJson(projectPath)
 
@@ -1356,6 +1360,38 @@ async function initDocker(projectPath: string, answers: InitAnswers) {
         loading.succeed('Docker 初始化成功！')
     } catch (error) {
         loading.fail('Docker 初始化失败！')
+    }
+}
+
+async function initJest(projectPath: string) {
+    const loading = ora('正在初始化 Jest ……').start()
+    try {
+        const files = ['jest.config.ts']
+        await copyFilesFromTemplates(projectPath, files)
+
+        const pkg: IPackage = await getProjectJson(projectPath)
+
+        const devDependencies = {
+            '@types/jest': '^29.5.12',
+            jest: '^29.7.0',
+            'ts-jest': '^29.1.2',
+            'ts-node': '^10.9.2',
+        }
+        const newPkg = merge({}, pkg, {
+            scripts: {
+                test: 'jest --config jest.config.ts',
+                'test:coverage': 'jest --config jest.config.ts --coverage',
+                ...pkg?.scripts,
+            },
+            devDependencies: {
+                ...devDependencies,
+                ...pkg?.devDependencies,
+            },
+        })
+        await saveProjectJson(projectPath, newPkg)
+        loading.succeed('Jest 初始化成功！')
+    } catch (error) {
+        loading.fail('Jest 初始化失败！')
     }
 }
 

@@ -88,6 +88,10 @@ export interface InitAnswers {
      */
     isInitSemanticRelease: boolean
     /**
+     * 是否初始化 jest
+     */
+    isInitJest: boolean
+    /**
      * 是否启用赞助
      */
     isEnableSupport?: boolean

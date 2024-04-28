@@ -195,6 +195,17 @@ module.exports = function (plop: NodePlopAPI) {
                 },
                 {
                     type: 'confirm',
+                    name: 'isInitJest',
+                    message: '是否初始化 jest？',
+                    default(answers: InitAnswers) {
+                        return answers.isOpenSource
+                    },
+                    when(answers: InitAnswers) {
+                        return answers.isOpenSource
+                    },
+                },
+                {
+                    type: 'confirm',
                     name: 'isInitReadme',
                     message: '是否初始化 README.md ？',
                     default: true,
