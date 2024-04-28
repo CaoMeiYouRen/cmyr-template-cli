@@ -1,5 +1,12 @@
 # cmyr-template-cli
 
+# [1.28.0](https://github.com/CaoMeiYouRen/cmyr-template-cli/compare/v1.27.5...v1.28.0) (2024-04-28)
+
+
+### ✨ 新功能
+
+* 新增 jest 配置选项 ([30800a5](https://github.com/CaoMeiYouRen/cmyr-template-cli/commit/30800a5))
+
 ## [1.27.5](https://github.com/CaoMeiYouRen/cmyr-template-cli/compare/v1.27.4...v1.27.5) (2024-04-27)
 
 
