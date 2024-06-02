@@ -1,5 +1,12 @@
 # cmyr-template-cli
 
+## [1.28.1](https://github.com/CaoMeiYouRen/cmyr-template-cli/compare/v1.28.0...v1.28.1) (2024-06-02)
+
+
+### 🐛 Bug 修复
+
+* 更新 github action 版本 ([f3140ad](https://github.com/CaoMeiYouRen/cmyr-template-cli/commit/f3140ad))
+
 # [1.28.0](https://github.com/CaoMeiYouRen/cmyr-template-cli/compare/v1.27.5...v1.28.0) (2024-04-28)
 
 
