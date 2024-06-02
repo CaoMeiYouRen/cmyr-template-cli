@@ -1388,6 +1388,7 @@ async function initJest(projectPath: string) {
                 ...pkg?.devDependencies,
             },
         })
+        newPkg.jest = undefined
         await saveProjectJson(projectPath, newPkg)
         loading.succeed('Jest 初始化成功！')
     } catch (error) {
