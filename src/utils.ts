@@ -649,6 +649,7 @@ async function initDependabot(projectPath: string, answers: InitAnswers) {
                             ...dependabot?.updates?.[0].ignore || [],
                             {
                                 'dependency-name': 'semantic-release',
+                                versions: ['>= 21.0.1'],
                             },
                             {
                                 'dependency-name': '@commitlint/cli',
