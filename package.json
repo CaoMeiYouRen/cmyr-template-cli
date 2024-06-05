@@ -32,7 +32,7 @@
     "build:prod": "npm run build && rimraf temp && cross-env NODE_ENV=production ct create"
   },
   "devDependencies": {
-    "@rollup/plugin-commonjs": "^25.0.0",
+    "@rollup/plugin-commonjs": "^26.0.1",
     "@rollup/plugin-json": "^6.0.0",
     "@rollup/plugin-node-resolve": "^15.0.0",
     "@rollup/plugin-replace": "^5.0.0",
