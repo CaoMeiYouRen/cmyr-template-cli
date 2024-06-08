@@ -1,5 +1,12 @@
 # cmyr-template-cli
 
+## [1.28.4](https://github.com/CaoMeiYouRen/cmyr-template-cli/compare/v1.28.3...v1.28.4) (2024-06-08)
+
+
+### 🐛 Bug 修复
+
+* 优化：release 时不允许并发 ([5f4876d](https://github.com/CaoMeiYouRen/cmyr-template-cli/commit/5f4876d))
+
 ## [1.28.3](https://github.com/CaoMeiYouRen/cmyr-template-cli/compare/v1.28.2...v1.28.3) (2024-06-08)
 
 
