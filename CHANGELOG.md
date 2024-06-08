@@ -1,5 +1,12 @@
 # cmyr-template-cli
 
+## [1.28.2](https://github.com/CaoMeiYouRen/cmyr-template-cli/compare/v1.28.1...v1.28.2) (2024-06-04)
+
+
+### 🐛 Bug 修复
+
+* 修复 semantic-release 的版本问题 ([9d3655d](https://github.com/CaoMeiYouRen/cmyr-template-cli/commit/9d3655d))
+
 ## [1.28.1](https://github.com/CaoMeiYouRen/cmyr-template-cli/compare/v1.28.0...v1.28.1) (2024-06-02)
 
 
