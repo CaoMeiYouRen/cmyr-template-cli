@@ -1,5 +1,12 @@
 # cmyr-template-cli
 
+## [1.28.5](https://github.com/CaoMeiYouRen/cmyr-template-cli/compare/v1.28.4...v1.28.5) (2024-06-08)
+
+
+### 🐛 Bug 修复
+
+* 修复 GitHub Action 的权限问题 ([562eb3f](https://github.com/CaoMeiYouRen/cmyr-template-cli/commit/562eb3f))
+
 ## [1.28.4](https://github.com/CaoMeiYouRen/cmyr-template-cli/compare/v1.28.3...v1.28.4) (2024-06-08)
 
 
