@@ -1,5 +1,12 @@
 # cmyr-template-cli
 
+## [1.28.6](https://github.com/CaoMeiYouRen/cmyr-template-cli/compare/v1.28.5...v1.28.6) (2024-06-12)
+
+
+### 🐛 Bug 修复
+
+* 修复 GITHUB_TOKEN 问题 ([f40ab56](https://github.com/CaoMeiYouRen/cmyr-template-cli/commit/f40ab56))
+
 ## [1.28.5](https://github.com/CaoMeiYouRen/cmyr-template-cli/compare/v1.28.4...v1.28.5) (2024-06-08)
 
 
