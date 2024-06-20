@@ -5,8 +5,8 @@
     <img alt="Version" src="https://img.shields.io/npm/v/<%= packageName %>.svg">
   </a>
 <% } -%>
-<% if (projectVersion && !isProjectOnNpm) { -%>
-  <img alt="Version" src="https://img.shields.io/badge/version-<%= projectVersion %>-blue.svg?cacheSeconds=2592000" />
+<% if (projectVersion && isJSProject) { -%>
+  <img alt="Version" src="https://img.shields.io/github/package-json/v/<%= packageName %>.svg" />
 <% } -%>
 <% if (isGithubRepos && isInitSemanticRelease) { -%>
   <a href="<%= repositoryUrl %>/actions?query=workflow%3ARelease" target="_blank">
