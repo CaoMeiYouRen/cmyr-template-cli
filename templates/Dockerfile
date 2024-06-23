@@ -1,12 +1,12 @@
-FROM caomeiyouren/alpine-nodejs:latest as nodejs
+FROM caomeiyouren/alpine-nodejs:latest AS nodejs
 
 RUN npm config set registry https://registry.npmmirror.com && \
     pnpm config set registry https://registry.npmmirror.com &&
 
-FROM caomeiyouren/alpine-nodejs-minimize:latest as runtime
+FROM caomeiyouren/alpine-nodejs-minimize:latest AS runtime
 
 # 阶段一：构建阶段
-FROM nodejs as builder
+FROM nodejs AS builder
 
 WORKDIR /home/app
 
@@ -19,7 +19,7 @@ COPY . /home/app
 RUN pnpm run build
 
 # 阶段二：缩小阶段
-FROM nodejs as docker-minifier
+FROM nodejs AS docker-minifier
 
 WORKDIR /home/app
 
