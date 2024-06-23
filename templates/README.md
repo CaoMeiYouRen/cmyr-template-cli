@@ -6,7 +6,7 @@
   </a>
 <% } -%>
 <% if (projectVersion && isJSProject) { -%>
-  <img alt="Version" src="https://img.shields.io/github/package-json/v/<%= packageName %>.svg" />
+  <img alt="Version" src="https://img.shields.io/github/package-json/v/<%= authorGithubUsername %>/<%= packageName %>.svg" />
 <% } -%>
 <% if (isGithubRepos && isInitSemanticRelease) { -%>
   <a href="<%= repositoryUrl %>/actions?query=workflow%3ARelease" target="_blank">
