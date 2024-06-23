@@ -1,5 +1,5 @@
 # 阶段一：下载依赖
-FROM golang:1.21-alpine as dependencies
+FROM golang:alpine as dependencies
 
 WORKDIR /home/app
 
