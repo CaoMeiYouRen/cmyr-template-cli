@@ -1,5 +1,12 @@
 # cmyr-template-cli
 
+## [1.28.8](https://github.com/CaoMeiYouRen/cmyr-template-cli/compare/v1.28.7...v1.28.8) (2024-06-23)
+
+
+### 🐛 Bug 修复
+
+* 更新 Dockerfile 构建脚本 ([a532037](https://github.com/CaoMeiYouRen/cmyr-template-cli/commit/a532037))
+
 ## [1.28.7](https://github.com/CaoMeiYouRen/cmyr-template-cli/compare/v1.28.6...v1.28.7) (2024-06-20)
 
 
