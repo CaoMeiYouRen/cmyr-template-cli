@@ -1,5 +1,12 @@
 # cmyr-template-cli
 
+# [1.29.0](https://github.com/CaoMeiYouRen/cmyr-template-cli/compare/v1.28.10...v1.29.0) (2024-06-24)
+
+
+### ✨ 新功能
+
+* 新增 JS 模块规范选择；优化对 esm 规范项目的支持 ([b95ce4c](https://github.com/CaoMeiYouRen/cmyr-template-cli/commit/b95ce4c))
+
 ## [1.28.10](https://github.com/CaoMeiYouRen/cmyr-template-cli/compare/v1.28.9...v1.28.10) (2024-06-23)
 
 
