@@ -1,5 +1,12 @@
 # cmyr-template-cli
 
+## [1.28.10](https://github.com/CaoMeiYouRen/cmyr-template-cli/compare/v1.28.9...v1.28.10) (2024-06-23)
+
+
+### 🐛 Bug 修复
+
+* 更正 大小写不匹配问题 ([e102dc5](https://github.com/CaoMeiYouRen/cmyr-template-cli/commit/e102dc5))
+
 ## [1.28.9](https://github.com/CaoMeiYouRen/cmyr-template-cli/compare/v1.28.8...v1.28.9) (2024-06-23)
 
 
