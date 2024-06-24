@@ -49,6 +49,11 @@ export interface InitAnswers {
      * 项目模板
      */
     template: string
+
+    /**
+     * 遵循的js模块规范，esm/cjs
+     */
+    jsModuleType: string
     /**
      * 是否开源
      */

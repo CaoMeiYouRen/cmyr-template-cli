@@ -58,6 +58,22 @@ module.exports = function (plop: NodePlopAPI) {
                     default: __DEV__ ? 'ts-template' : '',
                 },
                 {
+                    type: 'list',
+                    name: 'jsModuleType',
+                    message: '请选择 JS 模块规范',
+                    choices() {
+                        return ['esm', 'cjs']
+                    },
+                    default(answers: InitAnswers) {
+                        const templateMeta = getTemplateMeta(answers.template)
+                        return ['nodejs'].includes(templateMeta?.runtime) ? 'cjs' : ''
+                    },
+                    when(answers: InitAnswers) {
+                        const templateMeta = getTemplateMeta(answers.template)
+                        return ['nodejs'].includes(templateMeta?.runtime) // 当且仅当 nodejs 时需要选择
+                    },
+                },
+                {
                     type: 'checkbox',
                     name: 'commonDependencies',
                     message: '请选择需要安装的常见依赖',

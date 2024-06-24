@@ -328,9 +328,6 @@ async function init(projectPath: string, answers: InitAnswers) {
                 cwd: projectPath,
             })
 
-            await initConfig(projectPath)
-            await initCommitizen(projectPath)
-
             const info = await getProjectInfo(projectPath, answers)
             if (info) {
                 await initProjectJson(projectPath, info)
@@ -347,7 +344,8 @@ async function init(projectPath: string, answers: InitAnswers) {
                 }
                 await initGithubWorkflows(projectPath, answers)
             }
-
+            await initConfig(projectPath)
+            await initCommitizen(projectPath)
             if (isInitSemanticRelease) {
                 await initSemanticRelease(projectPath)
             }
@@ -357,7 +355,7 @@ async function init(projectPath: string, answers: InitAnswers) {
 
             await initCommonDependencies(projectPath, answers)
 
-            await initTsconfig(projectPath)
+            await initTsconfig(projectPath, answers)
 
             await initEslint(projectPath, answers)
 
@@ -682,10 +680,10 @@ async function initYarn(projectPath: string, answers: InitAnswers) {
     }
 }
 
-async function initTsconfig(projectPath: string) {
+async function initTsconfig(projectPath: string, answers: InitAnswers) {
     try {
         const tsconfigPath = path.join(projectPath, 'tsconfig.json')
-
+        const { jsModuleType } = answers
         if (await fs.pathExists(tsconfigPath)) { // 如果存在 tsconfig.json
             const tsconfigStr = await fs.readFile(tsconfigPath, 'utf8')
             const tsconfig = JSON5.parse(tsconfigStr)
@@ -714,6 +712,26 @@ async function initTsconfig(projectPath: string) {
                     newTsconfig.compilerOptions.skipLibCheck = true
                     hasChanges = true
                 }
+                // 修复 tsconfig sourceMap 选项的问题。缺少 sourceMap 的话会看不见原始的堆栈
+                // if (newTsconfig.compilerOptions.sourceMap === false) {
+                //     newTsconfig.compilerOptions.sourceMap = true
+                //     hasChanges = true
+                // }
+                switch (jsModuleType) {
+                    case 'cjs':
+                        // hasChanges = true
+                        break
+                    case 'esm':
+                        // 修复 esm 规范时的问题
+                        newTsconfig.compilerOptions.module = 'esnext'
+                        if (!newTsconfig.compilerOptions.moduleResolution) {
+                            newTsconfig.compilerOptions.moduleResolution = 'node'
+                        }
+                        hasChanges = true
+                        break
+                    default:
+                        break
+                }
                 if (hasChanges) {
                     await fs.writeFile(tsconfigPath, JSON.stringify(newTsconfig, null, 4))
                 }
@@ -733,7 +751,7 @@ async function initProjectJson(projectPath: string, projectInfos: ProjectInfo) {
     const loading = ora('正在初始化 package.json ……').start()
     try {
 
-        const { packageName, engines, license, homepage, issuesUrl, gitUrl, author, description, keywords = [], isOpenSource, isPublishToNpm = false } = projectInfos
+        const { packageName, engines, license, homepage, issuesUrl, gitUrl, author, description, keywords = [], isOpenSource, isPublishToNpm = false, jsModuleType } = projectInfos
 
         const pkg: IPackage = await getProjectJson(projectPath)
         const pkgData: IPackage = {
@@ -763,6 +781,16 @@ async function initProjectJson(projectPath: string, projectInfos: ProjectInfo) {
             extData.publishConfig = {
                 access: 'public',
             }
+        }
+        switch (jsModuleType) {
+            case 'cjs':
+                extData.type = 'commonjs'
+                break
+            case 'esm':
+                extData.type = 'module'
+                break
+            default:
+                break
         }
         const newPkg = merge({}, pkg, pkgData, extData)
         await saveProjectJson(projectPath, newPkg)
@@ -1046,10 +1074,15 @@ async function initGithubWorkflows(projectPath: string, answers: InitAnswers) {
 async function initSemanticRelease(projectPath: string) {
     const loading = ora('正在初始化 semantic-release ……').start()
     try {
-        const files = ['.releaserc.js']
-        await copyFilesFromTemplates(projectPath, files)
-
         const pkg: IPackage = await getProjectJson(projectPath)
+
+        const files = ['.releaserc.js', '.releaserc.cjs']
+        await removeFiles(projectPath, files)
+        if (pkg.type === 'module') {
+            await copyFilesFromTemplates(projectPath, ['.releaserc.cjs'])
+        } else {
+            await copyFilesFromTemplates(projectPath, ['.releaserc.js'])
+        }
 
         const devDependencies = {
             '@semantic-release/changelog': '^6.0.3',
@@ -1196,11 +1229,23 @@ async function initEslint(projectPath: string, answers: InitAnswers) {
     root: true,
     extends: '${eslintType}',
 }`
-        const filename = pkg.type === 'module' ? '.eslintrc.cjs' : '.eslintrc.js'
-        const toPath = path.join(projectPath, filename)
-        if (!await fs.pathExists(toPath)) { // 如果不存在就写入
-            await fs.writeFile(toPath, eslintrc)
+
+        const cjsPath = path.join(projectPath, '.eslintrc.cjs')
+        const jsPath = path.join(projectPath, '.eslintrc.js')
+
+        if (pkg.type === 'module') {
+            await removeFiles(projectPath, ['.eslintrc.js'])
+            if (!await fs.pathExists(cjsPath)) { // 如果不存在 cjs
+                if (await fs.pathExists(jsPath)) { // 如果存在 js 则重命名
+                    await fs.rename(jsPath, cjsPath)
+                } else { // 如果还不存在则写入
+                    await fs.writeFile(cjsPath, eslintrc)
+                }
+            }
+        } else if (!await fs.pathExists(jsPath)) { // 如果不存在就写入
+            await fs.writeFile(jsPath, eslintrc)
         }
+
         loading.succeed('eslint 初始化成功！')
     } catch (error) {
         loading.fail('eslint 初始化失败！')
