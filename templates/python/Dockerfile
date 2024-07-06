@@ -1,6 +1,6 @@
 FROM python:3.10-alpine
 
-WORKDIR /home/app
+WORKDIR /app
 
 # 安装python3环境和gunicorn环境
 RUN python3 -V && pip3 -V\
@@ -12,10 +12,10 @@ RUN python3 -V && pip3 -V\
     && echo "trusted-host=pypi.tuna.tsinghua.edu.cn" >> ~/.pip/pip.conf \
     && pip install --upgrade pip && pip install wheel
 
-COPY ./requirements.txt /home/app
+COPY ./requirements.txt /app
 
 RUN pip install -r requirements.txt
 
-COPY . /home/app
+COPY . /app
 
 CMD ["gunicorn", "app:app", "-p", "app.pid", "-b", "0.0.0.0:80"]

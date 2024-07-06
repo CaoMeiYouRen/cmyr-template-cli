@@ -1,9 +1,9 @@
 # 阶段一：下载依赖
 FROM golang:alpine as dependencies
 
-WORKDIR /home/app
+WORKDIR /app
 
-COPY go.mod go.sum /home/app/
+COPY go.mod go.sum /app/
 
 RUN go version && \
     go env -w CGO_ENABLED=0 && \
@@ -15,9 +15,9 @@ RUN go version && \
 # 阶段二：构建阶段
 FROM dependencies as builder
 
-WORKDIR /home/app
+WORKDIR /app
 
-COPY . /home/app
+COPY . /app
 
 RUN go version && \
     go build main.go
@@ -25,9 +25,9 @@ RUN go version && \
 # 阶段三：生产阶段
 FROM scratch
 
-WORKDIR /home/app
+WORKDIR /app
 
-COPY --from=builder /home/app/main /home/app
+COPY --from=builder /app/main /app
 
 EXPOSE 8080
 

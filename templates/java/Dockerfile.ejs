@@ -1,9 +1,9 @@
 # 阶段一：安装依赖
 FROM gradle:8.5.0-jdk<%= javaVersion %> as dependencies
 
-WORKDIR /home/app
+WORKDIR /app
 
-COPY build.gradle /home/app/build.gradle
+COPY build.gradle /app/build.gradle
 
 # 只安装依赖，跳过测试
 RUN gradle -v && gradle dependencies --no-daemon
@@ -11,7 +11,7 @@ RUN gradle -v && gradle dependencies --no-daemon
 # 阶段二：构建阶段
 FROM dependencies as builder
 
-COPY . /home/app
+COPY . /app
 
 # 构建
 RUN gradle clean build --no-daemon
@@ -19,9 +19,9 @@ RUN gradle clean build --no-daemon
 # 阶段三：生产阶段
 FROM eclipse-temurin:<%= javaVersion %>-jre-alpine
 
-WORKDIR /home/app
+WORKDIR /app
 
-COPY --from=builder /home/app/build/libs/main.jar /home/app
+COPY --from=builder /app/build/libs/main.jar /app
 
 EXPOSE 8080
 
