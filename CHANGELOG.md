@@ -1,5 +1,12 @@
 # cmyr-template-cli
 
+## [1.29.2](https://github.com/CaoMeiYouRen/cmyr-template-cli/compare/v1.29.1...v1.29.2) (2024-07-06)
+
+
+### 🐛 Bug 修复
+
+* 修改 docker 的 WORKDIR 为 /app ([68cd323](https://github.com/CaoMeiYouRen/cmyr-template-cli/commit/68cd323))
+
 ## [1.29.1](https://github.com/CaoMeiYouRen/cmyr-template-cli/compare/v1.29.0...v1.29.1) (2024-07-06)
 
 
