@@ -1,5 +1,12 @@
 # cmyr-template-cli
 
+## [1.29.1](https://github.com/CaoMeiYouRen/cmyr-template-cli/compare/v1.29.0...v1.29.1) (2024-07-06)
+
+
+### 🐛 Bug 修复
+
+* 修复 dockerfile 中存在多余的 && 的问题 ([0d13934](https://github.com/CaoMeiYouRen/cmyr-template-cli/commit/0d13934))
+
 # [1.29.0](https://github.com/CaoMeiYouRen/cmyr-template-cli/compare/v1.28.10...v1.29.0) (2024-06-24)
 
 
