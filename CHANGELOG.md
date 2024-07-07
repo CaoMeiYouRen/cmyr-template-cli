@@ -1,5 +1,17 @@
 # cmyr-template-cli
 
+# [1.30.0](https://github.com/CaoMeiYouRen/cmyr-template-cli/compare/v1.29.2...v1.30.0) (2024-07-07)
+
+
+### ✨ 新功能
+
+* 新增 判断 js 文件的模块类型，解决 cjs 和 esm 的兼容问题 ([e1a3e73](https://github.com/CaoMeiYouRen/cmyr-template-cli/commit/e1a3e73))
+
+
+### 🐛 Bug 修复
+
+* 修复 footer-max-line-length 问题 ([af750a0](https://github.com/CaoMeiYouRen/cmyr-template-cli/commit/af750a0))
+
 ## [1.29.2](https://github.com/CaoMeiYouRen/cmyr-template-cli/compare/v1.29.1...v1.29.2) (2024-07-06)
 
 
