@@ -254,7 +254,7 @@ module.exports = function (plop: NodePlopAPI) {
                     type: 'confirm',
                     name: 'isRemoveYarn',
                     message: '是否移除 yarn ？',
-                    default: false,
+                    default: true,
                     when(answers: InitAnswers) {
                         return answers.isOpenSource
                     },

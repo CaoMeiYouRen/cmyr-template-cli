@@ -68,6 +68,8 @@
   },
   "dependencies": {
     "@lint-md/core": "^2.0.0",
+    "acorn": "^8.12.1",
+    "acorn-walk": "^8.3.3",
     "axios": "^1.0.0",
     "colors": "^1.4.0",
     "commander": "^12.0.0",

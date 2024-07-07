@@ -14,6 +14,8 @@ import JSON5 from 'json5'
 import os from 'os'
 import { TEMPLATES_META_LIST } from './constants'
 import yaml from 'yaml'
+import acorn from 'acorn'
+import walk from 'acorn-walk'
 
 // 获取返回值类型并去除Promise的包裹
 type ProjectInfo = UnwrapPromise<ReturnType<typeof getProjectInfo>>
@@ -368,6 +370,8 @@ async function init(projectPath: string, answers: InitAnswers) {
             await sortProjectJson(projectPath)
 
             await initYarn(projectPath, answers)
+
+            await jsFileExtRename(projectPath)
 
             await asyncExec('git add .', {
                 cwd: projectPath,
@@ -1026,13 +1030,7 @@ async function initLicense(projectPath: string, projectInfos: ProjectInfo) {
 async function initConfig(projectPath: string) {
     try {
         await removeFiles(projectPath, ['commitlint.config.cjs', 'commitlint.config.js'])
-        const pkg: IPackage = await getProjectJson(projectPath)
-        const files = ['.editorconfig']
-        if (pkg.type === 'module') {
-            files.push('commitlint.config.cjs')
-        } else {
-            files.push('commitlint.config.js')
-        }
+        const files = ['.editorconfig', 'commitlint.config.js']
         await copyFilesFromTemplates(projectPath, files)
     } catch (error) {
         console.error(error)
@@ -1078,11 +1076,7 @@ async function initSemanticRelease(projectPath: string) {
 
         const files = ['.releaserc.js', '.releaserc.cjs']
         await removeFiles(projectPath, files)
-        if (pkg.type === 'module') {
-            await copyFilesFromTemplates(projectPath, ['.releaserc.cjs'])
-        } else {
-            await copyFilesFromTemplates(projectPath, ['.releaserc.js'])
-        }
+        await copyFilesFromTemplates(projectPath, ['.releaserc.js'])
 
         const devDependencies = {
             '@semantic-release/changelog': '^6.0.3',
@@ -1233,16 +1227,7 @@ async function initEslint(projectPath: string, answers: InitAnswers) {
         const cjsPath = path.join(projectPath, '.eslintrc.cjs')
         const jsPath = path.join(projectPath, '.eslintrc.js')
 
-        if (pkg.type === 'module') {
-            await removeFiles(projectPath, ['.eslintrc.js'])
-            if (!await fs.pathExists(cjsPath)) { // 如果不存在 cjs
-                if (await fs.pathExists(jsPath)) { // 如果存在 js 则重命名
-                    await fs.rename(jsPath, cjsPath)
-                } else { // 如果还不存在则写入
-                    await fs.writeFile(cjsPath, eslintrc)
-                }
-            }
-        } else if (!await fs.pathExists(jsPath)) { // 如果不存在就写入
+        if (!await fs.pathExists(cjsPath) && !await fs.pathExists(jsPath)) { // 如果不存在就写入
             await fs.writeFile(jsPath, eslintrc)
         }
 
@@ -1274,12 +1259,9 @@ async function initStylelint(projectPath: string) {
             return
         }
 
-        const files = ['.stylelintignore']
-        if (pkg.type === 'module') {
-            files.push('.stylelintrc.cjs')
-        } else {
-            files.push('.stylelintrc.js')
-        }
+        const files = ['.stylelintignore', '.stylelintrc.js']
+
+        await removeFiles(projectPath, ['.stylelintrc.js', '.stylelintrc.cjs'])
         await copyFilesFromTemplates(projectPath, files)
 
         const devDependencies = {
@@ -1439,6 +1421,102 @@ async function initJest(projectPath: string) {
         loading.succeed('Jest 初始化成功！')
     } catch (error) {
         loading.fail('Jest 初始化失败！')
+    }
+}
+
+async function jsFileExtRename(projectPath: string) {
+    const loading = ora('正在重命名 js 后缀名 ……').start()
+    try {
+        // 所有 .js 后缀的文件
+        const jsFiles = (await fs.readdir(projectPath)).filter((file) => /\.js$/.test(file)).map((file) => path.join(projectPath, file))
+        const pkg: IPackage = await getProjectJson(projectPath)
+        if (pkg.type === 'module') {
+            // 判断 js 的模块类型，如果是 cjs ，则改后缀为 .cjs
+            for await (const filepath of jsFiles) {
+                const fileContent = await fs.readFile(filepath, 'utf-8')
+                const moduleType = getJsModuleType(fileContent)
+                console.log(`正在判断文件：${filepath} 的模块类型`)
+                if (moduleType === 'CommonJS') {
+                    const dirpath = path.dirname(filepath)
+                    const extname = path.extname(filepath)
+                    const basename = `${path.basename(filepath, extname)}.cjs`
+                    const newPath = path.join(dirpath, basename)
+                    await fs.rename(filepath, newPath)
+                }
+            }
+        } else if (pkg.type === 'commonjs') {
+            // 判断 js 的模块类型，如果是 mjs ，则改后缀为 .mjs
+            for await (const filepath of jsFiles) {
+                const fileContent = await fs.readFile(filepath, 'utf-8')
+                const moduleType = getJsModuleType(fileContent)
+                console.log(`正在判断文件：${filepath} 的模块类型`)
+                if (moduleType === 'EsModule') {
+                    const dirpath = path.dirname(filepath)
+                    const extname = path.extname(filepath)
+                    const basename = `${path.basename(filepath, extname)}.mjs`
+                    const newPath = path.join(dirpath, basename)
+                    await fs.rename(filepath, newPath)
+                }
+            }
+        }
+        loading.succeed('重命名 js 后缀名成功！')
+    } catch (error) {
+        loading.fail('重命名 js 后缀名失败！')
+        console.error(error)
+    }
+}
+
+function getJsModuleType(fileContent: string) {
+    try {
+        // const fileContent = fs.readFileSync(filePath, 'utf-8')
+        const ast = acorn.parse(fileContent, {
+            sourceType: 'module',
+            ecmaVersion: 'latest',
+        })
+        // console.log(JSON.stringify(ast, null, 4))
+        let isCommonJS = false
+        let isESModule = false
+
+        walk.simple(ast, {
+            AssignmentExpression(node) {
+                // 判断 module.exports
+                if ((node.left as any)?.object?.name === 'module' && (node.left as any)?.property?.name === 'exports') {
+                    isCommonJS = true
+                }
+            },
+            CallExpression(node) {
+                // 判断 require()
+                if ((node.callee as any)?.name === 'require') {
+                    isCommonJS = true
+                }
+            },
+            ImportDeclaration(node) {
+                isESModule = true
+            },
+            ExportAllDeclaration(node) {
+                isESModule = true
+            },
+            ExportDefaultDeclaration(node) {
+                isESModule = true
+            },
+            ExportNamedDeclaration(node) {
+                isESModule = true
+            },
+            ExportSpecifier(node) {
+                isESModule = true
+            },
+        })
+        if (isESModule) {
+            return 'EsModule'
+        }
+        if (isCommonJS) {
+            return 'CommonJS'
+        }
+        return 'Unknown'
+
+    } catch (error) {
+        console.error(error)
+        return 'Unknown'
     }
 }
 
