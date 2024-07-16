@@ -129,6 +129,7 @@ type TemplateCliConfig = {
     WEIBO_USERNAME: string
     TWITTER_USERNAME: string
     NPM_USERNAME: string
+    DOCKER_USERNAME: string
 }
 
 type GiteeRepo = {
@@ -840,7 +841,8 @@ async function getProjectInfo(projectPath: string, answers: InitAnswers) {
         const twitterUsername = config?.TWITTER_USERNAME
         const afdianUsername = config?.AFDIAN_USERNAME
         const patreonUsername = config?.PATREON_USERNAME
-        const npmUsername = config?.NPM_USERNAME || author
+        const npmUsername = config?.NPM_USERNAME || githubUsername
+        const dockerUsername = config?.DOCKER_USERNAME || githubUsername?.toLowerCase()
 
         const repositoryUrl = `https://github.com/${githubUsername}/${projectName}`
         const gitUrl = `git+${repositoryUrl}.git`
@@ -908,6 +910,7 @@ async function getProjectInfo(projectPath: string, answers: InitAnswers) {
             weiboUsername,
             twitterUsername,
             npmUsername,
+            dockerUsername,
             templateMeta,
             mainFile,
         }

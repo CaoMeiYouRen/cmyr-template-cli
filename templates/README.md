@@ -4,9 +4,17 @@
   <a href="https://www.npmjs.com/package/<%= packageName %>" target="_blank">
     <img alt="Version" src="https://img.shields.io/npm/v/<%= packageName %>.svg">
   </a>
+  <a href="https://www.npmjs.com/package/<%= packageName %>" target="_blank">
+    <img alt="npm downloads" src="https://img.shields.io/npm/dt/<%= packageName %>?label=npm%20downloads&color=yellow">
+  </a>
 <% } -%>
 <% if (projectVersion && isJSProject) { -%>
   <img alt="Version" src="https://img.shields.io/github/package-json/v/<%= authorGithubUsername %>/<%= packageName %>.svg" />
+<% } -%>
+<% if (isOpenSource && isInitDocker) { -%>
+  <a href="https://hub.docker.com/r/<%= dockerUsername %>/<%= projectName %>" target="_blank">
+    <img alt="Docker Pulls" src="https://img.shields.io/docker/pulls/<%= dockerUsername %>/<%= projectName %>">
+  </a>
 <% } -%>
 <% if (isGithubRepos && isInitSemanticRelease) { -%>
   <a href="<%= repositoryUrl %>/actions?query=workflow%3ARelease" target="_blank">

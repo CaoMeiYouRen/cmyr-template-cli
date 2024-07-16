@@ -68,7 +68,8 @@ ct create
     "PATREON_USERNAME": "",
     "WEIBO_USERNAME": "",
     "TWITTER_USERNAME": "",
-    "NPM_USERNAME": ""
+    "NPM_USERNAME": "",
+    "DOCKER_USERNAME": ""
 }
 ```
 
@@ -89,6 +90,8 @@ WEIBO_USERNAME：微博用户名，可空，默认值为空
 TWITTER_USERNAME：Twitter 用户名，可空，默认值为空
 
 NPM_USERNAME：Npm 用户名，可空，默认会使用 `GITHUB_USERNAME` 的用户名
+
+DOCKER_USERNAME：Docker Hub 用户名，可空，默认会使用**小写的** `GITHUB_USERNAME` 的用户名
 
 **如果不使用自动初始化远程仓库功能，可以跳过该配置**
 
