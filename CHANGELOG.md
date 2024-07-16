@@ -1,5 +1,12 @@
 # cmyr-template-cli
 
+## [1.30.1](https://github.com/CaoMeiYouRen/cmyr-template-cli/compare/v1.30.0...v1.30.1) (2024-07-16)
+
+
+### 🐛 Bug 修复
+
+* 增加 docker hub 相关配置和徽章 ([b90fa8a](https://github.com/CaoMeiYouRen/cmyr-template-cli/commit/b90fa8a))
+
 # [1.30.0](https://github.com/CaoMeiYouRen/cmyr-template-cli/compare/v1.29.2...v1.30.0) (2024-07-07)
 
 
