@@ -76,7 +76,6 @@ export const COMMON_DEPENDENCIES = {
         'push-all-in-one': '^2.2.0',
         'leancloud-storage': '^4.15.0',
         yaml: '^2.3.3',
-
     },
 }
 
@@ -88,6 +87,7 @@ export const NODE_DEPENDENCIES = {
         log4js: '^6.9.1',
         md5: '^2.3.0',
         rimraf: '^5.0.0',
+        zx: '^8.1.0',
     },
 }
 
