@@ -1,5 +1,12 @@
 # cmyr-template-cli
 
+## [1.30.3](https://github.com/CaoMeiYouRen/cmyr-template-cli/compare/v1.30.2...v1.30.3) (2024-07-24)
+
+
+### 🐛 Bug 修复
+
+* 修复 husky 配置错误 ([75febdd](https://github.com/CaoMeiYouRen/cmyr-template-cli/commit/75febdd))
+
 ## [1.30.2](https://github.com/CaoMeiYouRen/cmyr-template-cli/compare/v1.30.1...v1.30.2) (2024-07-19)
 
 
