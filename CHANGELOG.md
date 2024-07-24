@@ -1,5 +1,13 @@
 # cmyr-template-cli
 
+## [1.30.2](https://github.com/CaoMeiYouRen/cmyr-template-cli/compare/v1.30.1...v1.30.2) (2024-07-19)
+
+
+### 🐛 Bug 修复
+
+* 新增 zx 依赖 ([3a3153d](https://github.com/CaoMeiYouRen/cmyr-template-cli/commit/3a3153d))
+* 移除部分过时的项目模板 ([037d525](https://github.com/CaoMeiYouRen/cmyr-template-cli/commit/037d525))
+
 ## [1.30.1](https://github.com/CaoMeiYouRen/cmyr-template-cli/compare/v1.30.0...v1.30.1) (2024-07-16)
 
 
