@@ -65,6 +65,7 @@ export const COMMON_DEPENDENCIES = {
         '@types/md5': '^2.3.1',
     },
     dependencies: {
+        'await-to-js': '^3.0.0',
         axios: '^1.0.0',
         'cmyr-error-collection': '^1.5.0',
         'cmyr-sign': '^1.1.0',
@@ -83,6 +84,7 @@ export const NODE_DEPENDENCIES = {
     devDependencies: {
     },
     dependencies: {
+        cron: '^3.1.7',
         dotenv: '^16.3.1',
         log4js: '^6.9.1',
         md5: '^2.3.0',
