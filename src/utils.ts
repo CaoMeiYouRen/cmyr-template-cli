@@ -74,6 +74,7 @@ export const COMMON_DEPENDENCIES = {
         'isomorphic-unfetch': '^3.1.0',
         lodash: '^4.17.20',
         'lodash-es': '^4.17.21',
+        'p-limit': '^3.1.0',
         'push-all-in-one': '^2.2.0',
         'leancloud-storage': '^4.15.0',
         yaml: '^2.3.3',
@@ -82,6 +83,7 @@ export const COMMON_DEPENDENCIES = {
 
 export const NODE_DEPENDENCIES = {
     devDependencies: {
+        tsx: '^4.15.7',
     },
     dependencies: {
         cron: '^3.1.7',
