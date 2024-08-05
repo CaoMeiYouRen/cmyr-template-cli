@@ -15,6 +15,7 @@ const { nodeFileTrace } = require('@vercel/nft');
         const fullPath = path.join(projectRoot, key)
         if (await fs.pathExists(fullPath)) {
             mainPath = fullPath
+            break
         }
     }
     if (!mainPath) {
