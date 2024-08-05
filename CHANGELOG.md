@@ -1,5 +1,13 @@
 # cmyr-template-cli
 
+## [1.30.4](https://github.com/CaoMeiYouRen/cmyr-template-cli/compare/v1.30.3...v1.30.4) (2024-08-05)
+
+
+### 🐛 Bug 修复
+
+* 修复 minify-docker.js 脚本的错误 ([4f8fd4c](https://github.com/CaoMeiYouRen/cmyr-template-cli/commit/4f8fd4c))
+* 增加部分默认依赖 ([d954284](https://github.com/CaoMeiYouRen/cmyr-template-cli/commit/d954284))
+
 ## [1.30.3](https://github.com/CaoMeiYouRen/cmyr-template-cli/compare/v1.30.2...v1.30.3) (2024-07-24)
 
 
