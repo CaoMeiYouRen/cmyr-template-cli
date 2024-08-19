@@ -817,7 +817,7 @@ const cleanText = (text: string) => text.replace(/-/g, '--').replace(/_/g, '__')
 async function getProjectInfo(projectPath: string, answers: InitAnswers) {
     const loading = ora('正在获取项目信息 ……').start()
     try {
-        const { name, author, description, template, isOpenSource, isPublishToNpm, license = 'UNLICENSED', isPrivateScopePackage, scopeName } = answers
+        const { name, author, description, template, isOpenSource, isPublishToNpm, license = 'UNLICENSED', isPrivateScopePackage, scopeName, isInitDocker = false } = answers
         const templateMeta = getTemplateMeta(template)
         const projectName = name
         const packageManager = 'npm'
@@ -917,6 +917,7 @@ async function getProjectInfo(projectPath: string, answers: InitAnswers) {
             dockerUsername,
             templateMeta,
             mainFile,
+            isInitDocker,
         }
         loading.succeed('项目信息 初始化成功！')
         return projectInfos
