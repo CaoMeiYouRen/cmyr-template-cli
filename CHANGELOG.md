@@ -1,5 +1,12 @@
 # cmyr-template-cli
 
+## [1.30.6](https://github.com/CaoMeiYouRen/cmyr-template-cli/compare/v1.30.5...v1.30.6) (2024-08-28)
+
+
+### 🐛 Bug 修复
+
+* 优化 常见依赖新增 p-queue ([bd5c3b0](https://github.com/CaoMeiYouRen/cmyr-template-cli/commit/bd5c3b0))
+
 ## [1.30.5](https://github.com/CaoMeiYouRen/cmyr-template-cli/compare/v1.30.4...v1.30.5) (2024-08-19)
 
 
