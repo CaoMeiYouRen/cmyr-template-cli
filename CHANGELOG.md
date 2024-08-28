@@ -1,5 +1,12 @@
 # cmyr-template-cli
 
+## [1.30.5](https://github.com/CaoMeiYouRen/cmyr-template-cli/compare/v1.30.4...v1.30.5) (2024-08-19)
+
+
+### 🐛 Bug 修复
+
+* 修复 部分情况下 isInitDocker 未定义的 bug ([47425c2](https://github.com/CaoMeiYouRen/cmyr-template-cli/commit/47425c2))
+
 ## [1.30.4](https://github.com/CaoMeiYouRen/cmyr-template-cli/compare/v1.30.3...v1.30.4) (2024-08-05)
 
 
