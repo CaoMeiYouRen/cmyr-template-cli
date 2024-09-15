@@ -154,7 +154,7 @@
 <% if (isEnableSupport) { -%>
 
 <% if (afdianUsername) { -%>
-<a href="https://afdian.net/@<%= afdianUsername %>">
+<a href="https://afdian.com/@<%= afdianUsername %>">
   <img src="https://cdn.jsdelivr.net/gh/CaoMeiYouRen/image-hosting-01@master/images/202306192324870.png" width="312px" height="78px" alt="在爱发电支持我">
 </a>
 <% } -%>
