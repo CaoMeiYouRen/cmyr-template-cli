@@ -1,5 +1,12 @@
 # cmyr-template-cli
 
+## [1.30.7](https://github.com/CaoMeiYouRen/cmyr-template-cli/compare/v1.30.6...v1.30.7) (2024-09-15)
+
+
+### 🐛 Bug 修复
+
+* 修复 爱发电域名问题 ([7fcae78](https://github.com/CaoMeiYouRen/cmyr-template-cli/commit/7fcae78))
+
 ## [1.30.6](https://github.com/CaoMeiYouRen/cmyr-template-cli/compare/v1.30.5...v1.30.6) (2024-08-28)
 
 
