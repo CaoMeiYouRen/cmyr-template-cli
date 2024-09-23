@@ -180,6 +180,14 @@ export const TEMPLATES_META_LIST: TemplateMeta[] = [
         docker: true,
         priority: 0,
     },
+    {
+        name: 'hono-template',
+        language: 'typescript',
+        runtime: 'nodejs',
+        vueVersion: 0,
+        docker: true,
+        priority: 0,
+    },
     // {
     //     name: 'auto-release-template',
     //     language: 'typescript',
