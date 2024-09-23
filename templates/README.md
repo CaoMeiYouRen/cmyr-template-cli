@@ -36,9 +36,9 @@
     <img alt="Maintenance" src="https://img.shields.io/badge/Maintained%3F-yes-green.svg" />
   </a>
 <% } -%>
-<% if (licenseName) { -%>
+<% if (license) { -%>
   <a href="<%= licenseUrl ? licenseUrl : '#' %>" target="_blank">
-    <img alt="License: <%= licenseName %>" src="https://img.shields.io/github/license/<%= githubUsername %>/<%= projectName %>?color=yellow" />
+    <img alt="License: <%= license %>" src="https://img.shields.io/github/license/<%= githubUsername %>/<%= projectName %>?color=yellow" />
   </a>
 <% } -%>
 </p>
@@ -172,13 +172,13 @@
 [![Star History Chart](https://api.star-history.com/svg?repos=<%= authorGithubUsername %>/<%= projectName %>&type=Date)](https://star-history.com/#<%= authorGithubUsername %>/<%= projectName %>&Date)
 <% } -%>
 
-<% if (licenseName && licenseUrl) { -%>
+<% if (license && licenseUrl) { -%>
 ## 📝 License
 
 <% if (authorName && authorGithubUsername) { -%>
 Copyright © <%= currentYear %> [<%= authorName %>](https://github.com/<%= authorGithubUsername %>).<br />
 <% } -%>
-This project is [<%= licenseName %>](<%= licenseUrl %>) licensed.
+This project is [<%= license %>](<%= licenseUrl %>) licensed.
 <% } -%>
 
 ***
