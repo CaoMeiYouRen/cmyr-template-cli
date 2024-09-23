@@ -1,5 +1,12 @@
 # cmyr-template-cli
 
+# [1.31.0](https://github.com/CaoMeiYouRen/cmyr-template-cli/compare/v1.30.7...v1.31.0) (2024-09-23)
+
+
+### ✨ 新功能
+
+* 新增 hono-template 项目模板 ([b870db7](https://github.com/CaoMeiYouRen/cmyr-template-cli/commit/b870db7))
+
 ## [1.30.7](https://github.com/CaoMeiYouRen/cmyr-template-cli/compare/v1.30.6...v1.30.7) (2024-09-15)
 
 
