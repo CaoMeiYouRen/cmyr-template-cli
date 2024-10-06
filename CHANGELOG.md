@@ -1,5 +1,12 @@
 # cmyr-template-cli
 
+## [1.31.2](https://github.com/CaoMeiYouRen/cmyr-template-cli/compare/v1.31.1...v1.31.2) (2024-10-06)
+
+
+### 🐛 Bug 修复
+
+* 修改 hono-template 配置；增加 NODE_DEPENDENCIES ([aadff03](https://github.com/CaoMeiYouRen/cmyr-template-cli/commit/aadff03))
+
 ## [1.31.1](https://github.com/CaoMeiYouRen/cmyr-template-cli/compare/v1.31.0...v1.31.1) (2024-09-23)
 
 
