@@ -185,7 +185,7 @@ export const TEMPLATES_META_LIST: TemplateMeta[] = [
         language: 'typescript',
         runtime: 'nodejs',
         vueVersion: 0,
-        docker: true,
+        docker: false, // 自带 docker 配置，无需初始化
         priority: 0,
     },
     // {

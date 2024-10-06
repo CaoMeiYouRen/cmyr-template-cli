@@ -92,6 +92,7 @@ export const NODE_DEPENDENCIES = {
         log4js: '^6.9.1',
         md5: '^2.3.0',
         rimraf: '^5.0.0',
+        'rss-parser': '^3.12.0',
         zx: '^8.1.0',
     },
 }
