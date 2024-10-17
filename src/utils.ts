@@ -1451,6 +1451,9 @@ async function jsFileExtRename(projectPath: string) {
                     const extname = path.extname(filepath)
                     const basename = `${path.basename(filepath, extname)}.cjs`
                     const newPath = path.join(dirpath, basename)
+                    if (await fs.pathExists(newPath)) { // 存在就删除
+                        await fs.remove(newPath)
+                    }
                     await fs.rename(filepath, newPath)
                 }
             }
@@ -1465,6 +1468,9 @@ async function jsFileExtRename(projectPath: string) {
                     const extname = path.extname(filepath)
                     const basename = `${path.basename(filepath, extname)}.mjs`
                     const newPath = path.join(dirpath, basename)
+                    if (await fs.pathExists(newPath)) { // 存在就删除
+                        await fs.remove(newPath)
+                    }
                     await fs.rename(filepath, newPath)
                 }
             }
