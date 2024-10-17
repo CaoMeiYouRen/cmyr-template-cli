@@ -8,7 +8,7 @@ import { PACKAGE_MANAGER } from './env'
 import { InitAnswers, IPackage, NodeIndexJson, UnwrapPromise } from './interfaces'
 import colors from 'colors'
 import ejs from 'ejs'
-import { unescape, cloneDeep, mergeWith, merge } from 'lodash'
+import { unescape, cloneDeep, mergeWith, merge, uniqBy } from 'lodash'
 import { lintMarkdown, LintMdRulesConfig } from '@lint-md/core'
 import JSON5 from 'json5'
 import os from 'os'
@@ -654,7 +654,7 @@ async function initDependabot(projectPath: string, answers: InitAnswers) {
                 if (await fs.pathExists(dependabotPath)) { // 如果存在 dependabot
                     const dependabot: Dependabot = yaml.parse(await fs.readFile(dependabotPath, 'utf-8'))
                     if (dependabot?.updates?.[0]['package-ecosystem'] === 'npm') { // 如果为 npm
-                        dependabot.updates[0].ignore = [
+                        dependabot.updates[0].ignore = uniqBy([
                             ...dependabot?.updates?.[0].ignore || [],
                             {
                                 'dependency-name': 'semantic-release',
@@ -668,7 +668,7 @@ async function initDependabot(projectPath: string, answers: InitAnswers) {
                                 'dependency-name': '@commitlint/config-conventional',
                                 versions: ['>= 19.0.0'],
                             },
-                        ]
+                        ], (e) => e['dependency-name'])
                         fs.writeFile(dependabotPath, yaml.stringify(dependabot))
                     }
                 }
