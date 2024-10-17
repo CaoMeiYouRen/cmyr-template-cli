@@ -1,5 +1,13 @@
 # cmyr-template-cli
 
+## [1.31.3](https://github.com/CaoMeiYouRen/cmyr-template-cli/compare/v1.31.2...v1.31.3) (2024-10-17)
+
+
+### 🐛 Bug 修复
+
+* 修复 部分情况下 dependabot 的 ignore 字段存在重复的问题 ([73bb60b](https://github.com/CaoMeiYouRen/cmyr-template-cli/commit/73bb60b))
+* 修复 部分情况下，重命名 js 文件后缀名 失败的问题 ([f909cc4](https://github.com/CaoMeiYouRen/cmyr-template-cli/commit/f909cc4))
+
 ## [1.31.2](https://github.com/CaoMeiYouRen/cmyr-template-cli/compare/v1.31.1...v1.31.2) (2024-10-06)
 
 
