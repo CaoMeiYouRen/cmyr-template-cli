@@ -1,5 +1,12 @@
 # cmyr-template-cli
 
+# [1.32.0](https://github.com/CaoMeiYouRen/cmyr-template-cli/compare/v1.31.4...v1.32.0) (2024-10-29)
+
+
+### ✨ 新功能
+
+* 在 Github Workflows 中添加 todo 配置 ([f798533](https://github.com/CaoMeiYouRen/cmyr-template-cli/commit/f798533))
+
 ## [1.31.4](https://github.com/CaoMeiYouRen/cmyr-template-cli/compare/v1.31.3...v1.31.4) (2024-10-25)
 
 
