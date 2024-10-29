@@ -131,7 +131,10 @@ module.exports = function (plop: NodePlopAPI) {
                     type: 'confirm',
                     name: 'isInitRemoteRepo',
                     message: '是否初始化远程 Git 仓库？',
-                    default: false,
+                    default(answers: InitAnswers) {
+                        const { isOpenSource } = answers
+                        return isOpenSource
+                    },
                 },
                 {
                     type: 'input',
@@ -214,7 +217,7 @@ module.exports = function (plop: NodePlopAPI) {
                     name: 'isInitJest',
                     message: '是否初始化 jest？',
                     default(answers: InitAnswers) {
-                        return answers.isOpenSource
+                        return answers.isPublishToNpm
                     },
                     when(answers: InitAnswers) {
                         return answers.isOpenSource
@@ -263,7 +266,9 @@ module.exports = function (plop: NodePlopAPI) {
                     type: 'confirm',
                     name: 'isEnableStarHistory',
                     message: '是否启用 Star History ？',
-                    default: false,
+                    default(answers: InitAnswers) {
+                        return answers.isOpenSource
+                    },
                     when(answers: InitAnswers) {
                         return answers.isOpenSource
                     },
@@ -272,7 +277,9 @@ module.exports = function (plop: NodePlopAPI) {
                     type: 'confirm',
                     name: 'isEnableSupport',
                     message: '是否启用赞助支持 ？',
-                    default: false,
+                    default(answers: InitAnswers) {
+                        return answers.isOpenSource
+                    },
                     when(answers: InitAnswers) {
                         return answers.isOpenSource
                     },
