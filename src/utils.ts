@@ -1056,7 +1056,7 @@ async function initGithubWorkflows(projectPath: string, answers: InitAnswers) {
     const loading = ora('正在初始化 Github Workflows ……').start()
     try {
         const { isInitSemanticRelease } = answers
-        const files = ['.github/workflows/test.yml']
+        const files = ['.github/workflows/test.yml', '.github/workflows/todo.yml']
         const dir = path.join(projectPath, '.github/workflows')
         if (!await fs.pathExists(dir)) {
             await fs.mkdirp(dir)
