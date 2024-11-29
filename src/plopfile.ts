@@ -66,7 +66,12 @@ module.exports = function (plop: NodePlopAPI) {
                     },
                     default(answers: InitAnswers) {
                         const templateMeta = getTemplateMeta(answers.template)
-                        return ['nodejs'].includes(templateMeta?.runtime) ? 'cjs' : ''
+                        if (!['nodejs'].includes(templateMeta?.runtime)) {
+                            return ''
+                        }
+                        // 根据 nodejs 版本选择默认值，若大于 18，则默认 esm，否则默认 cjs
+                        const nodeVersion = Number(process.version.split('.')[0].slice(1)) - 4 // 减 4 以兼容低版本
+                        return nodeVersion >= 18 ? 'esm' : 'cjs'
                     },
                     when(answers: InitAnswers) {
                         const templateMeta = getTemplateMeta(answers.template)
@@ -213,11 +218,14 @@ module.exports = function (plop: NodePlopAPI) {
                     },
                 },
                 {
-                    type: 'confirm',
-                    name: 'isInitJest',
-                    message: '是否初始化 jest？',
+                    type: 'list',
+                    name: 'isInitTest',
+                    message: '请选择测试框架',
+                    choices() {
+                        return ['vitest', 'jest', 'none']
+                    },
                     default(answers: InitAnswers) {
-                        return answers.isPublishToNpm
+                        return answers.isPublishToNpm ? 'vitest' : 'none'
                     },
                     when(answers: InitAnswers) {
                         return answers.isOpenSource

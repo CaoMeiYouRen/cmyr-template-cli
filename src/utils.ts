@@ -319,7 +319,7 @@ export async function initProject(answers: InitAnswers) {
 }
 
 async function init(projectPath: string, answers: InitAnswers) {
-    const { template, isOpenSource, isInitReadme, isInitContributing, isInitHusky, isInitSemanticRelease, isInitDocker, isInitJest } = answers
+    const { template, isOpenSource, isInitReadme, isInitContributing, isInitHusky, isInitSemanticRelease, isInitDocker, isInitTest } = answers
     try {
         const templateMeta = getTemplateMeta(template)
         await asyncExec('git --version', {
@@ -370,8 +370,8 @@ async function init(projectPath: string, answers: InitAnswers) {
 
             await initStylelint(projectPath)
 
-            if (isInitJest) {
-                await initJest(projectPath)
+            if (isInitTest) {
+                await initTest(projectPath, answers)
             }
 
             await sortProjectJson(projectPath)
@@ -1401,36 +1401,72 @@ async function initDocker(projectPath: string, answers: InitAnswers) {
     }
 }
 
-async function initJest(projectPath: string) {
-    const loading = ora('正在初始化 Jest ……').start()
+async function initTest(projectPath: string, answers: InitAnswers) {
+    const loading = ora('正在初始化测试 ……').start()
     try {
-        const files = ['jest.config.ts']
-        await copyFilesFromTemplates(projectPath, files)
+        if (answers.isInitTest === 'vitest') {
+            const files = ['vitest.config.ts']
+            await copyFilesFromTemplates(projectPath, files)
 
-        const pkg: IPackage = await getProjectJson(projectPath)
+            const pkg: IPackage = await getProjectJson(projectPath)
+            const devDependencies: Record<string, string> = {
+                vitest: '^2.1.6',
+            }
+            // 检测是否存在 vite，若不存在，则添加
+            if (!pkg?.dependencies?.vite && !pkg?.devDependencies?.vite) {
+                devDependencies.vite = '^6.0.1'
+            }
 
-        const devDependencies = {
-            '@types/jest': '^29.5.12',
-            jest: '^29.7.0',
-            'ts-jest': '^29.1.2',
-            'ts-node': '^10.9.2',
+            const newPkg = merge({}, pkg, {
+                scripts: {
+                    test: 'vitest run',
+                    'test:coverage': 'vitest run --coverage',
+                    ...pkg?.scripts,
+                },
+                devDependencies: {
+                    ...devDependencies,
+                    ...pkg?.devDependencies,
+                },
+            })
+            await saveProjectJson(projectPath, newPkg)
+            loading.succeed('Vitest 初始化成功！')
+            return
         }
-        const newPkg = merge({}, pkg, {
-            scripts: {
-                test: 'jest --config jest.config.ts',
-                'test:coverage': 'jest --config jest.config.ts --coverage',
-                ...pkg?.scripts,
-            },
-            devDependencies: {
-                ...devDependencies,
-                ...pkg?.devDependencies,
-            },
-        })
-        newPkg.jest = undefined
-        await saveProjectJson(projectPath, newPkg)
-        loading.succeed('Jest 初始化成功！')
+        if (answers.isInitTest === 'jest') {
+            const files = ['jest.config.ts']
+            await copyFilesFromTemplates(projectPath, files)
+
+            const pkg: IPackage = await getProjectJson(projectPath)
+
+            const devDependencies = {
+                '@types/jest': '^29.5.12',
+                jest: '^29.7.0',
+                'ts-jest': '^29.1.2',
+                'ts-node': '^10.9.2',
+            }
+            const newPkg = merge({}, pkg, {
+                scripts: {
+                    test: 'jest --config jest.config.ts',
+                    'test:coverage': 'jest --config jest.config.ts --coverage',
+                    ...pkg?.scripts,
+                },
+                devDependencies: {
+                    ...devDependencies,
+                    ...pkg?.devDependencies,
+                },
+            })
+            newPkg.jest = undefined
+            await saveProjectJson(projectPath, newPkg)
+            loading.succeed('Jest 初始化成功！')
+            return
+        }
+        if (answers.isInitTest === 'none') {
+            loading.succeed('未选择测试框架，跳过测试初始化')
+            return
+        }
+        loading.succeed('未选择测试框架，跳过测试初始化')
     } catch (error) {
-        loading.fail('Jest 初始化失败！')
+        loading.fail('测试初始化失败！')
     }
 }
 

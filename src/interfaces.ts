@@ -93,9 +93,9 @@ export interface InitAnswers {
      */
     isInitSemanticRelease: boolean
     /**
-     * 是否初始化 jest
+     * 是否初始化测试
      */
-    isInitJest: boolean
+    isInitTest: string
     /**
      * 是否启用赞助
      */
