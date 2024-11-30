@@ -1,5 +1,12 @@
 # cmyr-template-cli
 
+## [1.32.3](https://github.com/CaoMeiYouRen/cmyr-template-cli/compare/v1.32.2...v1.32.3) (2024-11-30)
+
+
+### 🐛 Bug 修复
+
+* 添加 Docker 配置和 GitHub Actions 工作流；优化 Docker 文件和脚本 ([ad0e081](https://github.com/CaoMeiYouRen/cmyr-template-cli/commit/ad0e081))
+
 ## [1.32.2](https://github.com/CaoMeiYouRen/cmyr-template-cli/compare/v1.32.1...v1.32.2) (2024-10-30)
 
 
