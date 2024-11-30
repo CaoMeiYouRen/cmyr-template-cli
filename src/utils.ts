@@ -1348,7 +1348,7 @@ async function initDocker(projectPath: string, answers: InitAnswers) {
     try {
         const templateMeta = getTemplateMeta(answers.template)
 
-        const files = ['.dockerignore', 'docker-compose.yml']
+        const files = ['.dockerignore', 'docker-compose.yml', '.github/workflows/docker.yml']
         await copyFilesFromTemplates(projectPath, files)
 
         let dockerfile = 'Dockerfile'
@@ -1371,7 +1371,7 @@ async function initDocker(projectPath: string, answers: InitAnswers) {
                 if (! await fs.pathExists(scriptsDir)) {
                     await fs.mkdir(scriptsDir)
                 }
-                await copyFilesFromTemplates(projectPath, ['scripts/minify-docker.js'])
+                await copyFilesFromTemplates(projectPath, ['scripts/minify-docker.cjs'])
             }
 
             const pkg: IPackage = await getProjectJson(projectPath)
