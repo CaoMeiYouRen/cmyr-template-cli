@@ -1,5 +1,12 @@
 # cmyr-template-cli
 
+# [1.33.0](https://github.com/CaoMeiYouRen/cmyr-template-cli/compare/v1.32.3...v1.33.0) (2024-12-06)
+
+
+### ✨ 新功能
+
+* 添加 GitHub 仓库主题更新功能 ([240bfee](https://github.com/CaoMeiYouRen/cmyr-template-cli/commit/240bfee))
+
 ## [1.32.3](https://github.com/CaoMeiYouRen/cmyr-template-cli/compare/v1.32.2...v1.32.3) (2024-11-30)
 
 
