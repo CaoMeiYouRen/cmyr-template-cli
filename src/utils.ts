@@ -8,7 +8,7 @@ import { PACKAGE_MANAGER } from './env'
 import { InitAnswers, IPackage, NodeIndexJson, UnwrapPromise } from './interfaces'
 import colors from 'colors'
 import ejs from 'ejs'
-import { unescape, cloneDeep, mergeWith, merge, uniqBy } from 'lodash'
+import { unescape, cloneDeep, mergeWith, merge, uniqBy, uniq } from 'lodash'
 import { lintMarkdown, LintMdRulesConfig } from '@lint-md/core'
 import JSON5 from 'json5'
 import os from 'os'
@@ -194,6 +194,34 @@ async function createGithubRepo(authToken: string, data: GithubRepo) {
             },
             data,
         })
+    } catch (error) {
+        console.error(error)
+        return null
+    }
+}
+
+type GithubTopics = {
+    owner: string
+    repo: string
+    topics: string[]
+}
+
+async function replaceGithubRepositoryTopics(authToken: string, data: GithubTopics) {
+    try {
+        const { owner, repo, topics } = data
+        const resp = await axios({
+            url: `/repos/${owner}/${repo}/topics`,
+            baseURL: GITHUB_API_URL,
+            method: 'PUT',
+            headers: {
+                Authorization: `Bearer ${authToken}`,
+                Accept: 'application/vnd.github+json',
+            },
+            data: {
+                names: topics,
+            },
+        })
+        return resp.data
     } catch (error) {
         console.error(error)
         return null
@@ -482,7 +510,8 @@ export async function sleep(time: number) {
 async function initRemoteGitRepo(projectPath: string, answers: InitAnswers) {
     const loading = ora('正在初始化远程 Git 仓库……').start()
     try {
-        const { name, description, gitRemoteUrl, isOpenSource, isInitRemoteRepo } = answers
+        const { name, description, gitRemoteUrl, isOpenSource, isInitRemoteRepo, keywords, template } = answers
+        const templateMeta = getTemplateMeta(template)
 
         if (!gitRemoteUrl) {
             loading.fail('未找到远程 Git 仓库地址，请自行初始化！')
@@ -524,6 +553,31 @@ async function initRemoteGitRepo(projectPath: string, answers: InitAnswers) {
                 if (resp?.status >= 200) {
                     loading.succeed('远程 Git 仓库初始化成功！')
                     console.info(colors.green(`远程 Git 仓库地址 ${resp.data?.html_url}`))
+                    const owner = resp.data?.owner?.login
+                    const repo = resp.data?.name
+                    if (owner && repo) {
+                        console.info(colors.green('正在初始化仓库 topics ！'))
+                        if (templateMeta.docker) {
+                            keywords.push('docker')
+                        }
+                        if (templateMeta?.language) {
+                            keywords.push(templateMeta?.language)
+                        }
+                        if (templateMeta?.runtime) {
+                            keywords.push(templateMeta?.runtime)
+                        }
+                        if (templateMeta?.vueVersion === 3) {
+                            keywords.push('vue3')
+                        }
+
+                        await replaceGithubRepositoryTopics(authToken, {
+                            owner,
+                            repo,
+                            topics: uniq(keywords).map((e) => kebabCase(e)),
+                        })
+                        console.info(colors.green('仓库 topics 初始化成功！'))
+
+                    }
                 } else {
                     loading.fail('远程 Git 仓库初始化失败！')
                 }
