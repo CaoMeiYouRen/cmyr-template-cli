@@ -1,5 +1,12 @@
 # cmyr-template-cli
 
+## [1.33.1](https://github.com/CaoMeiYouRen/cmyr-template-cli/compare/v1.33.0...v1.33.1) (2024-12-11)
+
+
+### 🐛 Bug 修复
+
+* 更新构建工具和依赖；移除缓存步骤以优化工作流 ([6d9f358](https://github.com/CaoMeiYouRen/cmyr-template-cli/commit/6d9f358))
+
 # [1.33.0](https://github.com/CaoMeiYouRen/cmyr-template-cli/compare/v1.32.3...v1.33.0) (2024-12-06)
 
 
