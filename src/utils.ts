@@ -24,12 +24,6 @@ const fix = (markdown: string, rules?: LintMdRulesConfig) => lintMarkdown(markdo
 
 axios.defaults.timeout = 10 * 1000
 
-if (!Promise.any) {
-    import('promise.any').then((any) => {
-        Promise.any = any.default
-    })
-}
-
 const GITHUB_API_URL = 'https://api.github.com'
 const GITEE_API_URL = 'https://gitee.com/api/v5'
 
