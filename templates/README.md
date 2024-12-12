@@ -21,10 +21,11 @@
     <img alt="GitHub Workflow Status" src="https://img.shields.io/github/actions/workflow/status/<%= authorGithubUsername %>/<%= projectName %>/release.yml?branch=master">
   </a>
 <% } -%>
-<% if (projectPrerequisites) { -%>
-<% projectPrerequisites.map(({ name, value }) => { -%>
+<% if (isProjectOnNpm) { -%>
+  <img src="https://img.shields.io/node/v/<%= packageName %>" />
+<% } -%>
+<% if (!isProjectOnNpm && projectPrerequisites) { -%>
   <img src="https://img.shields.io/badge/<%= name %>-<%= encodeURIComponent(value) %>-blue.svg" />
-<% }) -%>
 <% } -%>
 <% if (projectDocumentationUrl) { -%>
   <a href="<%= projectDocumentationUrl %>" target="_blank">
