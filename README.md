@@ -3,10 +3,13 @@
   <a href="https://www.npmjs.com/package/cmyr-template-cli" target="_blank">
     <img alt="Version" src="https://img.shields.io/npm/v/cmyr-template-cli.svg">
   </a>
+  <a href="https://www.npmjs.com/package/cmyr-template-cli" target="_blank">
+    <img alt="npm downloads" src="https://img.shields.io/npm/dt/cmyr-template-cli?label=npm%20downloads&color=yellow">
+  </a>
   <a href="https://github.com/CaoMeiYouRen/cmyr-template-cli/actions?query=workflow%3ARelease" target="_blank">
     <img alt="GitHub Workflow Status" src="https://img.shields.io/github/actions/workflow/status/CaoMeiYouRen/cmyr-template-cli/release.yml?branch=master">
   </a>
-  <img src="https://img.shields.io/badge/node-%3E%3D12-blue.svg" />
+  <img src="https://img.shields.io/node/v/cmyr-template-cli.svg" />
   <a href="https://github.com/CaoMeiYouRen/cmyr-template-cli#readme" target="_blank">
     <img alt="Documentation" src="https://img.shields.io/badge/documentation-yes-brightgreen.svg" />
   </a>
