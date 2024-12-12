@@ -1,5 +1,12 @@
 # cmyr-template-cli
 
+## [1.33.2](https://github.com/CaoMeiYouRen/cmyr-template-cli/compare/v1.33.1...v1.33.2) (2024-12-11)
+
+
+### 🐛 Bug 修复
+
+* 移除 `promise.any` 依赖 ([2954508](https://github.com/CaoMeiYouRen/cmyr-template-cli/commit/2954508))
+
 ## [1.33.1](https://github.com/CaoMeiYouRen/cmyr-template-cli/compare/v1.33.0...v1.33.1) (2024-12-11)
 
 
