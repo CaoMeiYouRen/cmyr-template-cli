@@ -6,7 +6,7 @@ import axios from 'axios'
 import { exec, ExecOptions } from 'child_process'
 import { PACKAGE_MANAGER } from './env'
 import { InitAnswers, IPackage, NodeIndexJson, UnwrapPromise } from './interfaces'
-import colors from 'colors'
+import colors from '@colors/colors'
 import ejs from 'ejs'
 import { unescape, cloneDeep, mergeWith, merge, uniqBy, uniq } from 'lodash'
 import { lintMarkdown, LintMdRulesConfig } from '@lint-md/core'
@@ -504,7 +504,7 @@ export async function sleep(time: number) {
 async function initRemoteGitRepo(projectPath: string, answers: InitAnswers) {
     const loading = ora('正在初始化远程 Git 仓库……').start()
     try {
-        const { name, description, gitRemoteUrl, isOpenSource, isInitRemoteRepo, keywords, template } = answers
+        const { name, description, gitRemoteUrl, isOpenSource, isInitRemoteRepo, keywords, template, isPublishToNpm } = answers
         const templateMeta = getTemplateMeta(template)
 
         if (!gitRemoteUrl) {
@@ -551,6 +551,9 @@ async function initRemoteGitRepo(projectPath: string, answers: InitAnswers) {
                     const repo = resp.data?.name
                     if (owner && repo) {
                         console.info(colors.green('正在初始化仓库 topics ！'))
+                        if (isPublishToNpm) {
+                            keywords.push('npm-package')
+                        }
                         if (templateMeta.docker) {
                             keywords.push('docker')
                         }
