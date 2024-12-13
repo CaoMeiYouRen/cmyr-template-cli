@@ -1,5 +1,12 @@
 # cmyr-template-cli
 
+## [1.33.3](https://github.com/CaoMeiYouRen/cmyr-template-cli/compare/v1.33.2...v1.33.3) (2024-12-13)
+
+
+### 🐛 Bug 修复
+
+* **utils:** 更新 initRemoteGitRepo 函数以支持 npm 发布 ([8430463](https://github.com/CaoMeiYouRen/cmyr-template-cli/commit/8430463))
+
 ## [1.33.2](https://github.com/CaoMeiYouRen/cmyr-template-cli/compare/v1.33.1...v1.33.2) (2024-12-11)
 
 
