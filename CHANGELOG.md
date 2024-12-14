@@ -1,5 +1,12 @@
 # cmyr-template-cli
 
+## [1.34.1](https://github.com/CaoMeiYouRen/cmyr-template-cli/compare/v1.34.0...v1.34.1) (2024-12-14)
+
+
+### 🐛 Bug 修复
+
+* 扩展支持的文件扩展名；更新贡献者公约文件 ([e6cec40](https://github.com/CaoMeiYouRen/cmyr-template-cli/commit/e6cec40))
+
 # [1.34.0](https://github.com/CaoMeiYouRen/cmyr-template-cli/compare/v1.33.3...v1.34.0) (2024-12-14)
 
 
