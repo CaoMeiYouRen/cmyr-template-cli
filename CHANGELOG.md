@@ -1,5 +1,12 @@
 # cmyr-template-cli
 
+# [1.34.0](https://github.com/CaoMeiYouRen/cmyr-template-cli/compare/v1.33.3...v1.34.0) (2024-12-14)
+
+
+### ✨ 新功能
+
+* 添加贡献者公约初始化功能；更新配置说明和链接 ([ebc257c](https://github.com/CaoMeiYouRen/cmyr-template-cli/commit/ebc257c))
+
 ## [1.33.3](https://github.com/CaoMeiYouRen/cmyr-template-cli/compare/v1.33.2...v1.33.3) (2024-12-13)
 
 
