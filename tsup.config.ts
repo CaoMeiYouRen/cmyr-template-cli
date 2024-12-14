@@ -30,7 +30,7 @@ const tsupOptions: Options = {
         }
     },
     splitting: false, // 代码拆分
-    sourcemap: true,
+    sourcemap: false,
     clean: false,
     dts: false,
     minify: false, // 缩小输出

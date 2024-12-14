@@ -130,6 +130,7 @@ type TemplateCliConfig = {
     TWITTER_USERNAME: string
     NPM_USERNAME: string
     DOCKER_USERNAME: string
+    CONTACT_EMAIL: string
 }
 
 type GiteeRepo = {
@@ -370,6 +371,7 @@ async function init(projectPath: string, answers: InitAnswers) {
                     }
                     if (isInitContributing) {
                         await initContributing(projectPath, info)
+                        await initCodeOfConduct(projectPath, info)
                     }
                     await initLicense(projectPath, info)
                 }
@@ -900,6 +902,7 @@ async function getProjectInfo(projectPath: string, answers: InitAnswers) {
         const patreonUsername = config?.PATREON_USERNAME
         const npmUsername = config?.NPM_USERNAME || githubUsername
         const dockerUsername = config?.DOCKER_USERNAME || githubUsername?.toLowerCase()
+        const contactEmail = config?.CONTACT_EMAIL || ''
 
         const repositoryUrl = `https://github.com/${githubUsername}/${projectName}`
         const gitUrl = `git+${repositoryUrl}.git`
@@ -971,6 +974,7 @@ async function getProjectInfo(projectPath: string, answers: InitAnswers) {
             templateMeta,
             mainFile,
             isInitDocker,
+            contactEmail,
         }
         loading.succeed('项目信息 初始化成功！')
         return projectInfos
@@ -1043,6 +1047,37 @@ async function initContributing(projectPath: string, projectInfos: ProjectInfo) 
         loading.succeed('贡献指南 初始化成功！')
     } catch (error) {
         loading.fail('贡献指南 初始化失败！')
+        console.error(error)
+    }
+}
+
+/**
+ * 初始化 贡献者公约
+ *
+ * @author CaoMeiYouRen
+ * @date 2024-12-15
+ * @param projectPath
+ * @param projectInfos
+ */
+async function initCodeOfConduct(projectPath: string, projectInfos: ProjectInfo) {
+    const loading = ora('正在初始化 贡献者公约 ……').start()
+    try {
+        const templatePath = path.join(__dirname, '../templates/CODE_OF_CONDUCT.md')
+        const template = (await fs.readFile(templatePath, 'utf8')).toString()
+        const newPath = path.join(projectPath, 'CODE_OF_CONDUCT.md')
+        const content = await ejs.render(
+            template,
+            projectInfos,
+            {
+                debug: false,
+                async: true,
+            },
+        )
+        await removeFiles(projectPath, ['CODE_OF_CONDUCT.md'])
+        await fs.writeFile(newPath, lintMd(unescape(content)))
+        loading.succeed('贡献者公约 初始化成功！')
+    } catch (error) {
+        loading.fail('贡献者公约 初始化失败！')
         console.error(error)
     }
 }

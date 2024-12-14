@@ -72,13 +72,14 @@ ct create
     "WEIBO_USERNAME": "",
     "TWITTER_USERNAME": "",
     "NPM_USERNAME": "",
-    "DOCKER_USERNAME": ""
+    "DOCKER_USERNAME": "",
+    "CONTACT_EMAIL": ""
 }
 ```
 
 GITHUB_TOKEN：可空，默认值为空。请参考： [创建用于命令行的个人访问令牌](https://help.github.com/cn/github/authenticating-to-github/creating-a-personal-access-token-for-the-command-line)
 
-GITEE_TOKEN：可空，默认值为空。请参考：https://gitee.com/profile/personal_access_tokens
+GITEE_TOKEN：可空，默认值为空。请参考：[私人令牌](https://gitee.com/profile/personal_access_tokens)
 
 GITHUB_USERNAME：GitHub 用户名，可空，默认会使用 `git config user.name` 的用户名
 
@@ -95,6 +96,8 @@ TWITTER_USERNAME：Twitter 用户名，可空，默认值为空
 NPM_USERNAME：Npm 用户名，可空，默认会使用 `GITHUB_USERNAME` 的用户名
 
 DOCKER_USERNAME：Docker Hub 用户名，可空，默认会使用**小写的** `GITHUB_USERNAME` 的用户名
+
+CONTACT_EMAIL：联系邮箱，可空，默认值为空
 
 **如果不使用自动初始化远程仓库功能，可以跳过该配置**
 
