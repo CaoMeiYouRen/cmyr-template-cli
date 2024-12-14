@@ -1277,7 +1277,7 @@ async function initEslint(projectPath: string, answers: InitAnswers) {
             eslint: '^8.31.0',
         }
         let eslintType = 'cmyr'
-        const extnames = ['js', 'mjs', 'cjs', 'ts']
+        const extnames = ['js', 'mjs', 'cjs', 'ts', 'cts', 'mts']
 
         if (templateMeta?.language === 'vue') {
             Object.assign(devDependencies, {
