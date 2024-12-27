@@ -40,7 +40,7 @@ const tsupOptions: Options = {
     },
     banner: {
         js: '#!/usr/bin/env node',
-    }
+    },
     // external: [], // 排除的依赖项
     // noExternal: [/(.*)/], // 将依赖打包到一个文件中
     // bundle: true,
