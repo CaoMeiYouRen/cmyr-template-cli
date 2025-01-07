@@ -1,5 +1,12 @@
 # cmyr-template-cli
 
+## [1.34.2](https://github.com/CaoMeiYouRen/cmyr-template-cli/compare/v1.34.1...v1.34.2) (2025-01-07)
+
+
+### 🐛 Bug 修复
+
+* 修复 README 模板中添加项目先决条件的徽章支持 ([101e545](https://github.com/CaoMeiYouRen/cmyr-template-cli/commit/101e545))
+
 ## [1.34.1](https://github.com/CaoMeiYouRen/cmyr-template-cli/compare/v1.34.0...v1.34.1) (2024-12-14)
 
 
