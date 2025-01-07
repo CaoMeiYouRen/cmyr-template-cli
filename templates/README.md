@@ -25,7 +25,9 @@
   <img src="https://img.shields.io/node/v/<%= packageName %>" />
 <% } -%>
 <% if (!isProjectOnNpm && projectPrerequisites) { -%>
+<% projectPrerequisites.map(({ name, value }) => { -%>
   <img src="https://img.shields.io/badge/<%= name %>-<%= encodeURIComponent(value) %>-blue.svg" />
+<% }) -%>
 <% } -%>
 <% if (projectDocumentationUrl) { -%>
   <a href="<%= projectDocumentationUrl %>" target="_blank">
