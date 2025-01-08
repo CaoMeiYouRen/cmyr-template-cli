@@ -32,6 +32,10 @@ export type TemplateMeta = {
      * 优先级
      */
     priority?: number
+    /**
+     * 标签
+     */
+    tags?: string[]
 }
 
 export const TEMPLATES_META_LIST: TemplateMeta[] = [
@@ -187,6 +191,7 @@ export const TEMPLATES_META_LIST: TemplateMeta[] = [
         vueVersion: 0,
         docker: true,
         priority: 0,
+        tags: ['hono', 'vercel', 'cloudflare-workers'],
     },
     // {
     //     name: 'auto-release-template',

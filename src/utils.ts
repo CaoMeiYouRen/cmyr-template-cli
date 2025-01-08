@@ -568,7 +568,9 @@ async function initRemoteGitRepo(projectPath: string, answers: InitAnswers) {
                         if (templateMeta?.vueVersion === 3) {
                             keywords.push('vue3')
                         }
-
+                        if (templateMeta.tags?.length) {
+                            keywords.push(...templateMeta.tags)
+                        }
                         await replaceGithubRepositoryTopics(authToken, {
                             owner,
                             repo,
