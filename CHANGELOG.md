@@ -1,5 +1,17 @@
 # cmyr-template-cli
 
+# [1.35.0](https://github.com/CaoMeiYouRen/cmyr-template-cli/compare/v1.34.2...v1.35.0) (2025-01-08)
+
+
+### ✨ 新功能
+
+* 为模板元数据添加标签支持，更新 Docker 初始化逻辑以处理 hono 模板 ([5ebef21](https://github.com/CaoMeiYouRen/cmyr-template-cli/commit/5ebef21))
+
+
+### 🐛 Bug 修复
+
+* 添加模板元数据中的标签支持 ([55becd6](https://github.com/CaoMeiYouRen/cmyr-template-cli/commit/55becd6))
+
 ## [1.34.2](https://github.com/CaoMeiYouRen/cmyr-template-cli/compare/v1.34.1...v1.34.2) (2025-01-07)
 
 
