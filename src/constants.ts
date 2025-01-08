@@ -110,6 +110,7 @@ export const TEMPLATES_META_LIST: TemplateMeta[] = [
         vueVersion: 2,
         docker: false,
         priority: 0,
+        tags: ['nuxt'],
     },
     {
         name: 'uni-template',
@@ -118,6 +119,7 @@ export const TEMPLATES_META_LIST: TemplateMeta[] = [
         vueVersion: 2,
         docker: false,
         priority: 0,
+        tags: ['uni-app'],
     },
     {
         name: 'uni-vite2-template',
@@ -126,6 +128,7 @@ export const TEMPLATES_META_LIST: TemplateMeta[] = [
         vueVersion: 3,
         docker: false,
         priority: 0,
+        tags: ['uni-app'],
     },
     {
         name: 'react-vite-template',
@@ -183,6 +186,7 @@ export const TEMPLATES_META_LIST: TemplateMeta[] = [
         vueVersion: 0,
         docker: true,
         priority: 0,
+        tags: ['nestjs'],
     },
     {
         name: 'hono-template',
@@ -236,6 +240,7 @@ export const TEMPLATES_META_LIST: TemplateMeta[] = [
         vueVersion: 0,
         docker: false,
         priority: 0,
+        tags: ['github-action'],
     },
     {
         name: 'python-flask-template',
@@ -244,6 +249,7 @@ export const TEMPLATES_META_LIST: TemplateMeta[] = [
         vueVersion: 0,
         docker: true,
         priority: 0,
+        tags: ['flask'],
     },
     {
         name: 'go-gin-template',
@@ -252,6 +258,7 @@ export const TEMPLATES_META_LIST: TemplateMeta[] = [
         vueVersion: 0,
         docker: true,
         priority: 0,
+        tags: ['gin'],
     },
     {
         name: 'spring-boot-template',
@@ -261,6 +268,7 @@ export const TEMPLATES_META_LIST: TemplateMeta[] = [
         javaVersion: 8,
         docker: true,
         priority: 0,
+        tags: ['spring-boot'],
     },
     {
         name: 'spring-boot-v3-template',
@@ -270,5 +278,6 @@ export const TEMPLATES_META_LIST: TemplateMeta[] = [
         javaVersion: 17,
         docker: true,
         priority: 0,
+        tags: ['spring-boot'],
     },
 ]

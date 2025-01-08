@@ -108,7 +108,10 @@ module.exports = function (plop: NodePlopAPI) {
                     type: 'confirm',
                     name: 'isInitDocker',
                     message: '是否初始化 Docker？',
-                    default: false,
+                    default(answers: InitAnswers) {
+                        const templateMeta = getTemplateMeta(answers.template)
+                        return templateMeta?.docker
+                    },
                     when(answers: InitAnswers) {
                         const templateMeta = getTemplateMeta(answers.template)
                         return templateMeta?.docker

@@ -1434,6 +1434,27 @@ async function initCommitizen(projectPath: string) {
 async function initDocker(projectPath: string, answers: InitAnswers) {
     const loading = ora('正在初始化 Docker ……').start()
     try {
+        const { name } = answers
+        // hono 的逻辑需要单独处理
+        if (answers.template === 'hono-template') {
+            const dockerComposePath = path.join(projectPath, 'docker-compose.yml')
+            if (await fs.pathExists(dockerComposePath)) {
+                // 替换 hono-template 为项目名称
+                let dockerCompose = await fs.readFile(dockerComposePath, 'utf-8')
+                dockerCompose = dockerCompose.replaceAll('hono-template', name)
+                await fs.writeFile(dockerComposePath, dockerCompose)
+            }
+            const wranglerPath = path.join(projectPath, 'wrangler.toml')
+            if (await fs.pathExists(wranglerPath)) {
+                // 替换 hono-template 为项目名称
+                let wrangler = await fs.readFile(wranglerPath, 'utf-8')
+                wrangler = wrangler.replaceAll('hono-template', name)
+                await fs.writeFile(wranglerPath, wrangler)
+            }
+            loading.succeed('Docker 初始化成功！')
+            return
+        }
+
         const templateMeta = getTemplateMeta(answers.template)
 
         const files = ['.dockerignore', 'docker-compose.yml', '.github/workflows/docker.yml']
