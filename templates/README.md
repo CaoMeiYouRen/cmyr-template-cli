@@ -158,13 +158,13 @@
 
 <% if (afdianUsername) { -%>
 <a href="https://afdian.com/@<%= afdianUsername %>">
-  <img src="https://cdn.jsdelivr.net/gh/CaoMeiYouRen/image-hosting-01@master/images/202306192324870.png" width="312px" height="78px" alt="在爱发电支持我">
+  <img src="https://oss.cmyr.dev/images/202306192324870.png" width="312px" height="78px" alt="在爱发电支持我">
 </a>
 <% } -%>
 
 <% if (patreonUsername) { -%>
 <a href="https://patreon.com/<%= patreonUsername %>">
-    <img src="https://cdn.jsdelivr.net/gh/CaoMeiYouRen/image-hosting-01@master/images/202306142054108.svg" width="312px" height="78px" alt="become a patreon"/>
+    <img src="https://oss.cmyr.dev/images/202306142054108.svg" width="312px" height="78px" alt="become a patreon"/>
 </a>
 <% } -%>
 <% } -%>
