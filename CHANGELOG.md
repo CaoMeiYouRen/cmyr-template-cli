@@ -1,5 +1,12 @@
 # cmyr-template-cli
 
+## [1.35.1](https://github.com/CaoMeiYouRen/cmyr-template-cli/compare/v1.35.0...v1.35.1) (2025-01-10)
+
+
+### 🐛 Bug 修复
+
+* 更新 README 模板中的图像链接以使用新的 OSS 地址 ([4b541d0](https://github.com/CaoMeiYouRen/cmyr-template-cli/commit/4b541d0))
+
 # [1.35.0](https://github.com/CaoMeiYouRen/cmyr-template-cli/compare/v1.34.2...v1.35.0) (2025-01-08)
 
 
