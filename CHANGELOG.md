@@ -1,5 +1,12 @@
 # cmyr-template-cli
 
+## [1.35.2](https://github.com/CaoMeiYouRen/cmyr-template-cli/compare/v1.35.1...v1.35.2) (2025-01-14)
+
+
+### 🐛 Bug 修复
+
+* 删除不再使用的 release 和 commitlint 配置文件 ([173533a](https://github.com/CaoMeiYouRen/cmyr-template-cli/commit/173533a))
+
 ## [1.35.1](https://github.com/CaoMeiYouRen/cmyr-template-cli/compare/v1.35.0...v1.35.1) (2025-01-10)
 
 
