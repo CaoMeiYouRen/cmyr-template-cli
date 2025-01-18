@@ -5,14 +5,13 @@ import download from 'download-git-repo'
 import axios from 'axios'
 import { exec, ExecOptions } from 'child_process'
 import { PACKAGE_MANAGER } from '../config/env'
-import { InitAnswers, IPackage, NodeIndexJson, UnwrapPromise } from '../types/interfaces'
+import { GiteeRepo, GithubRepo, GithubTopics, InitAnswers, IPackage, NodeIndexJson, TemplateCliConfig, UnwrapPromise } from '@/types/interfaces'
 import colors from '@colors/colors'
 import ejs from 'ejs'
 import { unescape, cloneDeep, mergeWith, merge, uniqBy, uniq } from 'lodash'
 import { lintMarkdown, LintMdRulesConfig } from '@lint-md/core'
 import JSON5 from 'json5'
 import os from 'os'
-import { TEMPLATES_META_LIST } from '../core/constants'
 import yaml from 'yaml'
 import acorn from 'acorn'
 import walk from 'acorn-walk'
@@ -27,26 +26,7 @@ const fix = (markdown: string, rules?: LintMdRulesConfig) => lintMarkdown(markdo
 
 axios.defaults.timeout = 10 * 1000
 
-type TemplateCliConfig = {
-    GITHUB_TOKEN: string
-    GITEE_TOKEN: string
-    GITHUB_USERNAME: string
-    GITEE_USERNAME: string
-    AFDIAN_USERNAME: string
-    PATREON_USERNAME: string
-    WEIBO_USERNAME: string
-    TWITTER_USERNAME: string
-    NPM_USERNAME: string
-    DOCKER_USERNAME: string
-    CONTACT_EMAIL: string
-}
 
-type GiteeRepo = {
-    access_token: string
-    name: string
-    description: string
-    private: boolean
-}
 /**
  * 创建 Gitee 项目
  *
@@ -72,11 +52,7 @@ async function createGiteeRepo(data: GiteeRepo) {
     }
 }
 
-type GithubRepo = {
-    name: string
-    description: string
-    private: boolean
-}
+
 
 /**
  * 创建 Github 项目
@@ -103,11 +79,7 @@ async function createGithubRepo(authToken: string, data: GithubRepo) {
     }
 }
 
-type GithubTopics = {
-    owner: string
-    repo: string
-    topics: string[]
-}
+
 
 async function replaceGithubRepositoryTopics(authToken: string, data: GithubTopics) {
     try {

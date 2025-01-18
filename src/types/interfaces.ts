@@ -185,3 +185,36 @@ export type TemplateMeta = {
      */
     tags?: string[]
 }
+
+export type TemplateCliConfig = {
+    GITHUB_TOKEN: string
+    GITEE_TOKEN: string
+    GITHUB_USERNAME: string
+    GITEE_USERNAME: string
+    AFDIAN_USERNAME: string
+    PATREON_USERNAME: string
+    WEIBO_USERNAME: string
+    TWITTER_USERNAME: string
+    NPM_USERNAME: string
+    DOCKER_USERNAME: string
+    CONTACT_EMAIL: string
+}
+
+export type GiteeRepo = {
+    access_token: string
+    name: string
+    description: string
+    private: boolean
+}
+
+export type GithubRepo = {
+    name: string
+    description: string
+    private: boolean
+}
+
+export type GithubTopics = {
+    owner: string
+    repo: string
+    topics: string[]
+}
