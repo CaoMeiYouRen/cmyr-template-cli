@@ -18,6 +18,7 @@ import acorn from 'acorn'
 import walk from 'acorn-walk'
 import { GITEE_API_URL, GITHUB_API_URL, REMOTES, NODE_INDEX_URL, NODEJS_URLS } from './constants'
 import { COMMON_DEPENDENCIES, NODE_DEPENDENCIES } from './dependencies'
+import { getTemplateMeta } from './template'
 
 // 获取返回值类型并去除Promise的包裹
 type ProjectInfo = UnwrapPromise<ReturnType<typeof getProjectInfo>>
@@ -399,11 +400,6 @@ async function init(projectPath: string, answers: InitAnswers) {
     } catch (error) {
         console.error(colors.red(error))
     }
-}
-
-export async function getGitUserName() {
-    const username = (await asyncExec('git config user.name')) as string || ''
-    return username?.trim()
 }
 
 export async function sleep(time: number) {
@@ -1772,10 +1768,6 @@ async function removeFiles(projectPath: string, files: string[]) {
 
 export function kebabCase(str: string) {
     return str.replace(/([a-z])([A-Z])/g, '$1-$2').replace(/_+/g, '-').replace(/\s+/g, '-').toLowerCase()
-}
-
-export function getTemplateMeta(template: string) {
-    return TEMPLATES_META_LIST.find((e) => e.name === template)
 }
 
 /**

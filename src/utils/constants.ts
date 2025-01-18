@@ -1,5 +1,3 @@
-import { TEMPLATES_META_LIST } from '../core/constants'
-
 export const GITHUB_API_URL = 'https://api.github.com'
 export const GITEE_API_URL = 'https://gitee.com/api/v5'
 
@@ -24,7 +22,3 @@ export const REMOTES = [
     'https://github.moeyy.xyz/https://github.com',
     'https://hub.njuu.cf',
 ]
-
-export function getTemplateMeta(template: string) {
-    return TEMPLATES_META_LIST.find((e) => e.name === template)
-}
