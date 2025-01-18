@@ -2,10 +2,9 @@ import fs from 'fs-extra'
 import path from 'path'
 import ora from 'ora'
 import download from 'download-git-repo'
-import axios from 'axios'
 import { exec, ExecOptions } from 'child_process'
 import { PACKAGE_MANAGER } from '../config/env'
-import { GiteeRepo, GithubRepo, GithubTopics, InitAnswers, IPackage, NodeIndexJson, TemplateCliConfig, UnwrapPromise } from '@/types/interfaces'
+import { InitAnswers, IPackage, TemplateCliConfig, UnwrapPromise } from '@/types/interfaces'
 import colors from '@colors/colors'
 import ejs from 'ejs'
 import { unescape, cloneDeep, mergeWith, merge, uniqBy, uniq } from 'lodash'
@@ -14,89 +13,17 @@ import os from 'os'
 import yaml from 'yaml'
 import acorn from 'acorn'
 import walk from 'acorn-walk'
-import { GITEE_API_URL, GITHUB_API_URL, REMOTES, NODE_INDEX_URL, NODEJS_URLS } from './constants'
+import { REMOTES, NODE_INDEX_URL, NODEJS_URLS } from './constants'
 import { COMMON_DEPENDENCIES, NODE_DEPENDENCIES } from './dependencies'
 import { getTemplateMeta } from './template'
 import { kebabCase, lintMd } from './string'
 import { ejsRender } from './ejs'
 import { copyFilesFromTemplates, removeFiles } from './files'
+import { createGithubRepo, replaceGithubRepositoryTopics, createGiteeRepo, getAuthorWebsiteFromGithubAPI, getLtsNodeVersionByHtml, getLtsNodeVersionByIndexJson, getFastUrl } from './api'
 
 // 获取返回值类型并去除Promise的包裹
 type ProjectInfo = UnwrapPromise<ReturnType<typeof getProjectInfo>>
 
-axios.defaults.timeout = 10 * 1000
-
-/**
- * 创建 Gitee 项目
- *
- * @author CaoMeiYouRen
- * @date 2022-09-14
- * @param data
- */
-async function createGiteeRepo(data: GiteeRepo) {
-    try {
-        const formData = new URLSearchParams()
-        Object.entries(data).forEach(([key, value]) => {
-            formData.append(key, String(value))
-        })
-        return await axios({
-            url: '/user/repos',
-            baseURL: GITEE_API_URL,
-            method: 'POST',
-            data: formData.toString(),
-        })
-    } catch (error) {
-        console.error(error)
-        return null
-    }
-}
-
-/**
- * 创建 Github 项目
- *
- * @author CaoMeiYouRen
- * @date 2022-09-15
- * @param data
- */
-async function createGithubRepo(authToken: string, data: GithubRepo) {
-    try {
-        return await axios({
-            url: '/user/repos',
-            baseURL: GITHUB_API_URL,
-            method: 'POST',
-            headers: {
-                Authorization: `Bearer ${authToken}`,
-                Accept: 'application/vnd.github+json',
-            },
-            data,
-        })
-    } catch (error) {
-        console.error(error)
-        return null
-    }
-}
-
-async function replaceGithubRepositoryTopics(authToken: string, data: GithubTopics) {
-    try {
-        const { owner, repo, topics } = data
-        const resp = await axios({
-            url: `/repos/${owner}/${repo}/topics`,
-            baseURL: GITHUB_API_URL,
-            method: 'PUT',
-            headers: {
-                Authorization: `Bearer ${authToken}`,
-                Accept: 'application/vnd.github+json',
-            },
-            data: {
-                names: topics,
-            },
-        })
-        return resp.data
-    } catch (error) {
-        console.error(error)
-        return null
-    }
-}
 
 /**
  * 载入配置，优先寻找当前目录下的 .ctrc 文件，其次寻找 HOME 路径下的 .ctrc。
@@ -1564,29 +1491,6 @@ async function sortProjectJson(projectPath: string) {
     }
 }
 
-/**
-         * 根据 github name 获取作者网站
-         */
-async function getAuthorWebsiteFromGithubAPI(githubUsername: string): Promise<string> {
-    try {
-        const userData = (await axios.get(`${GITHUB_API_URL}/users/${githubUsername}`)).data
-        const authorWebsite = userData?.blog
-        return authorWebsite || ''
-    } catch (error) {
-        console.error(error)
-        return ''
-    }
-}
-
-async function getLtsNodeVersionByIndexJson() {
-    const resp = await axios.get<NodeIndexJson>(NODE_INDEX_URL)
-    return resp.data?.find((e) => e.lts)?.version?.replace('v', '')
-}
-
-async function getLtsNodeVersionByHtml(url: string) {
-    const html = (await axios.get(url)).data as string
-    return html.match(/<strong>(.*)<\/strong>/)?.[1]?.trim()
-}
 
 /**
  * 获取 Node.js lts 版本号。取第一位，例如 '16.13.1' 取 '16'
@@ -1612,24 +1516,6 @@ async function getLtsNodeVersion(): Promise<string> {
     }
 }
 
-/**
- * 获取响应速度最快的 URL
- *
- * @author CaoMeiYouRen
- * @date 2022-11-10
- * @param urls
- */
-async function getFastUrl(urls: string[]) {
-    const fast = await Promise.any(urls.map((url) => axios({
-        url,
-        method: 'HEAD',
-        timeout: 15 * 1000,
-        headers: {
-            'Accept-Encoding': '',
-        },
-    })))
-    return fast?.config?.url
-}
 
 async function getNpmPackageVersion(name: string) {
     const version = (await asyncExec(`${PACKAGE_MANAGER} view ${name} version`)) as string || ''
