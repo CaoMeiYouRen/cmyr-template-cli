@@ -1,5 +1,22 @@
 # cmyr-template-cli
 
+# [1.36.0](https://github.com/CaoMeiYouRen/cmyr-template-cli/compare/v1.35.2...v1.36.0) (2025-01-18)
+
+
+### ♻ 代码重构
+
+* 将 API 相关功能提取到新文件 api.ts，优化代码结构 ([6ff6ff4](https://github.com/CaoMeiYouRen/cmyr-template-cli/commit/6ff6ff4))
+* 将 TemplateCliConfig、GiteeRepo、GithubRepo 和 GithubTopics 类型移至 interfaces.ts，优化代码结构 ([0d9c3f3](https://github.com/CaoMeiYouRen/cmyr-template-cli/commit/0d9c3f3))
+* 添加常量和依赖项管理，重构 utils 模块 ([da80520](https://github.com/CaoMeiYouRen/cmyr-template-cli/commit/da80520))
+* 重构 utils 模块，拆分功能到新文件并优化依赖管理 ([b225fd9](https://github.com/CaoMeiYouRen/cmyr-template-cli/commit/b225fd9))
+* 重构 utils 模块，拆分功能到新文件并优化导入 ([c54a9ed](https://github.com/CaoMeiYouRen/cmyr-template-cli/commit/c54a9ed))
+* 重构文件结构，移动常量和接口定义到新的目录 ([43977fc](https://github.com/CaoMeiYouRen/cmyr-template-cli/commit/43977fc))
+
+
+### ✨ 新功能
+
+* 更新 README，添加 Docker 密码和 NPM 令牌配置；在接口中新增相关类型；重构 API 模块以支持创建和更新仓库密钥 ([6a2be63](https://github.com/CaoMeiYouRen/cmyr-template-cli/commit/6a2be63))
+
 ## [1.35.2](https://github.com/CaoMeiYouRen/cmyr-template-cli/compare/v1.35.1...v1.35.2) (2025-01-14)
 
 
