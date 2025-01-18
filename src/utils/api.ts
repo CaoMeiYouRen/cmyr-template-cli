@@ -1,5 +1,6 @@
 import axios from 'axios'
-import { GiteeRepo, GithubRepo, GithubTopics, NodeIndexJson } from '@/types/interfaces'
+import sodium from 'libsodium-wrappers'
+import { CreateOrUpdateARepositorySecretRequest, GetARepositoryPublicKeyRequest, GiteeRepo, GithubRepo, GithubTopics, NodeIndexJson } from '@/types/interfaces'
 import { GITEE_API_URL, GITHUB_API_URL, NODE_INDEX_URL } from './constants'
 
 axios.defaults.timeout = 15 * 1000
@@ -122,7 +123,6 @@ export async function getLtsNodeVersionByHtml(url: string) {
     return html.match(/<strong>(.*)<\/strong>/)?.[1]?.trim()
 }
 
-
 /**
  * 获取响应速度最快的 URL
  *
@@ -140,4 +140,60 @@ export async function getFastUrl(urls: string[]) {
         },
     })))
     return fast?.config?.url
+}
+
+/**
+ * 获取 存储库 公共密钥
+ *
+ * @author CaoMeiYouRen
+ * @date 2023-01-05
+ * @param data
+ */
+export async function getARepositoryPublicKey(token: string, data: GetARepositoryPublicKeyRequest) {
+    const response = await axios.get(`https://api.github.com/repos/${data.owner}/${data.repo}/actions/secrets/public-key`, {
+        headers: {
+            Authorization: `token ${token}`,
+            'Content-Type': 'application/json',
+        },
+    })
+    return response.data
+}
+
+/**
+ * 创建或更新 Repository Secret
+ *
+ * @author CaoMeiYouRen
+ * @date 2023-01-05
+ * @param data
+ */
+export async function createOrUpdateARepositorySecret(token: string, data: CreateOrUpdateARepositorySecretRequest) {
+    const { secret_value, secret_name, owner, repo, ...other } = data
+    // Convert Secret & Base64 key to Uint8Array.
+    const { key, key_id } = await getARepositoryPublicKey(token, { owner, repo })
+
+    const binkey = sodium.from_base64(key, sodium.base64_variants.ORIGINAL) // sodium.from_base64(privateKey, sodium.base64_variants.ORIGINAL)
+    const binsec = sodium.from_string(secret_value)
+
+    // Encrypt the secret using LibSodium
+    const encBytes = sodium.crypto_box_seal(binsec, binkey)
+
+    // Convert encrypted Uint8Array to Base64
+    const encrypted_value = sodium.to_base64(encBytes, sodium.base64_variants.ORIGINAL)
+
+    const newData = {
+        ...other,
+        owner,
+        repo,
+        encrypted_value,
+        key_id,
+    }
+    // logger.info('newData', newData)
+
+    const response = await axios.put(`https://api.github.com/repos/${owner}/${repo}/actions/secrets/${secret_name}`, newData, {
+        headers: {
+            Authorization: `token ${token}`,
+            'Content-Type': 'application/json',
+        },
+    })
+    return response.data
 }

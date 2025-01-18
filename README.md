@@ -73,7 +73,9 @@ ct create
     "TWITTER_USERNAME": "",
     "NPM_USERNAME": "",
     "DOCKER_USERNAME": "",
-    "CONTACT_EMAIL": ""
+    "DOCKER_PASSWORD": "",
+    "CONTACT_EMAIL": "",
+    "NPM_TOKEN": ""
 }
 ```
 
@@ -97,7 +99,11 @@ NPM_USERNAME：Npm 用户名，可空，默认会使用 `GITHUB_USERNAME` 的用
 
 DOCKER_USERNAME：Docker Hub 用户名，可空，默认会使用**小写的** `GITHUB_USERNAME` 的用户名
 
+DOCKER_PASSWORD：Docker Hub 密码，可空，默认值为空。如果填写，会自动初始化对应的仓库 action secret
+
 CONTACT_EMAIL：联系邮箱，可空，默认值为空
+
+NPM_TOKEN：Npm 令牌，可空，默认值为空。如果填写，会自动初始化对应的仓库 action secret
 
 **如果不使用自动初始化远程仓库功能，可以跳过该配置**
 

@@ -197,7 +197,9 @@ export type TemplateCliConfig = {
     TWITTER_USERNAME: string
     NPM_USERNAME: string
     DOCKER_USERNAME: string
+    DOCKER_PASSWORD: string
     CONTACT_EMAIL: string
+    NPM_TOKEN: string
 }
 
 export type GiteeRepo = {
@@ -217,4 +219,16 @@ export type GithubTopics = {
     owner: string
     repo: string
     topics: string[]
+}
+
+export type GetARepositoryPublicKeyRequest = {
+    owner: string
+    repo: string
+}
+
+export type CreateOrUpdateARepositorySecretRequest = {
+    owner: string
+    repo: string
+    secret_name: string
+    secret_value: string
 }

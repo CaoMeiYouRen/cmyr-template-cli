@@ -19,11 +19,10 @@ import { getTemplateMeta } from './template'
 import { kebabCase, lintMd } from './string'
 import { ejsRender } from './ejs'
 import { copyFilesFromTemplates, removeFiles } from './files'
-import { createGithubRepo, replaceGithubRepositoryTopics, createGiteeRepo, getAuthorWebsiteFromGithubAPI, getLtsNodeVersionByHtml, getLtsNodeVersionByIndexJson, getFastUrl } from './api'
+import { createGithubRepo, replaceGithubRepositoryTopics, createGiteeRepo, getAuthorWebsiteFromGithubAPI, getLtsNodeVersionByHtml, getLtsNodeVersionByIndexJson, getFastUrl, createOrUpdateARepositorySecret } from './api'
 
 // 获取返回值类型并去除Promise的包裹
 type ProjectInfo = UnwrapPromise<ReturnType<typeof getProjectInfo>>
-
 
 /**
  * 载入配置，优先寻找当前目录下的 .ctrc 文件，其次寻找 HOME 路径下的 .ctrc。
@@ -375,9 +374,35 @@ async function initRemoteGitRepo(projectPath: string, answers: InitAnswers) {
                         })
                         console.info(colors.green('仓库 topics 初始化成功！'))
 
+                        console.info(colors.green('正在初始化仓库 action secret ！'))
+                        const { DOCKER_USERNAME, DOCKER_PASSWORD, NPM_TOKEN } = config
+                        if (isPublishToNpm && NPM_TOKEN) {
+                            await createOrUpdateARepositorySecret(authToken, {
+                                owner,
+                                repo,
+                                secret_name: 'NPM_TOKEN',
+                                secret_value: NPM_TOKEN,
+                            })
+                        }
+                        if (templateMeta.docker && DOCKER_USERNAME && DOCKER_PASSWORD) {
+                            await createOrUpdateARepositorySecret(authToken, {
+                                owner,
+                                repo,
+                                secret_name: 'DOCKER_USERNAME',
+                                secret_value: DOCKER_USERNAME,
+                            })
+                            await createOrUpdateARepositorySecret(authToken, {
+                                owner,
+                                repo,
+                                secret_name: 'DOCKER_PASSWORD',
+                                secret_value: DOCKER_PASSWORD,
+                            })
+                        }
+                        console.info(colors.green('仓库 action secret 初始化成功！'))
+                        return
                     }
-                } else {
                     loading.fail('远程 Git 仓库初始化失败！')
+                    return
                 }
                 return
             }
@@ -656,6 +681,7 @@ async function initProjectJson(projectPath: string, projectInfos: ProjectInfo) {
                 break
         }
         const newPkg = merge({}, pkg, pkgData, extData)
+        newPkg.keywords = uniq(keywords)
         await saveProjectJson(projectPath, newPkg)
 
         loading.succeed('package.json 初始化成功！')
@@ -693,6 +719,8 @@ async function getProjectInfo(projectPath: string, answers: InitAnswers) {
         const commitCommand = pkg?.scripts?.commit && `${packageManager} run commit`
         const mainFile = pkg?.main
 
+        answers.config = config
+
         const githubUsername = config?.GITHUB_USERNAME || author
         const giteeUsername = config?.GITEE_USERNAME
         const weiboUsername = config?.WEIBO_USERNAME
@@ -701,7 +729,9 @@ async function getProjectInfo(projectPath: string, answers: InitAnswers) {
         const patreonUsername = config?.PATREON_USERNAME
         const npmUsername = config?.NPM_USERNAME || githubUsername
         const dockerUsername = config?.DOCKER_USERNAME || githubUsername?.toLowerCase()
+        const dockerPassword = config?.DOCKER_PASSWORD || ''
         const contactEmail = config?.CONTACT_EMAIL || ''
+        const npmToken = config?.NPM_TOKEN || ''
 
         const repositoryUrl = `https://github.com/${githubUsername}/${projectName}`
         const gitUrl = `git+${repositoryUrl}.git`
@@ -770,10 +800,12 @@ async function getProjectInfo(projectPath: string, answers: InitAnswers) {
             twitterUsername,
             npmUsername,
             dockerUsername,
+            dockerPassword,
             templateMeta,
             mainFile,
             isInitDocker,
             contactEmail,
+            npmToken,
         }
         loading.succeed('项目信息 初始化成功！')
         return projectInfos
@@ -1491,7 +1523,6 @@ async function sortProjectJson(projectPath: string) {
     }
 }
 
-
 /**
  * 获取 Node.js lts 版本号。取第一位，例如 '16.13.1' 取 '16'
  */
@@ -1515,7 +1546,6 @@ async function getLtsNodeVersion(): Promise<string> {
         return ''
     }
 }
-
 
 async function getNpmPackageVersion(name: string) {
     const version = (await asyncExec(`${PACKAGE_MANAGER} view ${name} version`)) as string || ''
