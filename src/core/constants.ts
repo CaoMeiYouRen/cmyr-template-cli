@@ -1,42 +1,4 @@
-export type TemplateMeta = {
-    /**
-     * 模板名称
-     */
-    name: string
-    /**
-    * 主要开发语言
-    */
-    language: 'javascript' | 'typescript' | 'react' | 'vue' | 'java' | 'golang' | 'python'
-    /**
-     * 运行时
-     */
-    runtime: 'nodejs' | 'browser' | 'java' | 'golang' | 'python'
-    /**
-     * Vue 版本，非 Vue 项目为0
-     */
-    vueVersion?: 0 | 2 | 3
-
-    /**
-     * Java 版本，非 Java 项目为0
-     */
-    javaVersion?: 0 | 8 | 17
-    /**
-     * 是否支持使用 Docker
-     */
-    docker?: boolean
-    /**
-     * 是否支持发布到 npm
-     */
-    npm?: boolean
-    /**
-     * 优先级
-     */
-    priority?: number
-    /**
-     * 标签
-     */
-    tags?: string[]
-}
+import { TemplateMeta } from '@/types/interfaces'
 
 export const TEMPLATES_META_LIST: TemplateMeta[] = [
     {

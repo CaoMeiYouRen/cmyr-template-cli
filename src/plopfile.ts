@@ -1,9 +1,9 @@
 import { NodePlopAPI, ActionType } from 'plop'
 import { QuestionCollection } from 'inquirer'
-import { __DEV__ } from './env'
-import { InitAnswers } from './interfaces'
-import { COMMON_DEPENDENCIES, getGitUserName, initProject, VUE2_DEPENDENCIES, VUE3_DEPENDENCIES, kebabCase, loadTemplateCliConfig, WEB_DEPENDENCIES, NODE_DEPENDENCIES, getTemplateMeta, lintMd } from './utils'
-import { TEMPLATES_META_LIST } from './constants'
+import { __DEV__ } from './config/env'
+import { InitAnswers } from './types/interfaces'
+import { COMMON_DEPENDENCIES, getGitUserName, initProject, VUE2_DEPENDENCIES, VUE3_DEPENDENCIES, kebabCase, loadTemplateCliConfig, WEB_DEPENDENCIES, NODE_DEPENDENCIES, getTemplateMeta, lintMd } from './utils/utils'
+import { TEMPLATES_META_LIST } from './core/constants'
 import fs from 'fs-extra'
 import path from 'path'
 
