@@ -16,6 +16,8 @@ import { TEMPLATES_META_LIST } from '../core/constants'
 import yaml from 'yaml'
 import acorn from 'acorn'
 import walk from 'acorn-walk'
+import { GITEE_API_URL, GITHUB_API_URL, REMOTES, NODE_INDEX_URL, NODEJS_URLS } from './constants'
+import { COMMON_DEPENDENCIES, NODE_DEPENDENCIES } from './dependencies'
 
 // 获取返回值类型并去除Promise的包裹
 type ProjectInfo = UnwrapPromise<ReturnType<typeof getProjectInfo>>
@@ -23,101 +25,6 @@ type ProjectInfo = UnwrapPromise<ReturnType<typeof getProjectInfo>>
 const fix = (markdown: string, rules?: LintMdRulesConfig) => lintMarkdown(markdown, rules, true)?.fixedResult?.result
 
 axios.defaults.timeout = 10 * 1000
-
-const GITHUB_API_URL = 'https://api.github.com'
-const GITEE_API_URL = 'https://gitee.com/api/v5'
-
-const NODEJS_URLS = [
-    'https://nodejs.org/zh-cn/download/',
-    // 'http://nodejs.cn/download/',
-]
-
-const NODE_INDEX_URL = 'https://cdn.npmmirror.com/binaries/node/index.json'
-
-const REMOTES = [
-    'https://github.com',
-    'https://hub.fastgit.xyz',
-    'https://download.fastgit.org',
-    'https://ghproxy.com/https://github.com',
-    'https://gh.ddlc.top/https://github.com',
-    'https://gh.flyinbug.top/gh/https://github.com',
-    'https://gh.con.sh/https://github.com',
-    'https://cors.isteed.cc/github.com',
-    'https://ghps.cc/https://github.com',
-    'https://download.nuaa.cf',
-    'https://kgithub.com',
-    'https://github.moeyy.xyz/https://github.com',
-    'https://hub.njuu.cf',
-]
-
-// 常见依赖 map
-export const COMMON_DEPENDENCIES = {
-    devDependencies: {
-        '@types/fs-extra': '^9.0.4',
-        '@types/lodash': '^4.14.165',
-        '@types/lodash-es': '^4.17.4',
-        '@types/md5': '^2.3.1',
-    },
-    dependencies: {
-        'await-to-js': '^3.0.0',
-        axios: '^1.0.0',
-        'cmyr-error-collection': '^1.5.0',
-        'cmyr-sign': '^1.1.0',
-        dayjs: '^1.9.6',
-        'fs-extra': '^10.0.0',
-        'isomorphic-unfetch': '^3.1.0',
-        lodash: '^4.17.20',
-        'lodash-es': '^4.17.21',
-        'p-limit': '^6.1.0',
-        'p-queue': '^8.0.1',
-        'push-all-in-one': '^2.2.0',
-        'leancloud-storage': '^4.15.0',
-        yaml: '^2.3.3',
-    },
-}
-
-export const NODE_DEPENDENCIES = {
-    devDependencies: {
-        tsx: '^4.15.7',
-    },
-    dependencies: {
-        cron: '^3.1.7',
-        dotenv: '^16.3.1',
-        log4js: '^6.9.1',
-        md5: '^2.3.0',
-        rimraf: '^5.0.0',
-        'rss-parser': '^3.12.0',
-        zx: '^8.1.0',
-    },
-}
-
-export const VUE2_DEPENDENCIES = {
-    devDependencies: {},
-    dependencies: {
-        '@smallwei/avue': '2.9.4',
-        '@vueuse/core': '^10.4.1',
-        'element-ui': '^2.15.7',
-        vuetify: '^2.6.3',
-    },
-}
-
-export const VUE3_DEPENDENCIES = {
-    devDependencies: {},
-    dependencies: {
-        '@smallwei/avue': '^3.2.20',
-        '@vueuse/core': '^10.4.1',
-        'element-plus': '^2.3.14',
-        vuetify: '^3.3.14',
-    },
-}
-
-export const WEB_DEPENDENCIES = {
-    devDependencies: {},
-    dependencies: {
-        'animate.css': '^4.1.1',
-        'normalize.css': '^8.0.1',
-    },
-}
 
 type TemplateCliConfig = {
     GITHUB_TOKEN: string
