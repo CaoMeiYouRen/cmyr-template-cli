@@ -2,13 +2,14 @@ import { NodePlopAPI, ActionType } from 'plop'
 import { QuestionCollection } from 'inquirer'
 import { __DEV__ } from './config/env'
 import { InitAnswers } from './types/interfaces'
-import { initProject, kebabCase, loadTemplateCliConfig, lintMd } from './utils/utils'
+import { initProject, loadTemplateCliConfig } from './utils/utils'
 import { TEMPLATES_META_LIST } from './core/constants'
 import fs from 'fs-extra'
 import path from 'path'
 import { COMMON_DEPENDENCIES, NODE_DEPENDENCIES, WEB_DEPENDENCIES, VUE2_DEPENDENCIES, VUE3_DEPENDENCIES } from './utils/dependencies'
 import { getGitUserName } from './utils/git'
 import { getTemplateMeta } from './utils/template'
+import { kebabCase, lintMd } from './utils/string'
 
 module.exports = function (plop: NodePlopAPI) {
     plop.setActionType('initProject', initProject)

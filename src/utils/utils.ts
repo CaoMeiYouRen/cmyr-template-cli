@@ -9,7 +9,6 @@ import { GiteeRepo, GithubRepo, GithubTopics, InitAnswers, IPackage, NodeIndexJs
 import colors from '@colors/colors'
 import ejs from 'ejs'
 import { unescape, cloneDeep, mergeWith, merge, uniqBy, uniq } from 'lodash'
-import { lintMarkdown, LintMdRulesConfig } from '@lint-md/core'
 import JSON5 from 'json5'
 import os from 'os'
 import yaml from 'yaml'
@@ -18,14 +17,14 @@ import walk from 'acorn-walk'
 import { GITEE_API_URL, GITHUB_API_URL, REMOTES, NODE_INDEX_URL, NODEJS_URLS } from './constants'
 import { COMMON_DEPENDENCIES, NODE_DEPENDENCIES } from './dependencies'
 import { getTemplateMeta } from './template'
+import { kebabCase, lintMd } from './string'
+import { ejsRender } from './ejs'
+import { copyFilesFromTemplates, removeFiles } from './files'
 
 // 获取返回值类型并去除Promise的包裹
 type ProjectInfo = UnwrapPromise<ReturnType<typeof getProjectInfo>>
 
-const fix = (markdown: string, rules?: LintMdRulesConfig) => lintMarkdown(markdown, rules, true)?.fixedResult?.result
-
 axios.defaults.timeout = 10 * 1000
-
 
 /**
  * 创建 Gitee 项目
@@ -52,8 +51,6 @@ async function createGiteeRepo(data: GiteeRepo) {
     }
 }
 
-
-
 /**
  * 创建 Github 项目
  *
@@ -78,8 +75,6 @@ async function createGithubRepo(authToken: string, data: GithubRepo) {
         return null
     }
 }
-
-
 
 async function replaceGithubRepositoryTopics(authToken: string, data: GithubTopics) {
     try {
@@ -1641,23 +1636,6 @@ async function getNpmPackageVersion(name: string) {
     return version.trim()
 }
 
-/**
-         * 修复 markdown 格式
-         * @param markdown
-         * @returns
-         */
-export function lintMd(markdown: string) {
-    const rules = {
-        'no-empty-code': 0,
-        'no-trailing-punctuation': 0,
-        'no-long-code': 0,
-        'no-empty-code-lang': 0,
-        'no-empty-inlinecode': 0,
-    } as const
-    const fixed = fix(markdown, rules)
-    return fixed
-}
-
 function sortKey<T extends Record<string, unknown>>(obj: T) {
     const keys = Object.keys(obj).sort((a, b) => a.localeCompare(b))
     const obj2: Record<string, unknown> = {}
@@ -1680,86 +1658,3 @@ async function saveProjectJson(projectPath: string, pkgData: IPackage) {
     await fs.writeFile(pkgPath, JSON.stringify(newPkg, null, 2))
 }
 
-/**
- * 从 templates 复制文件到 项目根目录，如果文件已存在会先删除后更新
- *
- * @author CaoMeiYouRen
- * @date 2022-06-18
- * @param projectPath
- * @param files
- * @param [lazy=false] 为 true 时在文件已存在的情况下不会更新文件
- */
-async function copyFilesFromTemplates(projectPath: string, files: string[], lazy = false) {
-    const loading = ora(`正在复制文件 ${files.join()} ……`).start()
-    try {
-        for await (const file of files) {
-            const templatePath = path.join(__dirname, '../templates/', file)
-            const newPath = path.join(projectPath, file)
-            if (await fs.pathExists(newPath)) {
-                if (lazy) {
-                    continue
-                }
-                await fs.remove(newPath)
-            }
-            await fs.copyFile(templatePath, newPath)
-        }
-        loading.succeed(`文件 ${files.join()} 复制成功！`)
-        return true
-    } catch (error) {
-        loading.fail(`文件 ${files.join()} 复制失败！`)
-        throw error
-    }
-}
-
-/**
- * 删除根目录下的指定文件
- *
- * @author CaoMeiYouRen
- * @date 2022-06-18
- * @param projectPath
- * @param files
- */
-async function removeFiles(projectPath: string, files: string[]) {
-    const loading = ora(`正在删除文件 ${files.join()} ……`).start()
-    try {
-        for await (const file of files) {
-            const newPath = path.join(projectPath, file)
-            if (await fs.pathExists(newPath)) {
-                await fs.remove(newPath)
-            } else {
-                console.log(`文件 ${file} 不存在，已跳过删除`)
-            }
-        }
-        loading.succeed(`文件 ${files.join()} 删除成功！`)
-        return true
-    } catch (error) {
-        loading.fail(`文件 ${files.join()} 删除失败！`)
-        throw error
-    }
-}
-
-export function kebabCase(str: string) {
-    return str.replace(/([a-z])([A-Z])/g, '$1-$2').replace(/_+/g, '-').replace(/\s+/g, '-').toLowerCase()
-}
-
-/**
- * ejs 渲染
- *
- * @author CaoMeiYouRen
- * @date 2023-12-26
- * @param templatePath
- * @param data
- * @param outputPath
- */
-async function ejsRender(templatePath: string, data: any, outputPath: string) {
-    const template = (await fs.readFile(templatePath, 'utf8')).toString()
-    const content = await ejs.render(
-        template,
-        data,
-        {
-            debug: false,
-            async: true,
-        },
-    )
-    await fs.writeFile(outputPath, content)
-}
