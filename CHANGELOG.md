@@ -1,5 +1,12 @@
 # cmyr-template-cli
 
+## [1.36.1](https://github.com/CaoMeiYouRen/cmyr-template-cli/compare/v1.36.0...v1.36.1) (2025-01-21)
+
+
+### 🐛 Bug 修复
+
+* 在模板元数据中添加标签；优化获取模板元数据的函数返回类型；重构项目信息获取逻辑以包含关键词 ([98c99ff](https://github.com/CaoMeiYouRen/cmyr-template-cli/commit/98c99ff))
+
 # [1.36.0](https://github.com/CaoMeiYouRen/cmyr-template-cli/compare/v1.35.2...v1.36.0) (2025-01-18)
 
 
