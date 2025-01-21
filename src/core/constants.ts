@@ -8,6 +8,7 @@ export const TEMPLATES_META_LIST: TemplateMeta[] = [
         vueVersion: 3,
         docker: false,
         priority: 0,
+        tags: ['vite'],
     },
     // {
     //     name: 'vite3-template',
@@ -24,6 +25,7 @@ export const TEMPLATES_META_LIST: TemplateMeta[] = [
         vueVersion: 2,
         docker: false,
         priority: 0,
+        tags: ['vite'],
     },
     // {
     //     name: 'vite2-template',
@@ -56,6 +58,7 @@ export const TEMPLATES_META_LIST: TemplateMeta[] = [
         vueVersion: 3,
         docker: false,
         priority: 0,
+        tags: ['electron', 'vite'],
     },
     // {
     //     name: 'electron-vue-template',
@@ -99,6 +102,7 @@ export const TEMPLATES_META_LIST: TemplateMeta[] = [
         vueVersion: 0,
         docker: false,
         priority: 0,
+        tags: ['vite'],
     },
     {
         name: 'react-template',
@@ -132,6 +136,7 @@ export const TEMPLATES_META_LIST: TemplateMeta[] = [
         vueVersion: 0,
         docker: true,
         priority: 0,
+        tags: ['express'],
     },
     // {
     //     name: 'koa2-template',
@@ -240,6 +245,6 @@ export const TEMPLATES_META_LIST: TemplateMeta[] = [
         javaVersion: 17,
         docker: true,
         priority: 0,
-        tags: ['spring-boot'],
+        tags: ['spring-boot-v3'],
     },
 ]

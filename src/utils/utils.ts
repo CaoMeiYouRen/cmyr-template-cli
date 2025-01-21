@@ -355,17 +355,11 @@ async function initRemoteGitRepo(projectPath: string, answers: InitAnswers) {
                         if (templateMeta.docker) {
                             keywords.push('docker')
                         }
-                        if (templateMeta?.language) {
-                            keywords.push(templateMeta?.language)
-                        }
                         if (templateMeta?.runtime) {
                             keywords.push(templateMeta?.runtime)
                         }
-                        if (templateMeta?.vueVersion === 3) {
-                            keywords.push('vue3')
-                        }
-                        if (templateMeta.tags?.length) {
-                            keywords.push(...templateMeta.tags)
+                        if (templateMeta?.language) {
+                            keywords.push(templateMeta?.language)
                         }
                         await replaceGithubRepositoryTopics(authToken, {
                             owner,
@@ -707,6 +701,23 @@ async function getProjectInfo(projectPath: string, answers: InitAnswers) {
         const nodeVersion = await getLtsNodeVersion() || '20'
         const node = Number(nodeVersion) - 4 // lts 减 4 为最旧支持的版本
 
+        let keywords = [
+            ...answers.keywords || [],
+        ]
+        if (templateMeta.docker) {
+            keywords.push('docker')
+        }
+        if (templateMeta?.language) {
+            keywords.push(templateMeta?.language)
+        }
+        if (templateMeta?.vueVersion === 3) {
+            keywords.push('vue3')
+        }
+        if (templateMeta.tags?.length) {
+            keywords.push(...templateMeta.tags)
+        }
+        keywords = uniq(keywords).map((e) => kebabCase(e))
+
         const packageName = isPrivateScopePackage ? `@${scopeName}/${name}` : name // npm 包的名称
         const engines = merge({}, pkg?.engines, { node: `>=${node}` })
         const version = pkg?.version || '0.1.0'
@@ -718,8 +729,6 @@ async function getProjectInfo(projectPath: string, answers: InitAnswers) {
         const lintCommand = pkg?.scripts?.lint && `${packageManager} run lint`
         const commitCommand = pkg?.scripts?.commit && `${packageManager} run commit`
         const mainFile = pkg?.main
-
-        answers.config = config
 
         const githubUsername = config?.GITHUB_USERNAME || author
         const giteeUsername = config?.GITEE_USERNAME
@@ -747,6 +756,7 @@ async function getProjectInfo(projectPath: string, answers: InitAnswers) {
 
         const projectInfos = {
             ...answers,
+            keywords,
             currentYear: new Date().getFullYear(),
             name,
             description,
