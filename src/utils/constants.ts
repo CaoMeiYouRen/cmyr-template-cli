@@ -14,7 +14,6 @@ export const REMOTES = [
     'https://ghproxy.com/https://github.com',
     'https://gh.ddlc.top/https://github.com',
     'https://gh.flyinbug.top/gh/https://github.com',
-    'https://gh.con.sh/https://github.com',
     'https://cors.isteed.cc/github.com',
     'https://ghps.cc/https://github.com',
     'https://download.nuaa.cf',
