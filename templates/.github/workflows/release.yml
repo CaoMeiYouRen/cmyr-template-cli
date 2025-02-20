@@ -3,10 +3,10 @@ on:
   push:
     branches:
       - master
-# 仅取消针对当前工作流正在进行的作业或运行
+# 仅针对当前工作流正在进行的作业或运行
 concurrency:
   group: ${{ github.workflow }}-${{ github.ref }}
-  cancel-in-progress: true
+  cancel-in-progress: false # Release 作业不取消，因为要确保版本发布成功
 jobs:
   release:
     name: Release
