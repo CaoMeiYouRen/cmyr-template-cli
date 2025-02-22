@@ -52,6 +52,15 @@ export const TEMPLATES_META_LIST: TemplateMeta[] = [
     //     priority: 0,
     // },
     {
+        name: 'tauri-template',
+        language: 'vue',
+        runtime: 'browser',
+        vueVersion: 3,
+        docker: false,
+        priority: 0,
+        tags: ['tauri', 'vite'],
+    },
+    {
         name: 'electron-vite-template',
         language: 'vue',
         runtime: 'browser',
