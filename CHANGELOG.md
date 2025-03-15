@@ -1,5 +1,12 @@
 # cmyr-template-cli
 
+## [1.37.1](https://github.com/CaoMeiYouRen/cmyr-template-cli/compare/v1.37.0...v1.37.1) (2025-03-15)
+
+
+### 🐛 Bug 修复
+
+* 更新 nuxt-template 为 nuxt-latest-template，并将 Vue 版本更改为 3 ([8057500](https://github.com/CaoMeiYouRen/cmyr-template-cli/commit/8057500))
+
 # [1.37.0](https://github.com/CaoMeiYouRen/cmyr-template-cli/compare/v1.36.1...v1.37.0) (2025-02-22)
 
 
