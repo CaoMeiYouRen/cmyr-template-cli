@@ -1,5 +1,12 @@
 # cmyr-template-cli
 
+## [1.37.3](https://github.com/CaoMeiYouRen/cmyr-template-cli/compare/v1.37.2...v1.37.3) (2025-03-19)
+
+
+### 🐛 Bug 修复
+
+* 更新 dependabot 配置，禁用特定依赖项的版本更新并添加 GitHub Actions 自动更新 ([534873b](https://github.com/CaoMeiYouRen/cmyr-template-cli/commit/534873b))
+
 ## [1.37.2](https://github.com/CaoMeiYouRen/cmyr-template-cli/compare/v1.37.1...v1.37.2) (2025-03-19)
 
 
