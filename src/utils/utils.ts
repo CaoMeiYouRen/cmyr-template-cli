@@ -539,6 +539,10 @@ async function initDependabot(projectPath: string, answers: InitAnswers) {
                                 'dependency-name': '@commitlint/config-conventional',
                                 versions: ['>= 19.0.0'],
                             },
+                            {
+                                'dependency-name': 'art-template',
+                                versions: ['>= 4.13.3'], // 高版本涉嫌危险代码，参考 https://github.com/yoimiya-kokomi/Miao-Yunzai/pull/515
+                            },
                         ], (e) => e['dependency-name'])
                         fs.writeFile(dependabotPath, yaml.stringify(dependabot))
                     }
