@@ -1,5 +1,12 @@
 # cmyr-template-cli
 
+## [1.37.2](https://github.com/CaoMeiYouRen/cmyr-template-cli/compare/v1.37.1...v1.37.2) (2025-03-19)
+
+
+### 🐛 Bug 修复
+
+* 添加 art-template 依赖项，版本要求不大于 >= 4.13.3 ([fe921e8](https://github.com/CaoMeiYouRen/cmyr-template-cli/commit/fe921e8))
+
 ## [1.37.1](https://github.com/CaoMeiYouRen/cmyr-template-cli/compare/v1.37.0...v1.37.1) (2025-03-15)
 
 
