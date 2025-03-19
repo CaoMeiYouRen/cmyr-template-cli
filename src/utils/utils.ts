@@ -519,35 +519,61 @@ async function initDependabot(projectPath: string, answers: InitAnswers) {
             await removeFiles(projectPath, files) // 如果存在 dependabot.yml/mergify.yml
         } else {
             const pkg: IPackage = await getProjectJson(projectPath)
-            if (pkg?.devDependencies?.['semantic-release']) { // 如果有 semantic-release 依赖
-                // 解决 semantic-release 高版本出错问题，禁用 semantic-release 版本更新
-                const dependabotPath = path.join(projectPath, '.github/dependabot.yml')
-                if (await fs.pathExists(dependabotPath)) { // 如果存在 dependabot
-                    const dependabot: Dependabot = yaml.parse(await fs.readFile(dependabotPath, 'utf-8'))
-                    if (dependabot?.updates?.[0]['package-ecosystem'] === 'npm') { // 如果为 npm
-                        dependabot.updates[0].ignore = uniqBy([
-                            ...dependabot?.updates?.[0].ignore || [],
-                            {
-                                'dependency-name': 'semantic-release',
-                                versions: ['>= 21.0.1'],
-                            },
-                            {
-                                'dependency-name': '@commitlint/cli',
-                                versions: ['>= 19.0.0'],
-                            },
-                            {
-                                'dependency-name': '@commitlint/config-conventional',
-                                versions: ['>= 19.0.0'],
-                            },
-                            {
-                                'dependency-name': 'art-template',
-                                versions: ['>= 4.13.3'], // 高版本涉嫌危险代码，参考 https://github.com/yoimiya-kokomi/Miao-Yunzai/pull/515
-                            },
-                        ], (e) => e['dependency-name'])
-                        fs.writeFile(dependabotPath, yaml.stringify(dependabot))
+            const dependabotPath = path.join(projectPath, '.github/dependabot.yml')
+            if (await fs.pathExists(dependabotPath)) { // 如果存在 dependabot
+                const dependabot: Dependabot = yaml.parse(await fs.readFile(dependabotPath, 'utf-8'))
+                if (dependabot?.updates?.[0]['package-ecosystem'] === 'npm') { // 如果为 npm
+                    const dependencies = []
+                    if (pkg?.devDependencies?.['semantic-release']) { // 如果有 semantic-release 依赖
+                        // 解决 semantic-release 高版本出错问题，禁用 semantic-release 版本更新
+                        dependencies.push({
+                            'dependency-name': 'semantic-release',
+                            versions: ['>= 21.0.1'],
+                        })
                     }
+                    if (pkg?.devDependencies?.['@commitlint/cli']) { // 如果有 @commitlint/cli 依赖
+                        // 解决 @commitlint/cli 高版本出错问题，禁用 @commitlint/cli 版本更新
+                        dependencies.push({
+                            'dependency-name': '@commitlint/cli',
+                            versions: ['>= 19.0.0'],
+                        })
+                    }
+                    if (pkg?.devDependencies?.['@commitlint/config-conventional']) { // 如果有 @commitlint/config-conventional 依赖
+                        // 解决 @commitlint/config-conventional 高版本出错问题，禁用 @commitlint/config-conventional 版本更新
+                        dependencies.push({
+                            'dependency-name': '@commitlint/config-conventional',
+                            versions: ['>= 19.0.0'],
+                        })
+                    }
+                    if (pkg?.dependencies?.['art-template']) { // 如果有 art-template 依赖
+                        // 高版本涉嫌危险代码，参考 https://github.com/yoimiya-kokomi/Miao-Yunzai/pull/515
+                        dependencies.push({
+                            'dependency-name': 'art-template',
+                            versions: ['>= 4.13.3'],
+                        })
+                    }
+                    dependabot.updates[0].ignore = uniqBy([
+                        ...dependabot?.updates?.[0].ignore || [],
+                        ...dependencies,
+                    ], (e) => e['dependency-name'])
                 }
+                if (dependabot?.updates?.every((e) => e['package-ecosystem'] !== 'github-actions')) { // 如果不存在 github-actions
+                    // 增加 github-actions 版本自动更新
+                    dependabot.updates.push({
+                        'package-ecosystem': 'github-actions',
+                        directory: '/',
+                        'open-pull-requests-limit': 20,
+                        schedule: {
+                            interval: 'weekly',
+                            time: '04:00',
+                            timezone: 'Asia/Shanghai',
+                        },
+                        ignore: [],
+                    })
+                }
+                fs.writeFile(dependabotPath, yaml.stringify(dependabot))
             }
+
         }
     } catch (error) {
         console.error(error)
