@@ -9,7 +9,7 @@ updates:
     directory: "/" # Location of package manifests
     open-pull-requests-limit: 20
     schedule:
-      interval: "weekly"
+      interval: "monthly"
       time: "04:00"
       timezone: "Asia/Shanghai"
     ignore:
@@ -24,7 +24,7 @@ updates:
   - package-ecosystem: "github-actions"
     directory: "/"
     schedule:
-      interval: "weekly"
+      interval: "monthly"
       time: "04:00"
       timezone: "Asia/Shanghai"
     open-pull-requests-limit: 20
