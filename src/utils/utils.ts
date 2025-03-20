@@ -175,6 +175,7 @@ async function init(projectPath: string, answers: InitAnswers) {
                         await initCodeOfConduct(projectPath, info)
                         await initSecurity(projectPath, info)
                         await initPullRequestTemplate(projectPath, info)
+                        await initIssueTemplate(projectPath, info)
                     }
                     await initLicense(projectPath, info)
                 }
@@ -1056,6 +1057,30 @@ async function initConfig(projectPath: string) {
         const files = ['.editorconfig', 'commitlint.config.js']
         await copyFilesFromTemplates(projectPath, files)
     } catch (error) {
+        console.error(error)
+    }
+}
+
+/**
+ * 初始化 ISSUE_TEMPLATE
+ *
+ * @author CaoMeiYouRen
+ * @date 2025-03-21
+ * @param projectPath
+ * @param projectInfos
+ */
+async function initIssueTemplate(projectPath: string, projectInfos: ProjectInfo) {
+    const loading = ora('正在初始化 ISSUE_TEMPLATE ……').start()
+    try {
+        const files = ['.github/ISSUE_TEMPLATE/bug_report.yml', '.github/ISSUE_TEMPLATE/feature_request.yml', '.github/ISSUE_TEMPLATE/question.yml']
+        const newPath = path.join(projectPath, '.github/ISSUE_TEMPLATE/')
+        if (!await fs.pathExists(newPath)) {
+            await fs.mkdirp(newPath)
+        }
+        await copyFilesFromTemplates(projectPath, files, false)
+        loading.succeed('ISSUE_TEMPLATE 初始化成功！')
+    } catch (error) {
+        loading.fail('ISSUE_TEMPLATE 初始化失败！')
         console.error(error)
     }
 }

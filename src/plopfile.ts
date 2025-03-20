@@ -175,7 +175,10 @@ module.exports = function (plop: NodePlopAPI) {
                     type: 'confirm',
                     name: 'isPublishToNpm',
                     message: '是否发布到 npm？',
-                    default: false,
+                    default(answers: InitAnswers) {
+                        const templateMeta = getTemplateMeta(answers.template)
+                        return answers.isOpenSource && templateMeta.npm
+                    },
                     when(answers: InitAnswers) {
                         const templateMeta = getTemplateMeta(answers.template)
                         return answers.isOpenSource && templateMeta.npm
@@ -252,8 +255,7 @@ module.exports = function (plop: NodePlopAPI) {
                     name: 'isInitContributing',
                     message: '是否初始化 贡献指南(CONTRIBUTING.md) ？',
                     default(answers: InitAnswers) {
-                        const { isPublishToNpm } = answers
-                        return isPublishToNpm
+                        return answers.isOpenSource
                     },
                     when(answers: InitAnswers) {
                         return answers.isOpenSource
