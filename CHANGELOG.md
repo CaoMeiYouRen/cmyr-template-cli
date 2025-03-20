@@ -1,5 +1,14 @@
 # cmyr-template-cli
 
+# [1.38.0](https://github.com/CaoMeiYouRen/cmyr-template-cli/compare/v1.37.3...v1.38.0) (2025-03-20)
+
+
+### ✨ 新功能
+
+* 添加 ISSUE_TEMPLATE 初始化功能，包括 Bug 报告、功能请求和问题模板 ([94fbaca](https://github.com/CaoMeiYouRen/cmyr-template-cli/commit/94fbaca))
+* 添加 Pull Request 模板初始化功能 ([6dd4435](https://github.com/CaoMeiYouRen/cmyr-template-cli/commit/6dd4435))
+* 添加 SECURITY.md 模板并在初始化过程中支持安全策略配置 ([af12e62](https://github.com/CaoMeiYouRen/cmyr-template-cli/commit/af12e62))
+
 ## [1.37.3](https://github.com/CaoMeiYouRen/cmyr-template-cli/compare/v1.37.2...v1.37.3) (2025-03-19)
 
 
