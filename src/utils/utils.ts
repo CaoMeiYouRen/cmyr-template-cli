@@ -174,6 +174,7 @@ async function init(projectPath: string, answers: InitAnswers) {
                         await initContributing(projectPath, info)
                         await initCodeOfConduct(projectPath, info)
                         await initSecurity(projectPath, info)
+                        await initPullRequestTemplate(projectPath, info)
                     }
                     await initLicense(projectPath, info)
                 }
@@ -954,6 +955,14 @@ async function initCodeOfConduct(projectPath: string, projectInfos: ProjectInfo)
     }
 }
 
+/**
+ * 初始化 SECURITY.md
+ *
+ * @author CaoMeiYouRen
+ * @date 2025-03-21
+ * @param projectPath
+ * @param projectInfos
+ */
 async function initSecurity(projectPath: string, projectInfos: ProjectInfo) {
     const loading = ora('正在初始化 SECURITY.md ……').start()
     try {
@@ -973,6 +982,29 @@ async function initSecurity(projectPath: string, projectInfos: ProjectInfo) {
         loading.succeed('SECURITY.md 初始化成功！')
     } catch (error) {
         loading.fail('SECURITY.md 初始化失败！')
+        console.error(error)
+    }
+}
+
+async function initPullRequestTemplate(projectPath: string, projectInfos: ProjectInfo) {
+    const loading = ora('正在初始化 PULL_REQUEST_TEMPLATE ……').start()
+    try {
+        const templatePath = path.join(__dirname, '../templates/.github/PULL_REQUEST_TEMPLATE.md')
+        const template = (await fs.readFile(templatePath, 'utf8')).toString()
+        const newPath = path.join(projectPath, '.github/PULL_REQUEST_TEMPLATE.md')
+        const content = await ejs.render(
+            template,
+            projectInfos,
+            {
+                debug: false,
+                async: true,
+            },
+        )
+        await removeFiles(projectPath, ['.github/PULL_REQUEST_TEMPLATE.md'])
+        await fs.writeFile(newPath, lintMd(unescape(content)))
+        loading.succeed('PULL_REQUEST_TEMPLATE 初始化成功！')
+    } catch (error) {
+        loading.fail('PULL_REQUEST_TEMPLATE 初始化失败！')
         console.error(error)
     }
 }
