@@ -173,6 +173,7 @@ async function init(projectPath: string, answers: InitAnswers) {
                     if (isInitContributing) {
                         await initContributing(projectPath, info)
                         await initCodeOfConduct(projectPath, info)
+                        await initSecurity(projectPath, info)
                     }
                     await initLicense(projectPath, info)
                 }
@@ -949,6 +950,29 @@ async function initCodeOfConduct(projectPath: string, projectInfos: ProjectInfo)
         loading.succeed('贡献者公约 初始化成功！')
     } catch (error) {
         loading.fail('贡献者公约 初始化失败！')
+        console.error(error)
+    }
+}
+
+async function initSecurity(projectPath: string, projectInfos: ProjectInfo) {
+    const loading = ora('正在初始化 SECURITY.md ……').start()
+    try {
+        const templatePath = path.join(__dirname, '../templates/SECURITY.md')
+        const template = (await fs.readFile(templatePath, 'utf8')).toString()
+        const newPath = path.join(projectPath, 'SECURITY.md')
+        const content = await ejs.render(
+            template,
+            projectInfos,
+            {
+                debug: false,
+                async: true,
+            },
+        )
+        await removeFiles(projectPath, ['SECURITY.md'])
+        await fs.writeFile(newPath, lintMd(unescape(content)))
+        loading.succeed('SECURITY.md 初始化成功！')
+    } catch (error) {
+        loading.fail('SECURITY.md 初始化失败！')
         console.error(error)
     }
 }
