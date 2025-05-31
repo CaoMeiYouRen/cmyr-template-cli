@@ -1,5 +1,12 @@
 # cmyr-template-cli
 
+# [1.39.0](https://github.com/CaoMeiYouRen/cmyr-template-cli/compare/v1.38.0...v1.39.0) (2025-05-31)
+
+
+### ✨ 新功能
+
+* 添加 tsdown-template 模板元数据 ([c2bf033](https://github.com/CaoMeiYouRen/cmyr-template-cli/commit/c2bf033))
+
 # [1.38.0](https://github.com/CaoMeiYouRen/cmyr-template-cli/compare/v1.37.3...v1.38.0) (2025-03-20)
 
 
