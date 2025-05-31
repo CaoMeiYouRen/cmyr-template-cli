@@ -1,5 +1,12 @@
 # cmyr-template-cli
 
+## [1.39.1](https://github.com/CaoMeiYouRen/cmyr-template-cli/compare/v1.39.0...v1.39.1) (2025-05-31)
+
+
+### 🐛 Bug 修复
+
+* 添加 GitHub 链接到 ISC 和 MIT 许可证的版权声明 ([8d3c45f](https://github.com/CaoMeiYouRen/cmyr-template-cli/commit/8d3c45f))
+
 # [1.39.0](https://github.com/CaoMeiYouRen/cmyr-template-cli/compare/v1.38.0...v1.39.0) (2025-05-31)
 
 
