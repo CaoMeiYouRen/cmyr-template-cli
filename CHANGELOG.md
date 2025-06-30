@@ -1,5 +1,12 @@
 # cmyr-template-cli
 
+## [1.39.2](https://github.com/CaoMeiYouRen/cmyr-template-cli/compare/v1.39.1...v1.39.2) (2025-06-30)
+
+
+### 🐛 Bug 修复
+
+* 修正关键词输入过滤逻辑以去除多余空格 ([b417ee8](https://github.com/CaoMeiYouRen/cmyr-template-cli/commit/b417ee8))
+
 ## [1.39.1](https://github.com/CaoMeiYouRen/cmyr-template-cli/compare/v1.39.0...v1.39.1) (2025-05-31)
 
 
