@@ -50,7 +50,7 @@ module.exports = function (plop: NodePlopAPI) {
                     name: 'keywords',
                     message: '请输入项目关键词(用,分割)',
                     default: '',
-                    filter: (e: string) => e.trim().split(',').filter(Boolean),
+                    filter: (e: string) => e.trim().split(',').map((f) => f.trim()).filter(Boolean),
                 },
                 {
                     type: 'list',
