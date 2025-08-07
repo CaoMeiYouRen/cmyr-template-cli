@@ -507,7 +507,7 @@ interface Update {
     directory: string
     'open-pull-requests-limit': number
     schedule: Schedule
-    ignore: Ignore[]
+    ignore?: Ignore[]
 }
 interface Dependabot {
     version: number
@@ -571,10 +571,14 @@ async function initDependabot(projectPath: string, answers: InitAnswers) {
                             time: '04:00',
                             timezone: 'Asia/Shanghai',
                         },
-                        ignore: [],
+                        // ignore: [],
                     })
                 }
-                fs.writeFile(dependabotPath, yaml.stringify(dependabot))
+                fs.writeFile(dependabotPath, yaml.stringify(dependabot, {
+                    defaultStringType: 'QUOTE_DOUBLE',  // 默认使用双引号
+                    singleQuote: false,                 // 禁用单引号
+                    doubleQuotedAsJSON: true,           // 使用JSON兼容的双引号语法
+                }))
             }
 
         }
