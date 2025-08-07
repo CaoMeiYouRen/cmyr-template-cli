@@ -1,5 +1,12 @@
 # cmyr-template-cli
 
+## [1.39.3](https://github.com/CaoMeiYouRen/cmyr-template-cli/compare/v1.39.2...v1.39.3) (2025-08-07)
+
+
+### 🐛 Bug 修复
+
+* 将 ignore 属性改为可选，并更新 YAML 字符串化配置 ([7879e7b](https://github.com/CaoMeiYouRen/cmyr-template-cli/commit/7879e7b))
+
 ## [1.39.2](https://github.com/CaoMeiYouRen/cmyr-template-cli/compare/v1.39.1...v1.39.2) (2025-06-30)
 
 
