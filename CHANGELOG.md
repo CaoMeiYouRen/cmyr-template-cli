@@ -1,5 +1,12 @@
 # cmyr-template-cli
 
+# [1.40.0](https://github.com/CaoMeiYouRen/cmyr-template-cli/compare/v1.39.3...v1.40.0) (2025-08-18)
+
+
+### ✨ 新功能
+
+* 添加 Funding 初始化功能及模板配置 ([bb64c08](https://github.com/CaoMeiYouRen/cmyr-template-cli/commit/bb64c08))
+
 ## [1.39.3](https://github.com/CaoMeiYouRen/cmyr-template-cli/compare/v1.39.2...v1.39.3) (2025-08-07)
 
 
