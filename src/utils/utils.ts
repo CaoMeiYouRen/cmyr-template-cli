@@ -165,7 +165,7 @@ async function init(projectPath: string, answers: InitAnswers) {
             if (info) {
                 await initProjectJson(projectPath, info)
             }
-            if (isOpenSource) { // 只有开源的时候才初始化 REAMD
+            if (isOpenSource) { // 只有开源的时候才初始化 README、CONTRIBUTING 等文件
                 if (info) {
                     if (isInitReadme) {
                         await initReadme(projectPath, info)
@@ -178,6 +178,7 @@ async function init(projectPath: string, answers: InitAnswers) {
                         await initIssueTemplate(projectPath, info)
                     }
                     await initLicense(projectPath, info)
+                    await initFunding(projectPath, info)
                 }
                 await initGithubWorkflows(projectPath, answers)
             }
@@ -1530,6 +1531,23 @@ async function initTest(projectPath: string, answers: InitAnswers) {
         loading.succeed('未选择测试框架，跳过测试初始化')
     } catch (error) {
         loading.fail('测试初始化失败！')
+    }
+}
+
+async function initFunding(projectPath: string, projectInfos: ProjectInfo) {
+    const loading = ora('正在初始化 Funding 配置 ……').start()
+    try {
+        const { isEnableSupport } = projectInfos
+        if (!isEnableSupport) {
+            loading.succeed('未启用 Funding 支持，跳过 Funding 初始化')
+            return
+        }
+        const templatePath = path.join(__dirname, '../templates/.github/FUNDING.yml')
+        const newPath = path.join(projectPath, '.github/FUNDING.yml')
+        await ejsRender(templatePath, { afdianUsername: projectInfos.afdianUsername }, newPath)
+        loading.succeed('Funding 初始化成功！')
+    } catch (error) {
+        loading.fail('Funding 初始化失败！')
     }
 }
 
