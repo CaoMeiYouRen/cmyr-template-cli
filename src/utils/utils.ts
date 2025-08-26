@@ -536,10 +536,15 @@ async function initDependabot(projectPath: string, answers: InitAnswers) {
                             versions: ['>= 4.13.3'],
                         })
                     }
-                    dependabot.updates[0].ignore = uniqBy([
-                        ...dependabot?.updates?.[0].ignore || [],
-                        ...dependencies,
-                    ], (e) => e['dependency-name'])
+                    if (dependencies.length) {
+                        dependabot.updates[0].ignore = uniqBy([
+                            ...dependabot?.updates?.[0].ignore || [],
+                            ...dependencies,
+                        ], (e) => e['dependency-name'])
+                    } else {
+                        dependabot.updates[0].ignore = undefined // 没有就删除 ignore
+                    }
+
                 }
                 if (dependabot?.updates?.every((e) => e['package-ecosystem'] !== 'github-actions')) { // 如果不存在 github-actions
                     // 增加 github-actions 版本自动更新
