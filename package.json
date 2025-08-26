@@ -32,6 +32,7 @@
     "build:prod": "npm run build && rimraf temp && cross-env NODE_ENV=production ct create"
   },
   "devDependencies": {
+    "@commitlint/cli": "^19.8.1",
     "@semantic-release/changelog": "^6.0.0",
     "@semantic-release/git": "^10.0.0",
     "@types/debug": "^4.1.5",
@@ -42,10 +43,10 @@
     "@types/lodash": "^4.14.165",
     "@types/node": "^24.0.7",
     "commitizen": "^4.2.2",
-    "conventional-changelog-cli": "^5.0.0",
+    "commitlint-config-cmyr": "1.0.0-beta.3",
     "conventional-changelog-cmyr-config": "^2.1.1",
     "cross-env": "^10.0.0",
-    "cz-conventional-changelog-cmyr": "^1.0.0",
+    "cz-conventional-changelog-cmyr": "2.0.0-beta.3",
     "debug": "^4.3.1",
     "eslint": "^9.34.0",
     "eslint-config-cmyr": "2.0.0-beta.15",
