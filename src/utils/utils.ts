@@ -529,13 +529,6 @@ async function initDependabot(projectPath: string, answers: InitAnswers) {
                 const dependabot: Dependabot = yaml.parse(await fs.readFile(dependabotPath, 'utf-8'))
                 if (dependabot?.updates?.[0]['package-ecosystem'] === 'npm') { // 如果为 npm
                     const dependencies = []
-                    if (pkg?.devDependencies?.['semantic-release']) { // 如果有 semantic-release 依赖
-                        // 解决 semantic-release 高版本出错问题，禁用 semantic-release 版本更新
-                        dependencies.push({
-                            'dependency-name': 'semantic-release',
-                            versions: ['>= 21.0.1'],
-                        })
-                    }
                     if (pkg?.dependencies?.['art-template']) { // 如果有 art-template 依赖
                         // 高版本涉嫌危险代码，参考 https://github.com/yoimiya-kokomi/Miao-Yunzai/pull/515
                         dependencies.push({
