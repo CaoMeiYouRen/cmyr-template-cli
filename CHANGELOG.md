@@ -1,5 +1,12 @@
 # cmyr-template-cli
 
+## [1.41.2](https://github.com/CaoMeiYouRen/cmyr-template-cli/compare/v1.41.1...v1.41.2) (2025-08-26)
+
+
+### 🐛 Bug 修复
+
+* 优化 dependabot 更新忽略逻辑，删除空依赖时清空 ignore ([9e5cc36](https://github.com/CaoMeiYouRen/cmyr-template-cli/commit/9e5cc36))
+
 ## [1.41.1](https://github.com/CaoMeiYouRen/cmyr-template-cli/compare/v1.41.0...v1.41.1) (2025-08-26)
 
 
