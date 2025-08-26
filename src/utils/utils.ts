@@ -1244,39 +1244,35 @@ async function initEslint(projectPath: string, answers: InitAnswers) {
         const pkg: IPackage = await getProjectJson(projectPath)
 
         const devDependencies: Record<string, string> = {
-            '@typescript-eslint/eslint-plugin': '^5.48.0',
-            '@typescript-eslint/parser': '^5.48.0',
-            'cross-env': '^7.0.3',
-            eslint: '^8.31.0',
+            'cross-env': '^10.0.0',
+            eslint: '^9.34.0',
+            // 移除不必要的依赖
+            '@typescript-eslint/eslint-plugin': undefined,
+            '@typescript-eslint/parser': undefined,
         }
         let eslintType = 'cmyr'
         const extnames = ['js', 'mjs', 'cjs', 'ts', 'cts', 'mts']
 
         if (templateMeta?.language === 'vue') {
             Object.assign(devDependencies, {
-                '@vue/eslint-config-typescript': '^11.0.2',
+                '@vue/eslint-config-typescript': undefined,
                 'eslint-plugin-vue': '^9.8.0',
             })
             extnames.push('vue')
-            if (templateMeta?.vueVersion === 3) { // vue3
-                eslintType = 'cmyr/vue3'
-            } else {
-                eslintType = 'cmyr/vue'
-            }
+            eslintType = 'eslint-config-cmyr/vue'
         } else if (templateMeta?.language === 'react') {
             extnames.push('jsx', 'tsx')
-            eslintType = 'cmyr/react'
+            eslintType = 'eslint-config-cmyr/react'
             Object.assign(devDependencies, {
-                'eslint-config-react-app': '^7.0.1',
+                'eslint-plugin-react': '^7.37.5',
             })
         }
         const pkgData: IPackage = {
             scripts: {
-                lint: `cross-env NODE_ENV=production eslint src --fix --ext ${extnames.join(',')}`,
+                lint: `cross-env NODE_ENV=production eslint . --fix`,
                 ...pkg?.scripts,
             },
             devDependencies: {
-                'eslint-plugin-import': '^2.28.1',
                 ...devDependencies,
                 ...pkg?.devDependencies,
                 'eslint-config-cmyr': `^${await getNpmPackageVersion('eslint-config-cmyr')}`,
@@ -1285,18 +1281,18 @@ async function initEslint(projectPath: string, answers: InitAnswers) {
 
         await saveProjectJson(projectPath, pkgData)
 
-        const files = ['.eslintignore']
-        await copyFilesFromTemplates(projectPath, files, true)
+        const files = ['.eslintignore', '.eslintrc.cjs', '.eslintrc.js']
+        await removeFiles(projectPath, files)
 
-        const eslintrc = `module.exports = {
-    root: true,
-    extends: '${eslintType}',
-}`
+        const eslintrc = `import { defineConfig } from 'eslint/config'
+import cmyr from '${eslintType}'
+export default defineConfig([cmyr])
+`
 
-        const cjsPath = path.join(projectPath, '.eslintrc.cjs')
-        const jsPath = path.join(projectPath, '.eslintrc.js')
+        const mjsPath = path.join(projectPath, 'eslint.config.mjs')
+        const jsPath = path.join(projectPath, 'eslint.config.js')
 
-        if (!await fs.pathExists(cjsPath) && !await fs.pathExists(jsPath)) { // 如果不存在就写入
+        if (!await fs.pathExists(mjsPath) && !await fs.pathExists(jsPath)) { // 如果不存在就写入
             await fs.writeFile(jsPath, eslintrc)
         }
 
