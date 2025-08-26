@@ -1,7 +1,7 @@
+import path from 'path'
 import { Plop, run } from 'plop'
 import { Command } from 'commander'
 import minimist from 'minimist'
-import path from 'path'
 import fs from 'fs-extra'
 
 const program = new Command('ct')

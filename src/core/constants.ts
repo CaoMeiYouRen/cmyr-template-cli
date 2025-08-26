@@ -200,7 +200,7 @@ export const TEMPLATES_META_LIST: TemplateMeta[] = [
         npm: true,
         priority: 0,
     },
-      {
+    {
         name: 'tsdown-template',
         language: 'typescript',
         runtime: 'nodejs',

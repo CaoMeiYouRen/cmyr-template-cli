@@ -1,18 +1,17 @@
-import fs from 'fs-extra'
 import path from 'path'
-import ora from 'ora'
-import download from 'download-git-repo'
 import { exec, ExecOptions } from 'child_process'
-import { PACKAGE_MANAGER } from '../config/env'
-import { InitAnswers, IPackage, TemplateCliConfig, UnwrapPromise } from '@/types/interfaces'
+import os from 'os'
 import colors from '@colors/colors'
 import ejs from 'ejs'
 import { unescape, cloneDeep, mergeWith, merge, uniqBy, uniq } from 'lodash'
 import JSON5 from 'json5'
-import os from 'os'
+import download from 'download-git-repo'
+import ora from 'ora'
+import fs from 'fs-extra'
 import yaml from 'yaml'
 import acorn from 'acorn'
 import walk from 'acorn-walk'
+import { PACKAGE_MANAGER } from '../config/env'
 import { REMOTES, NODE_INDEX_URL, NODEJS_URLS } from './constants'
 import { COMMON_DEPENDENCIES, NODE_DEPENDENCIES } from './dependencies'
 import { getTemplateMeta } from './template'
@@ -20,6 +19,7 @@ import { kebabCase, lintMd } from './string'
 import { ejsRender } from './ejs'
 import { copyFilesFromTemplates, removeFiles } from './files'
 import { createGithubRepo, replaceGithubRepositoryTopics, createGiteeRepo, getAuthorWebsiteFromGithubAPI, getLtsNodeVersionByHtml, getLtsNodeVersionByIndexJson, getFastUrl, createOrUpdateARepositorySecret } from './api'
+import { InitAnswers, IPackage, TemplateCliConfig, UnwrapPromise } from '@/types/interfaces'
 
 // 获取返回值类型并去除Promise的包裹
 type ProjectInfo = UnwrapPromise<ReturnType<typeof getProjectInfo>>
@@ -576,9 +576,9 @@ async function initDependabot(projectPath: string, answers: InitAnswers) {
                     })
                 }
                 fs.writeFile(dependabotPath, yaml.stringify(dependabot, {
-                    defaultStringType: 'QUOTE_DOUBLE',  // 默认使用双引号
-                    singleQuote: false,                 // 禁用单引号
-                    doubleQuotedAsJSON: true,           // 使用JSON兼容的双引号语法
+                    defaultStringType: 'QUOTE_DOUBLE', // 默认使用双引号
+                    singleQuote: false, // 禁用单引号
+                    doubleQuotedAsJSON: true, // 使用JSON兼容的双引号语法
                 }))
             }
 
@@ -1432,7 +1432,7 @@ async function initDocker(projectPath: string, answers: InitAnswers) {
             // 解决 nodejs 依赖过大的问题
             if (templateMeta?.runtime === 'nodejs') {
                 const scriptsDir = path.join(projectPath, 'scripts')
-                if (! await fs.pathExists(scriptsDir)) {
+                if (!await fs.pathExists(scriptsDir)) {
                     await fs.mkdir(scriptsDir)
                 }
                 await copyFilesFromTemplates(projectPath, ['scripts/minify-docker.cjs'])

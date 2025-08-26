@@ -1,7 +1,7 @@
 import axios from 'axios'
 import sodium from 'libsodium-wrappers'
-import { CreateOrUpdateARepositorySecretRequest, GetARepositoryPublicKeyRequest, GiteeRepo, GithubRepo, GithubTopics, NodeIndexJson } from '@/types/interfaces'
 import { GITEE_API_URL, GITHUB_API_URL, NODE_INDEX_URL } from './constants'
+import { CreateOrUpdateARepositorySecretRequest, GetARepositoryPublicKeyRequest, GiteeRepo, GithubRepo, GithubTopics, NodeIndexJson } from '@/types/interfaces'
 
 axios.defaults.timeout = 15 * 1000
 
