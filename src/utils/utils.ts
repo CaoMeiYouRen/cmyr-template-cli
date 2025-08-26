@@ -1059,6 +1059,19 @@ async function initEditorconfig(projectPath: string) {
 async function initCommitlint(projectPath: string) {
     const loading = ora('正在初始化 commitlint ……').start()
     try {
+        const pkg: IPackage = await getProjectJson(projectPath)
+        const devDependencies = {
+            commitlint: '^19.8.1',
+            'commitlint-config-cmyr': `^${await getNpmPackageVersion('commitlint-config-cmyr')}`,
+        }
+        const pkgData: IPackage = {
+            devDependencies: {
+                ...devDependencies,
+                ...pkg?.devDependencies,
+            },
+        }
+        await saveProjectJson(projectPath, pkgData)
+
         await removeFiles(projectPath, ['commitlint.config.cjs', 'commitlint.config.js'])
         const files = ['commitlint.config.ts']
         await copyFilesFromTemplates(projectPath, files, true)
@@ -1367,7 +1380,6 @@ async function initCommitizen(projectPath: string) {
         const pkg: IPackage = await getProjectJson(projectPath)
         const devDependencies = {
             commitizen: '^4.3.1',
-            'commitlint-config-cmyr': `^${await getNpmPackageVersion('commitlint-config-cmyr')}`,
             'cz-conventional-changelog-cmyr': `^${await getNpmPackageVersion('cz-conventional-changelog-cmyr')}`,
         }
         const pkgData: IPackage = {
@@ -1378,7 +1390,7 @@ async function initCommitizen(projectPath: string) {
             devDependencies: {
                 ...devDependencies,
                 ...pkg?.devDependencies,
-                commitlint: '^19.8.1',
+
             },
             config: {
                 ...pkg?.config,
