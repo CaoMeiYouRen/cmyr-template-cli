@@ -1062,12 +1062,13 @@ async function initCommitlint(projectPath: string) {
         const pkg: IPackage = await getProjectJson(projectPath)
         const devDependencies = {
             commitlint: '^19.8.1',
-            'commitlint-config-cmyr': `^${await getNpmPackageVersion('commitlint-config-cmyr')}`,
+            '@commitlint/cli': undefined,
         }
         const pkgData: IPackage = {
             devDependencies: {
-                ...devDependencies,
+                'commitlint-config-cmyr': `^${await getNpmPackageVersion('commitlint-config-cmyr')}`,
                 ...pkg?.devDependencies,
+                ...devDependencies,
             },
         }
         await saveProjectJson(projectPath, pkgData)
@@ -1151,6 +1152,7 @@ async function initSemanticRelease(projectPath: string) {
             '@semantic-release/changelog': '^6.0.3',
             '@semantic-release/git': '^10.0.1',
             'semantic-release': '^24.2.7',
+            'conventional-changelog-cli': undefined,
         }
 
         const pkgData: IPackage = {
@@ -1159,8 +1161,8 @@ async function initSemanticRelease(projectPath: string) {
                 ...pkg?.scripts,
             },
             devDependencies: {
-                ...devDependencies,
                 ...pkg?.devDependencies,
+                ...devDependencies,
                 'conventional-changelog-cmyr-config': `^${await getNpmPackageVersion('conventional-changelog-cmyr-config')}`,
                 'semantic-release': devDependencies['semantic-release'],
             },
