@@ -182,7 +182,8 @@ async function init(projectPath: string, answers: InitAnswers) {
                 }
                 await initGithubWorkflows(projectPath, answers)
             }
-            await initConfig(projectPath)
+            await initEditorconfig(projectPath)
+            await initCommitlint(projectPath)
             await initCommitizen(projectPath)
             if (isInitSemanticRelease) {
                 await initSemanticRelease(projectPath)
@@ -533,20 +534,6 @@ async function initDependabot(projectPath: string, answers: InitAnswers) {
                         dependencies.push({
                             'dependency-name': 'semantic-release',
                             versions: ['>= 21.0.1'],
-                        })
-                    }
-                    if (pkg?.devDependencies?.['@commitlint/cli']) { // 如果有 @commitlint/cli 依赖
-                        // 解决 @commitlint/cli 高版本出错问题，禁用 @commitlint/cli 版本更新
-                        dependencies.push({
-                            'dependency-name': '@commitlint/cli',
-                            versions: ['>= 19.0.0'],
-                        })
-                    }
-                    if (pkg?.devDependencies?.['@commitlint/config-conventional']) { // 如果有 @commitlint/config-conventional 依赖
-                        // 解决 @commitlint/config-conventional 高版本出错问题，禁用 @commitlint/config-conventional 版本更新
-                        dependencies.push({
-                            'dependency-name': '@commitlint/config-conventional',
-                            versions: ['>= 19.0.0'],
                         })
                     }
                     if (pkg?.dependencies?.['art-template']) { // 如果有 art-template 依赖
@@ -1053,15 +1040,31 @@ async function initLicense(projectPath: string, projectInfos: ProjectInfo) {
 }
 
 /**
- * 初始化 .editorconfig、commitlint.config.js 等配置
+ * 初始化 .editorconfig 等配置
  * @param projectPath
  */
-async function initConfig(projectPath: string) {
+async function initEditorconfig(projectPath: string) {
     try {
-        await removeFiles(projectPath, ['commitlint.config.cjs', 'commitlint.config.js'])
-        const files = ['.editorconfig', 'commitlint.config.ts']
+        const files = ['.editorconfig']
         await copyFilesFromTemplates(projectPath, files, true)
     } catch (error) {
+        console.error(error)
+    }
+}
+
+/**
+ *  初始化 commitlint 配置
+ * @param projectPath
+ */
+async function initCommitlint(projectPath: string) {
+    const loading = ora('正在初始化 commitlint ……').start()
+    try {
+        await removeFiles(projectPath, ['commitlint.config.cjs', 'commitlint.config.js'])
+        const files = ['commitlint.config.ts']
+        await copyFilesFromTemplates(projectPath, files, true)
+        loading.succeed('commitlint 初始化成功！')
+    } catch (error) {
+        loading.fail('commitlint 初始化失败！')
         console.error(error)
     }
 }
@@ -1369,7 +1372,7 @@ async function initCommitizen(projectPath: string) {
             devDependencies: {
                 ...devDependencies,
                 ...pkg?.devDependencies,
-                '@commitlint/cli': '^19.8.1',
+                commitlint: '^19.8.1',
             },
             // config: {
             //     ...pkg?.config,
