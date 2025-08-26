@@ -1374,12 +1374,10 @@ async function initCommitizen(projectPath: string) {
                 ...pkg?.devDependencies,
                 commitlint: '^19.8.1',
             },
-            // config: {
-            //     ...pkg?.config,
-            //     commitizen: {
-            //         path: './node_modules/cz-conventional-changelog-cmyr',
-            //     },
-            // },
+            config: {
+                ...pkg?.config,
+                commitizen: undefined, // 移除旧的 commitizen 配置
+            },
         }
         await saveProjectJson(projectPath, pkgData)
         const files = ['.czrc']
