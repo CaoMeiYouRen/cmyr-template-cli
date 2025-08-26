@@ -1,5 +1,14 @@
 # cmyr-template-cli
 
+## [1.41.1](https://github.com/CaoMeiYouRen/cmyr-template-cli/compare/v1.41.0...v1.41.1) (2025-08-26)
+
+
+### 🐛 Bug 修复
+
+* 在项目依赖生成中移除 commitlint 和 conventional-changelog-cli ([f5b71b4](https://github.com/CaoMeiYouRen/cmyr-template-cli/commit/f5b71b4))
+* 更新 vitest 和 vite 的版本依赖 ([3be447b](https://github.com/CaoMeiYouRen/cmyr-template-cli/commit/3be447b))
+* 移除对 semantic-release 的更新忽略 ([67c4828](https://github.com/CaoMeiYouRen/cmyr-template-cli/commit/67c4828))
+
 # [1.41.0](https://github.com/CaoMeiYouRen/cmyr-template-cli/compare/v1.40.0...v1.41.0) (2025-08-26)
 
 
