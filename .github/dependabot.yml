@@ -15,9 +15,6 @@ updates:
     ignore:
       - dependency-name: "plop"
       - dependency-name: "ora"
-      - dependency-name: "eslint"
-        versions:
-          - ">= 9.0.0"
       - dependency-name: semantic-release
         versions:
           - ">= 21.0.1"
