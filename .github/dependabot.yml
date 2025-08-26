@@ -15,9 +15,6 @@ updates:
     ignore:
       - dependency-name: "plop"
       - dependency-name: "ora"
-      - dependency-name: semantic-release
-        versions:
-          - ">= 21.0.1"
   - package-ecosystem: "github-actions"
     directory: "/"
     schedule:
