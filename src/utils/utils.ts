@@ -1315,25 +1315,31 @@ async function initStylelint(projectPath: string) {
             return
         }
 
-        const files = ['.stylelintignore', '.stylelintrc.js']
 
         await removeFiles(projectPath, ['.stylelintrc.js', '.stylelintrc.cjs'])
-        await copyFilesFromTemplates(projectPath, files)
+
+        const files = ['stylelint.config.js']
+        await copyFilesFromTemplates(projectPath, files, true)
 
         const devDependencies = {
-            'postcss-html': '^1.5.0',
-            sass: '^1.57.1',
-            stylelint: '^14.16.1',
-            'stylelint-config-cmyr': '^0.2.1',
-            'stylelint-config-rational-order': '^0.1.2',
-            'stylelint-config-standard': '^29.0.0',
-            'stylelint-order': '^6.0.1',
-            'stylelint-scss': '^4.3.0',
+            postcss: '^8.5.6',
+            sass: '^1.90.0',
+            stylelint: '^16.23.1',
+            'stylelint-config-cmyr': `^${await getNpmPackageVersion('stylelint-config-cmyr')}`,
+            // 移除不必要的依赖
+            'postcss-html': undefined,
+            'postcss-scss': undefined,
+            'stylelint-config-standard': undefined,
+            'stylelint-config-recommended': undefined,
+            'stylelint-config-standard-scss': undefined,
+            'stylelint-scss': undefined,
+            'stylelint-config-html': undefined,
+            'stylelint-config-rational-order': undefined,
         }
 
         const pkgData: IPackage = {
             scripts: {
-                'lint:css': `stylelint src/**/*.{${extnames.join(',')}} --fix --custom-syntax postcss-html`,
+                'lint:css': `stylelint src/**/*.{${extnames.join(',')}} --fix`,
                 ...pkg?.scripts,
             },
             devDependencies: {
