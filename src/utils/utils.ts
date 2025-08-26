@@ -1059,8 +1059,8 @@ async function initLicense(projectPath: string, projectInfos: ProjectInfo) {
 async function initConfig(projectPath: string) {
     try {
         await removeFiles(projectPath, ['commitlint.config.cjs', 'commitlint.config.js'])
-        const files = ['.editorconfig', 'commitlint.config.js']
-        await copyFilesFromTemplates(projectPath, files)
+        const files = ['.editorconfig', 'commitlint.config.ts']
+        await copyFilesFromTemplates(projectPath, files, true)
     } catch (error) {
         console.error(error)
     }
@@ -1357,7 +1357,8 @@ async function initCommitizen(projectPath: string) {
     try {
         const pkg: IPackage = await getProjectJson(projectPath)
         const devDependencies = {
-            commitizen: '^4.2.3',
+            commitizen: '^4.3.1',
+            'commitlint-config-cmyr': `^${await getNpmPackageVersion('commitlint-config-cmyr')}`,
             'cz-conventional-changelog-cmyr': `^${await getNpmPackageVersion('cz-conventional-changelog-cmyr')}`,
         }
         const pkgData: IPackage = {
@@ -1368,17 +1369,18 @@ async function initCommitizen(projectPath: string) {
             devDependencies: {
                 ...devDependencies,
                 ...pkg?.devDependencies,
-                '@commitlint/cli': '^18.6.1',
-                '@commitlint/config-conventional': '^18.6.3',
+                '@commitlint/cli': '^19.8.1',
             },
-            config: {
-                ...pkg?.config,
-                commitizen: {
-                    path: 'cz-conventional-changelog-cmyr',
-                },
-            },
+            // config: {
+            //     ...pkg?.config,
+            //     commitizen: {
+            //         path: './node_modules/cz-conventional-changelog-cmyr',
+            //     },
+            // },
         }
         await saveProjectJson(projectPath, pkgData)
+        const files = ['.czrc']
+        await copyFilesFromTemplates(projectPath, files, true)
         loading.succeed('commitizen 初始化成功！')
     } catch (error) {
         console.error(error)
