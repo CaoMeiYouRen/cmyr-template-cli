@@ -1493,11 +1493,11 @@ async function initTest(projectPath: string, answers: InitAnswers) {
 
             const pkg: IPackage = await getProjectJson(projectPath)
             const devDependencies: Record<string, string> = {
-                vitest: '^2.1.6',
+                vitest: '^3.2.4',
             }
             // 检测是否存在 vite，若不存在，则添加
             if (!pkg?.dependencies?.vite && !pkg?.devDependencies?.vite) {
-                devDependencies.vite = '^6.0.1'
+                devDependencies.vite = '^7.0.5'
             }
 
             const newPkg = merge({}, pkg, {
