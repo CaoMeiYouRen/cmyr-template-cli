@@ -1,5 +1,28 @@
 # cmyr-template-cli
 
+# [1.41.0](https://github.com/CaoMeiYouRen/cmyr-template-cli/compare/v1.40.0...v1.41.0) (2025-08-26)
+
+
+### ✨ 新功能
+
+* 优化 commitlint 配置逻辑 ([07c1be3](https://github.com/CaoMeiYouRen/cmyr-template-cli/commit/07c1be3))
+* 更新 release 配置，添加新的 release.config.js 文件并升级相关依赖 ([fb89154](https://github.com/CaoMeiYouRen/cmyr-template-cli/commit/fb89154))
+* 重构 ESLint 配置，移除不必要的依赖并添加新的配置文件 ([97857f2](https://github.com/CaoMeiYouRen/cmyr-template-cli/commit/97857f2))
+* 重构初始化配置，优化 .editorconfig 和 commitlint 的支持 ([6a3ff6e](https://github.com/CaoMeiYouRen/cmyr-template-cli/commit/6a3ff6e))
+
+
+### 🐛 Bug 修复
+
+* 更新 commitizen 版本，重构 commitlint 配置，添加新的配置文件 ([1968e52](https://github.com/CaoMeiYouRen/cmyr-template-cli/commit/1968e52))
+* 更新 REMOTES 常量，添加多个新的 GitHub 代理链接 ([f6dc540](https://github.com/CaoMeiYouRen/cmyr-template-cli/commit/f6dc540))
+* 移除旧的 commitizen 配置，优化项目初始化逻辑 ([26b4e07](https://github.com/CaoMeiYouRen/cmyr-template-cli/commit/26b4e07))
+* 统一引号风格，优化代码结构，修复导入顺序 ([10c533a](https://github.com/CaoMeiYouRen/cmyr-template-cli/commit/10c533a))
+
+
+### 📦 代码重构
+
+* 更新 stylelint 配置，移除不必要的依赖并添加新的配置文件 ([cc74f18](https://github.com/CaoMeiYouRen/cmyr-template-cli/commit/cc74f18))
+
 # [1.40.0](https://github.com/CaoMeiYouRen/cmyr-template-cli/compare/v1.39.3...v1.40.0) (2025-08-18)
 
 
