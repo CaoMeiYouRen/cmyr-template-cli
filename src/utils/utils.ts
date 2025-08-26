@@ -1145,12 +1145,12 @@ async function initSemanticRelease(projectPath: string) {
 
         const files = ['.releaserc.js', '.releaserc.cjs']
         await removeFiles(projectPath, files)
-        await copyFilesFromTemplates(projectPath, ['.releaserc.js'])
+        await copyFilesFromTemplates(projectPath, ['release.config.js'], true)
 
         const devDependencies = {
             '@semantic-release/changelog': '^6.0.3',
             '@semantic-release/git': '^10.0.1',
-            'semantic-release': '21.0.1',
+            'semantic-release': '^24.2.7',
         }
 
         const pkgData: IPackage = {
@@ -1203,13 +1203,13 @@ async function initHusky(projectPath: string) {
         }
         const keyname = `*.{${extnames.join(',')}}`
         const devDependencies = {
-            husky: '^9.0.11',
-            'lint-staged': '^15.2.2',
+            husky: '^9.1.7',
+            'lint-staged': '^16.1.5',
         }
         const pkgData: IPackage = {
             scripts: {
                 ...pkg?.scripts,
-                prepare: 'husky install',
+                prepare: 'husky init',
             },
             devDependencies: {
                 ...devDependencies,

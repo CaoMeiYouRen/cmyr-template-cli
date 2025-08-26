@@ -1,5 +1,9 @@
-const { name } = require('./package.json')
-module.exports = {
+import pkg from './package.json' with { type: 'json' }
+const { name } = pkg
+/**
+ * @type {import('semantic-release').GlobalConfig}
+ */
+export default {
     plugins: [
         [
             '@semantic-release/commit-analyzer',
