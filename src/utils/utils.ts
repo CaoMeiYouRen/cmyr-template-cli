@@ -1059,7 +1059,7 @@ async function initCommitlint(projectPath: string) {
     try {
         const pkg: IPackage = await getProjectJson(projectPath)
         const devDependencies = {
-            commitlint: '^19.8.1',
+            commitlint: `^${await getNpmPackageVersion('commitlint')}`,
             '@commitlint/cli': undefined,
         }
         const pkgData: IPackage = {
@@ -1147,7 +1147,7 @@ async function initSemanticRelease(projectPath: string) {
         await copyFilesFromTemplates(projectPath, ['release.config.js'], true)
 
         const devDependencies = {
-            'semantic-release': '^24.2.7',
+            'semantic-release': `^${await getNpmPackageVersion('semantic-release')}`,
             'semantic-release-cmyr-config': `^${await getNpmPackageVersion('semantic-release-cmyr-config')}`,
             'conventional-changelog-cli': undefined,
             'conventional-changelog-cmyr-config': undefined,
@@ -1203,8 +1203,8 @@ async function initHusky(projectPath: string) {
         }
         const keyname = `*.{${extnames.join(',')}}`
         const devDependencies = {
-            husky: '^9.1.7',
-            'lint-staged': '^16.1.5',
+            husky: `^${await getNpmPackageVersion('husky')}`,
+            'lint-staged': `^${await getNpmPackageVersion('lint-staged')}`,
         }
         const pkgData: IPackage = {
             scripts: {
@@ -1212,8 +1212,8 @@ async function initHusky(projectPath: string) {
                 prepare: 'husky init',
             },
             devDependencies: {
-                ...devDependencies,
                 ...pkg?.devDependencies,
+                ...devDependencies,
             },
             husky: undefined,
             'lint-staged': {
@@ -1256,7 +1256,7 @@ async function initEslint(projectPath: string, answers: InitAnswers) {
         if (templateMeta?.language === 'vue') {
             Object.assign(devDependencies, {
                 '@vue/eslint-config-typescript': undefined,
-                'eslint-plugin-vue': '^9.8.0',
+                'eslint-plugin-vue': `^${await getNpmPackageVersion('eslint-plugin-vue')}`,
             })
             extnames.push('vue')
             eslintType = 'eslint-config-cmyr/vue'
@@ -1264,7 +1264,7 @@ async function initEslint(projectPath: string, answers: InitAnswers) {
             extnames.push('jsx', 'tsx')
             eslintType = 'eslint-config-cmyr/react'
             Object.assign(devDependencies, {
-                'eslint-plugin-react': '^7.37.5',
+                'eslint-plugin-react': `^${await getNpmPackageVersion('eslint-plugin-react')}`,
             })
         }
         const pkgData: IPackage = {
@@ -1331,9 +1331,9 @@ async function initStylelint(projectPath: string) {
         await copyFilesFromTemplates(projectPath, files, true)
 
         const devDependencies = {
-            postcss: '^8.5.6',
-            sass: '^1.90.0',
-            stylelint: '^16.23.1',
+            postcss: `^${await getNpmPackageVersion('postcss')}`,
+            sass: `^${await getNpmPackageVersion('sass')}`,
+            stylelint: `^${await getNpmPackageVersion('stylelint')}`,
             'stylelint-config-cmyr': `^${await getNpmPackageVersion('stylelint-config-cmyr')}`,
             // 移除不必要的依赖
             'postcss-html': undefined,
@@ -1352,8 +1352,8 @@ async function initStylelint(projectPath: string) {
                 ...pkg?.scripts,
             },
             devDependencies: {
-                ...devDependencies,
                 ...pkg?.devDependencies,
+                ...devDependencies,
             },
         }
 
@@ -1375,7 +1375,7 @@ async function initCommitizen(projectPath: string) {
     try {
         const pkg: IPackage = await getProjectJson(projectPath)
         const devDependencies = {
-            commitizen: '^4.3.1',
+            commitizen: `^${await getNpmPackageVersion('commitizen')}`,
             'cz-conventional-changelog-cmyr': `^${await getNpmPackageVersion('cz-conventional-changelog-cmyr')}`,
         }
         const pkgData: IPackage = {
@@ -1384,9 +1384,8 @@ async function initCommitizen(projectPath: string) {
                 commit: 'cz',
             },
             devDependencies: {
-                ...devDependencies,
                 ...pkg?.devDependencies,
-
+                ...devDependencies,
             },
             config: {
                 ...pkg?.config,
