@@ -1,5 +1,20 @@
 # cmyr-template-cli
 
+## [1.41.3](https://github.com/CaoMeiYouRen/cmyr-template-cli/compare/v1.41.2...v1.41.3) (2025-08-27)
+
+
+### 🐛 Bug 修复
+
+* 修复 initEslint 函数中的 lint 脚本和开发依赖合并逻辑 ([85a2a26](https://github.com/CaoMeiYouRen/cmyr-template-cli/commit/85a2a26))
+* 更新 initSemanticRelease 函数中的开发依赖，移除版本限制 ([832df5d](https://github.com/CaoMeiYouRen/cmyr-template-cli/commit/832df5d))
+* 更新多个开发依赖的版本获取方式，改为动态获取最新版本 ([0ff756e](https://github.com/CaoMeiYouRen/cmyr-template-cli/commit/0ff756e))
+
+
+### 📦 代码重构
+
+* 精简 release 配置，移除不必要的插件 ([13f2502](https://github.com/CaoMeiYouRen/cmyr-template-cli/commit/13f2502))
+* 精简 release 配置，移除多余的插件和逻辑 ([0f9f3e1](https://github.com/CaoMeiYouRen/cmyr-template-cli/commit/0f9f3e1))
+
 ## [1.41.2](https://github.com/CaoMeiYouRen/cmyr-template-cli/compare/v1.41.1...v1.41.2) (2025-08-26)
 
 
