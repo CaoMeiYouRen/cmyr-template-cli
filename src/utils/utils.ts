@@ -1269,12 +1269,12 @@ async function initEslint(projectPath: string, answers: InitAnswers) {
         }
         const pkgData: IPackage = {
             scripts: {
-                lint: `cross-env NODE_ENV=production eslint . --fix`,
                 ...pkg?.scripts,
+                lint: `cross-env NODE_ENV=production eslint . --fix`,
             },
             devDependencies: {
-                ...devDependencies,
                 ...pkg?.devDependencies,
+                ...devDependencies,
                 'eslint-config-cmyr': `^${await getNpmPackageVersion('eslint-config-cmyr')}`,
             },
         }
