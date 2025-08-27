@@ -1147,10 +1147,12 @@ async function initSemanticRelease(projectPath: string) {
         await copyFilesFromTemplates(projectPath, ['release.config.js'], true)
 
         const devDependencies = {
-            '@semantic-release/changelog': '^6.0.3',
-            '@semantic-release/git': '^10.0.1',
             'semantic-release': '^24.2.7',
+            'semantic-release-cmyr-config': `^${await getNpmPackageVersion('semantic-release-cmyr-config')}`,
             'conventional-changelog-cli': undefined,
+            'conventional-changelog-cmyr-config': undefined,
+            '@semantic-release/changelog': undefined,
+            '@semantic-release/git': undefined,
         }
 
         const pkgData: IPackage = {
@@ -1161,8 +1163,6 @@ async function initSemanticRelease(projectPath: string) {
             devDependencies: {
                 ...pkg?.devDependencies,
                 ...devDependencies,
-                'conventional-changelog-cmyr-config': `^${await getNpmPackageVersion('conventional-changelog-cmyr-config')}`,
-                'semantic-release': devDependencies['semantic-release'],
             },
             changelog: {
                 language: 'zh',
