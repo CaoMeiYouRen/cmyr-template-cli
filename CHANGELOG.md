@@ -1,5 +1,12 @@
 # cmyr-template-cli
 
+## [1.41.4](https://github.com/CaoMeiYouRen/cmyr-template-cli/compare/v1.41.3...v1.41.4) (2025-09-21)
+
+
+### 🐛 Bug 修复
+
+* 更新工作流配置，优化并统一各个 YAML 文件的结构 ([602bb35](https://github.com/CaoMeiYouRen/cmyr-template-cli/commit/602bb35))
+
 ## [1.41.3](https://github.com/CaoMeiYouRen/cmyr-template-cli/compare/v1.41.2...v1.41.3) (2025-08-27)
 
 
