@@ -528,6 +528,9 @@ async function initDependabot(projectPath: string, answers: InitAnswers) {
             if (await fs.pathExists(dependabotPath)) { // 如果存在 dependabot
                 const dependabot: Dependabot = yaml.parse(await fs.readFile(dependabotPath, 'utf-8'))
                 if (dependabot?.updates?.[0]['package-ecosystem'] === 'npm') { // 如果为 npm
+                    if (dependabot.updates[0].schedule.interval !== 'monthly') {
+                        dependabot.updates[0].schedule.interval = 'monthly' // 修改为每月更新一次
+                    }
                     const dependencies = []
                     if (pkg?.dependencies?.['art-template']) { // 如果有 art-template 依赖
                         // 高版本涉嫌危险代码，参考 https://github.com/yoimiya-kokomi/Miao-Yunzai/pull/515
@@ -553,7 +556,7 @@ async function initDependabot(projectPath: string, answers: InitAnswers) {
                         directory: '/',
                         'open-pull-requests-limit': 20,
                         schedule: {
-                            interval: 'weekly',
+                            interval: 'monthly',
                             time: '04:00',
                             timezone: 'Asia/Shanghai',
                         },
@@ -563,7 +566,7 @@ async function initDependabot(projectPath: string, answers: InitAnswers) {
                 fs.writeFile(dependabotPath, yaml.stringify(dependabot, {
                     defaultStringType: 'QUOTE_DOUBLE', // 默认使用双引号
                     singleQuote: false, // 禁用单引号
-                    doubleQuotedAsJSON: true, // 使用JSON兼容的双引号语法
+                    doubleQuotedAsJSON: false, // 使用JSON兼容的双引号语法
                 }))
             }
 
