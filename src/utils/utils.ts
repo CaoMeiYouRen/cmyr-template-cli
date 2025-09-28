@@ -1218,7 +1218,7 @@ async function initHusky(projectPath: string) {
         const pkgData: IPackage = {
             scripts: {
                 ...pkg?.scripts,
-                prepare: 'husky init',
+                prepare: 'husky',
             },
             devDependencies: {
                 ...pkg?.devDependencies,
