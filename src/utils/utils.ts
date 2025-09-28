@@ -210,6 +210,8 @@ async function init(projectPath: string, answers: InitAnswers) {
 
             await jsFileExtRename(projectPath)
 
+            await initDependabot(projectPath, answers)
+
             await asyncExec('git add .', {
                 cwd: projectPath,
             })
@@ -284,8 +286,6 @@ async function init(projectPath: string, answers: InitAnswers) {
         if (isInitDocker) {
             await initDocker(projectPath, answers)
         }
-
-        await initDependabot(projectPath, answers)
 
         await asyncExec('git add .', {
             cwd: projectPath,
@@ -530,6 +530,12 @@ async function initDependabot(projectPath: string, answers: InitAnswers) {
                 if (dependabot?.updates?.[0]['package-ecosystem'] === 'npm') { // 如果为 npm
                     if (dependabot.updates[0].schedule.interval !== 'monthly') {
                         dependabot.updates[0].schedule.interval = 'monthly' // 修改为每月更新一次
+                    }
+                    if (dependabot.updates[0].schedule.time !== '04:00') {
+                        dependabot.updates[0].schedule.time = '04:00' // 修改为 04:00 更新
+                    }
+                    if (dependabot.updates[0].schedule.timezone !== 'Asia/Shanghai') {
+                        dependabot.updates[0].schedule.timezone = 'Asia/Shanghai'// 修改为 上海时区
                     }
                     const dependencies = []
                     if (pkg?.dependencies?.['art-template']) { // 如果有 art-template 依赖
