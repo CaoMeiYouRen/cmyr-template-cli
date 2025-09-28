@@ -1,5 +1,16 @@
 # cmyr-template-cli
 
+## [1.41.5](https://github.com/CaoMeiYouRen/cmyr-template-cli/compare/v1.41.4...v1.41.5) (2025-09-28)
+
+
+### 🐛 Bug 修复
+
+* 修改 Dependabot 更新频率为每月，并调整 YAML 输出格式 ([b3a1a70](https://github.com/CaoMeiYouRen/cmyr-template-cli/commit/b3a1a70))
+* 修改 husky 初始化脚本为 'husky' ([8482f0d](https://github.com/CaoMeiYouRen/cmyr-template-cli/commit/8482f0d))
+* 修正 ESLint 配置类型为 'eslint-config-cmyr' ([b20fc9c](https://github.com/CaoMeiYouRen/cmyr-template-cli/commit/b20fc9c))
+* 更新 initDependabot 函数，设置每月更新时间为 04:00，并调整时区为上海 ([4a01d59](https://github.com/CaoMeiYouRen/cmyr-template-cli/commit/4a01d59))
+* 更新 initDependabot 函数的 YAML 配置，调整键值类型和双引号语法 ([17ce5c0](https://github.com/CaoMeiYouRen/cmyr-template-cli/commit/17ce5c0))
+
 ## [1.41.4](https://github.com/CaoMeiYouRen/cmyr-template-cli/compare/v1.41.3...v1.41.4) (2025-09-21)
 
 
