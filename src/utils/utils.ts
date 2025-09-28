@@ -1253,7 +1253,7 @@ async function initEslint(projectPath: string, answers: InitAnswers) {
             '@typescript-eslint/eslint-plugin': undefined,
             '@typescript-eslint/parser': undefined,
         }
-        let eslintType = 'cmyr'
+        let eslintType = 'eslint-config-cmyr'
         const extnames = ['js', 'mjs', 'cjs', 'ts', 'cts', 'mts']
 
         if (templateMeta?.language === 'vue') {
