@@ -571,8 +571,9 @@ async function initDependabot(projectPath: string, answers: InitAnswers) {
                 }
                 fs.writeFile(dependabotPath, yaml.stringify(dependabot, {
                     defaultStringType: 'QUOTE_DOUBLE', // 默认使用双引号
+                    defaultKeyType: 'PLAIN', // key 使用普通字符串
                     singleQuote: false, // 禁用单引号
-                    doubleQuotedAsJSON: false, // 使用JSON兼容的双引号语法
+                    doubleQuotedAsJSON: true, // 使用JSON兼容的双引号语法
                 }))
             }
 
