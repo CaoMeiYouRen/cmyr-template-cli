@@ -32,7 +32,7 @@
     "build:prod": "npm run build && rimraf temp && cross-env NODE_ENV=production ct create"
   },
   "devDependencies": {
-    "@commitlint/cli": "^19.8.1",
+    "@commitlint/cli": "^20.1.0",
     "@types/debug": "^4.1.5",
     "@types/ejs": "^3.1.0",
     "@types/fs-extra": "^11.0.0",
