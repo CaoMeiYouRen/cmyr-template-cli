@@ -83,5 +83,13 @@
   },
   "changelog": {
     "language": "zh"
+  },
+  "homepage": "https://github.com/CaoMeiYouRen/cmyr-template-cli#readme",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/CaoMeiYouRen/cmyr-template-cli.git"
+  },
+  "bugs": {
+    "url": "https://github.com/CaoMeiYouRen/cmyr-template-cli/issues"
   }
 }
