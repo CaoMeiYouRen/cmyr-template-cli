@@ -21,6 +21,11 @@ jobs:
     name: Release
     runs-on: ubuntu-latest
     timeout-minutes: 10
+    permissions:
+      packages: write
+      contents: write
+      issues: write
+      pull-requests: write
     steps:
       - uses: actions/checkout@v5
         with:
