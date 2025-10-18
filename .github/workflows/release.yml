@@ -9,7 +9,7 @@ concurrency:
   cancel-in-progress: false
 
 permissions:
-  # id-token: write # Required for OIDC
+  id-token: write # Required for OIDC
   packages: write
   contents: write
   issues: write
@@ -39,5 +39,5 @@ jobs:
       - env:
           # GH_TOKEN: ${{ secrets.GH_TOKEN }}
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
+          # NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
         run: pnpm run release
