@@ -7,9 +7,14 @@ on:
 concurrency:
   group: ${{ github.workflow }}-${{ github.ref }}
   cancel-in-progress: false
+
 permissions:
   id-token: write # Required for OIDC
-  contents: read
+  packages: write
+  contents: write
+  issues: write
+  pull-requests: write
+
 jobs:
   release:
     name: Release
