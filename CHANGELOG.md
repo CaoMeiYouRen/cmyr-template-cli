@@ -1,5 +1,12 @@
 # cmyr-template-cli
 
+## [1.41.6](https://github.com/CaoMeiYouRen/cmyr-template-cli/compare/v1.41.5...v1.41.6) (2025-10-18)
+
+
+### 🐛 Bug 修复
+
+* 添加 homepage、repository 和 bugs 字段到 package.json ([531c752](https://github.com/CaoMeiYouRen/cmyr-template-cli/commit/531c752))
+
 ## [1.41.5](https://github.com/CaoMeiYouRen/cmyr-template-cli/compare/v1.41.4...v1.41.5) (2025-09-28)
 
 
