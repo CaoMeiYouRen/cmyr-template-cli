@@ -10,7 +10,7 @@ concurrency:
   cancel-in-progress: false
 
 permissions:
-  # id-token: write # Required for OIDC
+  id-token: write # Required for OIDC
   packages: write
   contents: write
   issues: write
@@ -21,11 +21,6 @@ jobs:
     name: Release
     runs-on: ubuntu-latest
     timeout-minutes: 10
-    permissions:
-      packages: write
-      contents: write
-      issues: write
-      pull-requests: write
     steps:
       - uses: actions/checkout@v5
         with:
@@ -39,11 +34,14 @@ jobs:
         with:
           node-version: "lts/*"
           registry-url: "https://registry.npmjs.org"
+      # Ensure npm 11.5.1 or later is installed
+      - name: Update npm
+        run: npm install -g npm@latest
       - run: pnpm i --fix-lockfile
       - run: pnpm run lint
       - run: pnpm run build
       - env:
           # GH_TOKEN: ${{ secrets.GH_TOKEN }}
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
-        run: pnpm run release
+          # NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
+        run: npm run release
