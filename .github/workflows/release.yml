@@ -3,13 +3,14 @@ on:
   push:
     branches:
       - master
+  workflow_dispatch:
 # 仅取消针对当前工作流正在进行的作业或运行
 concurrency:
   group: ${{ github.workflow }}-${{ github.ref }}
   cancel-in-progress: false
 
 permissions:
-  id-token: write # Required for OIDC
+  # id-token: write # Required for OIDC
   packages: write
   contents: write
   issues: write
