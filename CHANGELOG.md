@@ -1,5 +1,13 @@
 # cmyr-template-cli
 
+## [1.41.7](https://github.com/CaoMeiYouRen/cmyr-template-cli/compare/v1.41.6...v1.41.7) (2025-10-19)
+
+
+### 🐛 Bug 修复
+
+* 启用 npm 发布并更新工作流配置 ([ed20b27](https://github.com/CaoMeiYouRen/cmyr-template-cli/commit/ed20b27))
+* 添加 pnpm 配置以覆盖 semantic-release 依赖版本 ([2372226](https://github.com/CaoMeiYouRen/cmyr-template-cli/commit/2372226))
+
 ## [1.41.6](https://github.com/CaoMeiYouRen/cmyr-template-cli/compare/v1.41.5...v1.41.6) (2025-10-18)
 
 
