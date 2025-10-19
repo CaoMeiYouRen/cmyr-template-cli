@@ -95,5 +95,11 @@
   },
   "bugs": {
     "url": "https://github.com/CaoMeiYouRen/cmyr-template-cli/issues"
+  },
+  "pnpm": {
+    "overrides": {
+      "@semantic-release/github": "^12.0.0",
+      "@semantic-release/npm": "^13.1.0"
+    }
   }
 }
