@@ -13,6 +13,7 @@ jobs:
     runs-on: ubuntu-latest
     timeout-minutes: 30
     permissions:
+      id-token: write # Required for OIDC
       packages: write
       contents: write
       issues: write
@@ -34,7 +35,5 @@ jobs:
       - run: pnpm run lint
       - run: pnpm run build
       # - env:
-      #     # GH_TOKEN: ${{ secrets.GH_TOKEN }}
       #     GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-      #     # NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
       #   run: pnpm run release
