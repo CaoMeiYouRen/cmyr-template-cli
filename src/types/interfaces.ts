@@ -199,6 +199,9 @@ export type TemplateCliConfig = {
     DOCKER_USERNAME: string
     DOCKER_PASSWORD: string
     CONTACT_EMAIL: string
+    /**
+     * @deprecated 由于 npm 的安全机制修改，所以不再需要设置 NPM_TOKEN 了
+     */
     NPM_TOKEN: string
 }
 

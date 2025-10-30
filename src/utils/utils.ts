@@ -374,15 +374,8 @@ async function initRemoteGitRepo(projectPath: string, answers: InitAnswers) {
                         console.info(colors.green('仓库 topics 初始化成功！'))
 
                         console.info(colors.green('正在初始化仓库 action secret ！'))
-                        const { DOCKER_USERNAME, DOCKER_PASSWORD, NPM_TOKEN } = config
-                        if (isPublishToNpm && NPM_TOKEN) {
-                            await createOrUpdateARepositorySecret(authToken, {
-                                owner,
-                                repo,
-                                secret_name: 'NPM_TOKEN',
-                                secret_value: NPM_TOKEN,
-                            })
-                        }
+
+                        const { DOCKER_USERNAME, DOCKER_PASSWORD } = config
                         if (templateMeta.docker && DOCKER_USERNAME && DOCKER_PASSWORD) {
                             await createOrUpdateARepositorySecret(authToken, {
                                 owner,
