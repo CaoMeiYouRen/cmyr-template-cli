@@ -1,5 +1,12 @@
 # cmyr-template-cli
 
+## [1.41.8](https://github.com/CaoMeiYouRen/cmyr-template-cli/compare/v1.41.7...v1.41.8) (2025-10-30)
+
+
+### 🐛 Bug 修复
+
+* 移除不再需要的 NPM_TOKEN 配置，并更新相关逻辑 ([feb05bf](https://github.com/CaoMeiYouRen/cmyr-template-cli/commit/feb05bf))
+
 ## [1.41.7](https://github.com/CaoMeiYouRen/cmyr-template-cli/compare/v1.41.6...v1.41.7) (2025-10-19)
 
 
