@@ -1,14 +1,12 @@
 import { describe, expect, it, vi } from 'vitest'
 
-vi.mock('@lint-md/core', () => {
-    return {
-        lintMarkdown: vi.fn((markdown: string) => ({
-            fixedResult: {
-                result: markdown.replace(/\s+/g, ' ').trim(),
-            },
-        })),
-    }
-})
+vi.mock('@lint-md/core', () => ({
+    lintMarkdown: vi.fn((markdown: string) => ({
+        fixedResult: {
+            result: markdown.replace(/\s+/g, ' ').trim(),
+        },
+    })),
+}))
 
 import { lintMarkdown } from '@lint-md/core'
 import { kebabCase, lintMd } from './string'
