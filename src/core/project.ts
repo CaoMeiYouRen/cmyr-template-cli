@@ -315,6 +315,15 @@ function getJsModuleType(fileContent: string) {
 }
 
 export async function getNpmPackageVersion(name: string) {
-    const version = (await asyncExec(`${PACKAGE_MANAGER} view ${name} version`)) as string || ''
-    return version.trim()
+    const output = (await asyncExec(`${PACKAGE_MANAGER} view ${name} version`)) as string || ''
+    const semverReg = /\d+\.\d+\.\d+(?:[-+][0-9A-Za-z-.]+)?/
+    const lines = output.split(/\r?\n/).map((line) => line.trim()).filter(Boolean)
+    const hit = lines.reverse().find((line) => semverReg.test(line))
+    if (hit) {
+        const match = hit.match(semverReg)
+        if (match) {
+            return match[0]
+        }
+    }
+    return output.trim()
 }
