@@ -21,3 +21,4 @@ jobs:
       - run: pnpm i --fix-lockfile
       - run: pnpm run lint
       - run: pnpm run build
+      - run: pnpm run test
