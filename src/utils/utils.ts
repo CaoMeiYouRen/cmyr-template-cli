@@ -442,15 +442,32 @@ async function getProjectInfo(projectPath: string, answers: InitAnswers) {
  * @param projectPath
  * @param projectInfos
  */
-async function initReadme(projectPath: string, projectInfos: ProjectInfo) {
-    const loading = ora('正在初始化 README.md ……').start()
+interface MarkdownTemplateInitOptions {
+    projectPath: string
+    projectInfos: ProjectInfo
+    templateRelativePath: string
+    destinationRelativePath?: string
+    loadingText: string
+    successText: string
+    failText: string
+}
+
+async function renderMarkdownTemplate({
+    projectPath,
+    projectInfos,
+    templateRelativePath,
+    destinationRelativePath,
+    loadingText,
+    successText,
+    failText,
+}: MarkdownTemplateInitOptions) {
+    const loading = ora(loadingText).start()
     try {
-
-        const templatePath = path.join(__dirname, '../templates/README.md')
+        const templatePath = path.join(__dirname, '../templates/', templateRelativePath)
         const template = (await fs.readFile(templatePath, 'utf8')).toString()
-        const newReadmePath = path.join(projectPath, 'README.md')
-
-        const readmeContent = await ejs.render(
+        const targetRelativePath = destinationRelativePath || templateRelativePath
+        const targetPath = path.join(projectPath, targetRelativePath)
+        const renderedContent = await ejs.render(
             template,
             projectInfos,
             {
@@ -458,15 +475,25 @@ async function initReadme(projectPath: string, projectInfos: ProjectInfo) {
                 async: true,
             },
         )
-
-        await removeFiles(projectPath, ['README.md'])
-        await fs.writeFile(newReadmePath, lintMd(unescape(readmeContent)))
-
-        loading.succeed('README.md 初始化成功！')
+        await removeFiles(projectPath, [targetRelativePath])
+        await fs.mkdirp(path.dirname(targetPath))
+        await fs.writeFile(targetPath, lintMd(unescape(renderedContent)))
+        loading.succeed(successText)
     } catch (error) {
-        loading.fail('README.md 初始化失败！')
+        loading.fail(failText)
         console.error(error)
     }
+}
+
+async function initReadme(projectPath: string, projectInfos: ProjectInfo) {
+    await renderMarkdownTemplate({
+        projectPath,
+        projectInfos,
+        templateRelativePath: 'README.md',
+        loadingText: '正在初始化 README.md ……',
+        successText: 'README.md 初始化成功！',
+        failText: 'README.md 初始化失败！',
+    })
 }
 
 /**
@@ -475,31 +502,14 @@ async function initReadme(projectPath: string, projectInfos: ProjectInfo) {
  * @param projectInfos
  */
 async function initContributing(projectPath: string, projectInfos: ProjectInfo) {
-    const loading = ora('正在初始化 贡献指南 ……').start()
-    try {
-
-        const templatePath = path.join(__dirname, '../templates/CONTRIBUTING.md')
-        const template = (await fs.readFile(templatePath, 'utf8')).toString()
-        const newContributingPath = path.join(projectPath, 'CONTRIBUTING.md')
-
-        const content = await ejs.render(
-            template,
-            projectInfos,
-            {
-                debug: false,
-                async: true,
-            },
-        )
-
-        await removeFiles(projectPath, ['CONTRIBUTING.md'])
-
-        await fs.writeFile(newContributingPath, lintMd(unescape(content)))
-
-        loading.succeed('贡献指南 初始化成功！')
-    } catch (error) {
-        loading.fail('贡献指南 初始化失败！')
-        console.error(error)
-    }
+    await renderMarkdownTemplate({
+        projectPath,
+        projectInfos,
+        templateRelativePath: 'CONTRIBUTING.md',
+        loadingText: '正在初始化 贡献指南 ……',
+        successText: '贡献指南 初始化成功！',
+        failText: '贡献指南 初始化失败！',
+    })
 }
 
 /**
@@ -511,26 +521,14 @@ async function initContributing(projectPath: string, projectInfos: ProjectInfo) 
  * @param projectInfos
  */
 async function initCodeOfConduct(projectPath: string, projectInfos: ProjectInfo) {
-    const loading = ora('正在初始化 贡献者公约 ……').start()
-    try {
-        const templatePath = path.join(__dirname, '../templates/CODE_OF_CONDUCT.md')
-        const template = (await fs.readFile(templatePath, 'utf8')).toString()
-        const newPath = path.join(projectPath, 'CODE_OF_CONDUCT.md')
-        const content = await ejs.render(
-            template,
-            projectInfos,
-            {
-                debug: false,
-                async: true,
-            },
-        )
-        await removeFiles(projectPath, ['CODE_OF_CONDUCT.md'])
-        await fs.writeFile(newPath, lintMd(unescape(content)))
-        loading.succeed('贡献者公约 初始化成功！')
-    } catch (error) {
-        loading.fail('贡献者公约 初始化失败！')
-        console.error(error)
-    }
+    await renderMarkdownTemplate({
+        projectPath,
+        projectInfos,
+        templateRelativePath: 'CODE_OF_CONDUCT.md',
+        loadingText: '正在初始化 贡献者公约 ……',
+        successText: '贡献者公约 初始化成功！',
+        failText: '贡献者公约 初始化失败！',
+    })
 }
 
 /**
@@ -542,49 +540,26 @@ async function initCodeOfConduct(projectPath: string, projectInfos: ProjectInfo)
  * @param projectInfos
  */
 async function initSecurity(projectPath: string, projectInfos: ProjectInfo) {
-    const loading = ora('正在初始化 SECURITY.md ……').start()
-    try {
-        const templatePath = path.join(__dirname, '../templates/SECURITY.md')
-        const template = (await fs.readFile(templatePath, 'utf8')).toString()
-        const newPath = path.join(projectPath, 'SECURITY.md')
-        const content = await ejs.render(
-            template,
-            projectInfos,
-            {
-                debug: false,
-                async: true,
-            },
-        )
-        await removeFiles(projectPath, ['SECURITY.md'])
-        await fs.writeFile(newPath, lintMd(unescape(content)))
-        loading.succeed('SECURITY.md 初始化成功！')
-    } catch (error) {
-        loading.fail('SECURITY.md 初始化失败！')
-        console.error(error)
-    }
+    await renderMarkdownTemplate({
+        projectPath,
+        projectInfos,
+        templateRelativePath: 'SECURITY.md',
+        loadingText: '正在初始化 SECURITY.md ……',
+        successText: 'SECURITY.md 初始化成功！',
+        failText: 'SECURITY.md 初始化失败！',
+    })
 }
 
 async function initPullRequestTemplate(projectPath: string, projectInfos: ProjectInfo) {
-    const loading = ora('正在初始化 PULL_REQUEST_TEMPLATE ……').start()
-    try {
-        const templatePath = path.join(__dirname, '../templates/.github/PULL_REQUEST_TEMPLATE.md')
-        const template = (await fs.readFile(templatePath, 'utf8')).toString()
-        const newPath = path.join(projectPath, '.github/PULL_REQUEST_TEMPLATE.md')
-        const content = await ejs.render(
-            template,
-            projectInfos,
-            {
-                debug: false,
-                async: true,
-            },
-        )
-        await removeFiles(projectPath, ['.github/PULL_REQUEST_TEMPLATE.md'])
-        await fs.writeFile(newPath, lintMd(unescape(content)))
-        loading.succeed('PULL_REQUEST_TEMPLATE 初始化成功！')
-    } catch (error) {
-        loading.fail('PULL_REQUEST_TEMPLATE 初始化失败！')
-        console.error(error)
-    }
+    await renderMarkdownTemplate({
+        projectPath,
+        projectInfos,
+        templateRelativePath: '.github/PULL_REQUEST_TEMPLATE.md',
+        destinationRelativePath: '.github/PULL_REQUEST_TEMPLATE.md',
+        loadingText: '正在初始化 PULL_REQUEST_TEMPLATE ……',
+        successText: 'PULL_REQUEST_TEMPLATE 初始化成功！',
+        failText: 'PULL_REQUEST_TEMPLATE 初始化失败！',
+    })
 }
 
 /**
