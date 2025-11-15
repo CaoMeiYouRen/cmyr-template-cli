@@ -37,3 +37,4 @@ sessions
 dist
 temp
 .ctrc
+coverage
