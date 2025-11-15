@@ -12,7 +12,7 @@ export async function loadTemplateCliConfig(): Promise<TemplateCliConfig> {
     const [local, home]: TemplateCliConfig[] = (await Promise.all(paths.map(async (p) => {
         try {
             if (await fs.pathExists(p)) {
-                return fs.readJSON(p)
+                return await fs.readJSON(p)
             }
             return null
         } catch (error) {
