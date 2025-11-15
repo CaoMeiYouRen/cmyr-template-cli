@@ -17,6 +17,18 @@ describe('buildDockerPlan', () => {
         expect(buildDockerPlan({ templateName: 'java-template', templateMeta: { ...baseMeta, runtime: 'java' } })).toEqual({ mode: 'java-ejs', templateRelativePath: 'java/Dockerfile.ejs' })
     })
 
+    it('returns node ejs plan when runtime is nodejs', () => {
+        expect(buildDockerPlan({ templateName: 'node-template', templateMeta: baseMeta })).toEqual({ mode: 'node-ejs', templateRelativePath: 'Dockerfile' })
+    })
+
+    it('returns python plan when runtime is python', () => {
+        expect(buildDockerPlan({ templateName: 'python-template', templateMeta: { ...baseMeta, runtime: 'python' } })).toEqual({ mode: 'python', templateRelativePath: 'python/Dockerfile' })
+    })
+
+    it('returns golang plan when runtime is golang', () => {
+        expect(buildDockerPlan({ templateName: 'go-template', templateMeta: { ...baseMeta, runtime: 'golang' } })).toEqual({ mode: 'golang', templateRelativePath: 'golang/Dockerfile' })
+    })
+
     it('falls back to default template otherwise', () => {
         expect(buildDockerPlan({ templateName: 'other', templateMeta: { ...baseMeta, runtime: 'browser' } })).toEqual({ mode: 'default', templateRelativePath: 'Dockerfile' })
     })
@@ -31,5 +43,9 @@ describe('shouldCopyDockerMinifyScript', () => {
     it('returns false for other runtimes', () => {
         const meta = { name: 'demo', language: 'typescript', runtime: 'python' } as TemplateMeta
         expect(shouldCopyDockerMinifyScript(meta)).toBe(false)
+    })
+
+    it('returns false when metadata is missing', () => {
+        expect(shouldCopyDockerMinifyScript(undefined)).toBe(false)
     })
 })

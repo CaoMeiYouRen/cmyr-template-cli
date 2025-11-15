@@ -14,6 +14,11 @@ describe('detectRemoteService', () => {
     it('returns unknown for other urls', () => {
         expect(detectRemoteService('git@selfhosted.com/foo.git')).toBe('unknown')
     })
+
+    it('returns unknown for non-string or empty inputs', () => {
+        expect(detectRemoteService('')).toBe('unknown')
+        expect(detectRemoteService(null as unknown as string)).toBe('unknown')
+    })
 })
 
 describe('buildRepositoryTopics', () => {
