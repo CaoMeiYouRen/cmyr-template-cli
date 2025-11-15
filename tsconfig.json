@@ -15,10 +15,9 @@
         "allowSyntheticDefaultImports": true,
         "experimentalDecorators": true, //开启装饰器
         "removeComments": false,
-        "baseUrl": ".",
         "paths": {
             "@/*": [
-                "src/*"
+                "./src/*"
             ]
         },
         "lib": [
