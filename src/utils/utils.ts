@@ -19,11 +19,11 @@ import { kebabCase, lintMd } from './string'
 import { ejsRender } from './ejs'
 import { copyFilesFromTemplates, removeFiles } from './files'
 import { createGithubRepo, replaceGithubRepositoryTopics, createGiteeRepo, getAuthorWebsiteFromGithubAPI, getLtsNodeVersionByHtml, getLtsNodeVersionByIndexJson, getFastUrl, createOrUpdateARepositorySecret } from './api'
-import { InitAnswers, IPackage, TemplateCliConfig, UnwrapPromise } from '@/types/interfaces'
+import { InitAnswers, IPackage, ProjectInfo, TemplateCliConfig } from '@/types/interfaces'
+import { sortKey } from '@/pure/common'
+import { buildPackageJsonPatch, buildProjectInfo } from '@/core/project-info'
 
 // 获取返回值类型并去除Promise的包裹
-type ProjectInfo = UnwrapPromise<ReturnType<typeof getProjectInfo>>
-
 /**
  * 载入配置，优先寻找当前目录下的 .ctrc 文件，其次寻找 HOME 路径下的 .ctrc。
  * github 和 gitee 的 token 各自独立寻找，不为空即为找到
@@ -658,50 +658,11 @@ async function initTsconfig(projectPath: string, answers: InitAnswers) {
 async function initProjectJson(projectPath: string, projectInfos: ProjectInfo) {
     const loading = ora('正在初始化 package.json ……').start()
     try {
-
-        const { packageName, engines, license, homepage, issuesUrl, gitUrl, author, description, keywords = [], isOpenSource, isPublishToNpm = false, jsModuleType } = projectInfos
-
         const pkg: IPackage = await getProjectJson(projectPath)
-        const pkgData: IPackage = {
-            name: packageName,
-            author,
-            description,
-            keywords,
-            private: !isPublishToNpm,
-            license: 'UNLICENSED',
-            engines,
-        }
-        let extData: IPackage = {}
-        if (isOpenSource) {
-            extData = {
-                license,
-                homepage,
-                repository: {
-                    type: 'git',
-                    url: gitUrl,
-                },
-                bugs: {
-                    url: issuesUrl,
-                },
-            }
-        }
-        if (isPublishToNpm) {
-            extData.publishConfig = {
-                access: 'public',
-            }
-        }
-        switch (jsModuleType) {
-            case 'cjs':
-                extData.type = 'commonjs'
-                break
-            case 'esm':
-                extData.type = 'module'
-                break
-            default:
-                break
-        }
-        const newPkg = merge({}, pkg, pkgData, extData)
-        newPkg.keywords = uniq(keywords)
+        const newPkg = buildPackageJsonPatch({
+            packageInfo: projectInfos,
+            basePackageJson: pkg,
+        })
         await saveProjectJson(projectPath, newPkg)
 
         loading.succeed('package.json 初始化成功！')
@@ -712,137 +673,29 @@ async function initProjectJson(projectPath: string, projectInfos: ProjectInfo) {
     }
 }
 
-export const cleanText = (text: string) => text.replace(/-/g, '--').replace(/_/g, '__')
-
 async function getProjectInfo(projectPath: string, answers: InitAnswers) {
     const loading = ora('正在获取项目信息 ……').start()
     try {
-        const { name, author, description, template, isOpenSource, isPublishToNpm, license = 'UNLICENSED', isPrivateScopePackage, scopeName, isInitDocker = false } = answers
+        const { author, template, isOpenSource } = answers
         const templateMeta = getTemplateMeta(template)
-        const projectName = name
         const packageManager = 'npm'
         const config = await loadTemplateCliConfig()
         const pkg: IPackage = await getProjectJson(projectPath)
 
         const nodeVersion = await getLtsNodeVersion() || '20'
-        const node = Number(nodeVersion) - 4 // lts 减 4 为最旧支持的版本
-
-        let keywords = [
-            ...answers.keywords || [],
-        ]
-        if (templateMeta.docker) {
-            keywords.push('docker')
-        }
-        if (templateMeta?.language) {
-            keywords.push(templateMeta?.language)
-        }
-        if (templateMeta?.vueVersion === 3) {
-            keywords.push('vue3')
-        }
-        if (templateMeta.tags?.length) {
-            keywords.push(...templateMeta.tags)
-        }
-        keywords = uniq(keywords).map((e) => kebabCase(e))
-
-        const packageName = isPrivateScopePackage ? `@${scopeName}/${name}` : name // npm 包的名称
-        const engines = merge({}, pkg?.engines, { node: `>=${node}` })
-        const version = pkg?.version || '0.1.0'
-        const installCommand = isPublishToNpm ? `${packageManager} install ${packageName}` : `${packageManager} install`
-        const startCommand = pkg?.scripts?.start && `${packageManager} run start`
-        const devCommand = pkg?.scripts?.dev && `${packageManager} run dev`
-        const buildCommand = pkg?.scripts?.build && `${packageManager} run build`
-        const testCommand = pkg?.scripts?.test && `${packageManager} run test`
-        const lintCommand = pkg?.scripts?.lint && `${packageManager} run lint`
-        const commitCommand = pkg?.scripts?.commit && `${packageManager} run commit`
-        const mainFile = pkg?.main
-
         const githubUsername = config?.GITHUB_USERNAME || author
-        const giteeUsername = config?.GITEE_USERNAME
-        const weiboUsername = config?.WEIBO_USERNAME
-        const twitterUsername = config?.TWITTER_USERNAME
-        const afdianUsername = config?.AFDIAN_USERNAME
-        const patreonUsername = config?.PATREON_USERNAME
-        const npmUsername = config?.NPM_USERNAME || githubUsername
-        const dockerUsername = config?.DOCKER_USERNAME || githubUsername?.toLowerCase()
-        const dockerPassword = config?.DOCKER_PASSWORD || ''
-        const contactEmail = config?.CONTACT_EMAIL || ''
-        const npmToken = config?.NPM_TOKEN || ''
-
-        const repositoryUrl = `https://github.com/${githubUsername}/${projectName}`
-        const gitUrl = `git+${repositoryUrl}.git`
-        const issuesUrl = `${repositoryUrl}/issues`
-        const contributingUrl = `${repositoryUrl}/blob/master/CONTRIBUTING.md`
-        const documentationUrl = `${repositoryUrl}#readme`
-        const demoUrl = `${repositoryUrl}#readme`
-        const homepage = documentationUrl
-        const licenseUrl = `${repositoryUrl}/blob/master/LICENSE`
-        const discussionsUrl = `${repositoryUrl}/discussions`
-        const pullRequestsUrl = `${repositoryUrl}/pulls`
         const authorWebsite = isOpenSource ? await getAuthorWebsiteFromGithubAPI(githubUsername) : ''
 
-        const projectInfos = {
-            ...answers,
-            keywords,
-            currentYear: new Date().getFullYear(),
-            name,
-            description,
-            version,
-            author,
-            authorWebsite,
-            homepage,
-            demoUrl,
-            gitUrl,
-            repositoryUrl,
-            issuesUrl,
-            contributingUrl,
-            githubUsername,
-            authorName: author,
-            authorGithubUsername: githubUsername,
-            engines,
-            license,
-            licenseName: cleanText(license),
-            licenseUrl,
-            documentationUrl,
-            isGithubRepos: isOpenSource,
-            installCommand,
-            startCommand,
-            usage: startCommand,
-            devCommand,
-            buildCommand,
-            testCommand,
-            lintCommand,
-            commitCommand,
-            isJSProject: ['nodejs', 'browser'].includes(templateMeta?.runtime),
-            packageManager,
-            isProjectOnNpm: isPublishToNpm,
-            isOpenSource,
-            packageName,
-            projectName,
-            projectVersion: version,
-            projectDocumentationUrl: documentationUrl,
-            projectDescription: description,
-            projectHomepage: homepage,
-            projectDemoUrl: demoUrl,
-            projectPrerequisites: Object.keys(engines).map((key) => ({
-                name: key,
-                value: engines[key],
-            })),
-            discussionsUrl,
-            pullRequestsUrl,
-            giteeUsername,
-            afdianUsername,
-            patreonUsername,
-            weiboUsername,
-            twitterUsername,
-            npmUsername,
-            dockerUsername,
-            dockerPassword,
+        const projectInfos = buildProjectInfo({
+            answers,
             templateMeta,
-            mainFile,
-            isInitDocker,
-            contactEmail,
-            npmToken,
-        }
+            packageJson: pkg,
+            cliConfig: config,
+            nodeLtsVersion: nodeVersion,
+            packageManager,
+            authorWebsite,
+            currentYear: new Date().getFullYear(),
+        })
         loading.succeed('项目信息 初始化成功！')
         return projectInfos
 
@@ -1712,15 +1565,6 @@ async function getLtsNodeVersion(): Promise<string> {
 async function getNpmPackageVersion(name: string) {
     const version = (await asyncExec(`${PACKAGE_MANAGER} view ${name} version`)) as string || ''
     return version.trim()
-}
-
-export function sortKey<T extends Record<string, unknown>>(obj: T) {
-    const keys = Object.keys(obj).sort((a, b) => a.localeCompare(b))
-    const obj2: Record<string, unknown> = {}
-    keys.forEach((e) => {
-        obj2[e] = obj[e]
-    })
-    return obj2 as T
 }
 
 async function getProjectJson(projectPath: string) {

@@ -17,7 +17,16 @@ export interface Package {
     engines: Record<string, string>
     homepage: string
     bugs: Record<string, string>
+    repository?: {
+        type?: string
+        url?: string
+        [k: string]: unknown
+    }
     config: Record<string, unknown>
+    publishConfig?: {
+        access?: string
+        [k: string]: unknown
+    }
     type: string
     [k: string]: unknown
 }
@@ -203,6 +212,65 @@ export type TemplateCliConfig = {
      * @deprecated 由于 npm 的安全机制修改，所以不再需要设置 NPM_TOKEN 了
      */
     NPM_TOKEN: string
+}
+
+export type ProjectPrerequisite = {
+    name: string
+    value: string
+}
+
+export interface ProjectInfo extends InitAnswers {
+    keywords: string[]
+    currentYear: number
+    version: string
+    authorWebsite: string
+    homepage: string
+    demoUrl: string
+    gitUrl: string
+    repositoryUrl: string
+    issuesUrl: string
+    contributingUrl: string
+    githubUsername: string
+    authorName: string
+    authorGithubUsername: string
+    engines: Record<string, string>
+    licenseName: string
+    licenseUrl: string
+    documentationUrl: string
+    isGithubRepos: boolean
+    installCommand: string
+    startCommand?: string
+    usage?: string
+    devCommand?: string
+    buildCommand?: string
+    testCommand?: string
+    lintCommand?: string
+    commitCommand?: string
+    isJSProject: boolean
+    packageManager: string
+    isProjectOnNpm: boolean
+    packageName: string
+    projectName: string
+    projectVersion: string
+    projectDocumentationUrl: string
+    projectDescription: string
+    projectHomepage: string
+    projectDemoUrl: string
+    projectPrerequisites: ProjectPrerequisite[]
+    discussionsUrl: string
+    pullRequestsUrl: string
+    giteeUsername?: string
+    afdianUsername?: string
+    patreonUsername?: string
+    weiboUsername?: string
+    twitterUsername?: string
+    npmUsername?: string
+    dockerUsername?: string
+    dockerPassword?: string
+    templateMeta: TemplateMeta
+    mainFile?: string
+    contactEmail?: string
+    npmToken?: string
 }
 
 export type GiteeRepo = {

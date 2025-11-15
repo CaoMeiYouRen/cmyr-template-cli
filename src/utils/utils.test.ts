@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest'
-import { cleanText, sortKey } from './utils'
+import { cleanText, sortKey } from '../pure/common'
 
 describe('cleanText', () => {
     it('escapes dashes and underscores for template usage', () => {
