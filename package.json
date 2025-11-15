@@ -29,7 +29,9 @@
     "commit": "cz",
     "create": "ct create",
     "build:dev": "rimraf dist && cross-env NODE_ENV=development tsup && rimraf temp && cross-env NODE_ENV=development ct create",
-    "build:prod": "npm run build && rimraf temp && cross-env NODE_ENV=production ct create"
+    "build:prod": "npm run build && rimraf temp && cross-env NODE_ENV=production ct create",
+    "test": "vitest run",
+    "coverage": "vitest run --coverage"
   },
   "devDependencies": {
     "@commitlint/cli": "^20.1.0",
@@ -58,7 +60,8 @@
     "semantic-release-cmyr-config": "1.0.0",
     "tsup": "^8.3.5",
     "tsx": "^4.20.5",
-    "typescript": "^5.0.2"
+    "typescript": "^5.0.2",
+    "vitest": "^4.0.9"
   },
   "dependencies": {
     "@colors/colors": "^1.6.0",
