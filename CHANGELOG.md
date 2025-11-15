@@ -1,5 +1,25 @@
 # cmyr-template-cli
 
+# [1.42.0](https://github.com/CaoMeiYouRen/cmyr-template-cli/compare/v1.41.8...v1.42.0) (2025-11-15)
+
+
+### ✨ 新功能
+
+* **core:** 重构核心模块结构 ([257668a](https://github.com/CaoMeiYouRen/cmyr-template-cli/commit/257668a))
+* 重构 GitHub 和 Docker 初始化功能，包含工作流和依赖管理 ([0be3988](https://github.com/CaoMeiYouRen/cmyr-template-cli/commit/0be3988))
+
+
+### 🐛 Bug 修复
+
+* 更新获取 npm 包版本的逻辑，支持提取语义版本号 ([d756d0a](https://github.com/CaoMeiYouRen/cmyr-template-cli/commit/d756d0a))
+
+
+### 📦 代码重构
+
+* **utils:** 重构工具函数结构 ([73e6618](https://github.com/CaoMeiYouRen/cmyr-template-cli/commit/73e6618))
+* 重构 git 相关功能和测试用例 ([49693d4](https://github.com/CaoMeiYouRen/cmyr-template-cli/commit/49693d4))
+* 重构 README.md 和贡献指南初始化逻辑，提取公共模板渲染函数 ([ea15673](https://github.com/CaoMeiYouRen/cmyr-template-cli/commit/ea15673))
+
 ## [1.41.8](https://github.com/CaoMeiYouRen/cmyr-template-cli/compare/v1.41.7...v1.41.8) (2025-10-30)
 
 
