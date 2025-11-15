@@ -16,10 +16,8 @@ export async function asyncExec(cmd: string, options?: ExecOptions) {
             if (err) {
                 return reject(err)
             }
-            if (stderr) {
-                return resolve(stderr)
-            }
-            resolve(stdout)
+            const combinedOutput = [stdout, stderr].filter(Boolean).join('').trimEnd()
+            resolve(combinedOutput || stdout || stderr)
         })
         ls.stdout.on('data', (data) => {
             console.log(data)
