@@ -83,6 +83,53 @@ describe('buildProjectInfo', () => {
         expect(info.projectPrerequisites).toEqual([{ name: 'node', value: '>=16' }])
         expect(info.projectDocumentationUrl).toContain('https://github.com/cmyr-dev/sample-app')
     })
+
+    it('handles closed-source scoped packages without template meta', () => {
+        const answers: InitAnswers = {
+            ...baseAnswers,
+            license: 'MIT-LICENSE_v2',
+            isOpenSource: false,
+            isPublishToNpm: false,
+            isPrivateScopePackage: true,
+            scopeName: 'acme',
+            keywords: ['FooBar', 'foobar'],
+        }
+        const emptyCliConfig: TemplateCliConfig = {
+            GITHUB_TOKEN: '',
+            GITEE_TOKEN: '',
+            GITHUB_USERNAME: '',
+            GITEE_USERNAME: '',
+            AFDIAN_USERNAME: '',
+            PATREON_USERNAME: '',
+            WEIBO_USERNAME: '',
+            TWITTER_USERNAME: '',
+            NPM_USERNAME: '',
+            DOCKER_USERNAME: '',
+            DOCKER_PASSWORD: '',
+            CONTACT_EMAIL: '',
+            NPM_TOKEN: '',
+        }
+
+        const info = buildProjectInfo({
+            answers,
+            templateMeta: undefined,
+            packageJson: undefined,
+            cliConfig: emptyCliConfig,
+            nodeLtsVersion: '18',
+            packageManager: 'npm',
+            authorWebsite: '',
+            currentYear: 2025,
+        })
+
+        expect(info.packageName).toBe('@acme/sample-app')
+        expect(info.installCommand).toBe('npm install')
+        expect(info.isGithubRepos).toBe(false)
+        expect(info.templateMeta.name).toBe(answers.template)
+        expect(info.projectPrerequisites).toEqual([{ name: 'node', value: '>=14' }])
+        expect(info.startCommand).toBeUndefined()
+        expect(info.licenseName).toBe('MIT--LICENSE__v2')
+        expect(info.dockerUsername).toBe(answers.author.toLowerCase())
+    })
 })
 
 describe('buildPackageJsonPatch', () => {
@@ -109,5 +156,44 @@ describe('buildPackageJsonPatch', () => {
         expect(patch.publishConfig?.access).toBe('public')
         expect(patch.type).toBe('module')
         expect(patch.keywords).toEqual(info.keywords)
+    })
+
+    it('handles private cjs packages and deduplicates keywords', () => {
+        const answers: InitAnswers = {
+            ...baseAnswers,
+            keywords: ['foo', 'Foo'],
+            isOpenSource: false,
+            isPublishToNpm: false,
+            jsModuleType: 'cjs',
+            isPrivateScopePackage: true,
+            scopeName: 'team',
+        }
+
+        const info = buildProjectInfo({
+            answers,
+            templateMeta,
+            packageJson,
+            cliConfig,
+            nodeLtsVersion: '20',
+            packageManager: 'npm',
+            authorWebsite: '',
+            currentYear: 2025,
+        })
+
+        const legacyPackageJson: IPackage = {
+            type: 'module',
+            scripts: { lint: 'eslint .' },
+        }
+
+        const patch = buildPackageJsonPatch({
+            packageInfo: info,
+            basePackageJson: legacyPackageJson,
+        })
+
+        expect(patch.private).toBe(true)
+        expect(patch.repository).toBeUndefined()
+        expect(patch.publishConfig).toBeUndefined()
+        expect(patch.type).toBe('commonjs')
+        expect(patch.keywords).toEqual(['foo'])
     })
 })
