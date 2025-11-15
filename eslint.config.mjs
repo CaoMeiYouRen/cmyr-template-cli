@@ -10,7 +10,7 @@ export default defineConfig([
             'require-await': 0,
             '@typescript-eslint/no-require-imports': 0,
             'max-lines': [1, { max: 500 }], // 强制文件的最大行数
-            'max-lines-per-function': [1, { max: 150 }], // 强制函数最大行数
+            'max-lines-per-function': [0, { max: 150 }], // 强制函数最大行数
         },
     },
 ])
