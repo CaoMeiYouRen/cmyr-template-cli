@@ -1,61 +1,32 @@
 import path from 'path'
-import os from 'os'
 import colors from '@colors/colors'
 import ejs from 'ejs'
-import { unescape, cloneDeep, mergeWith, merge, uniqBy, uniq } from 'lodash'
+import { unescape, cloneDeep, merge } from 'lodash'
 import JSON5 from 'json5'
 import download from 'download-git-repo'
 import ora from 'ora'
 import fs from 'fs-extra'
-import yaml from 'yaml'
 import acorn from 'acorn'
 import walk from 'acorn-walk'
 import { PACKAGE_MANAGER } from '../config/env'
 import { REMOTES, NODE_INDEX_URL, NODEJS_URLS } from './constants'
 import { COMMON_DEPENDENCIES, NODE_DEPENDENCIES } from './dependencies'
 import { getTemplateMeta } from './template'
-import { kebabCase, lintMd } from './string'
+import { lintMd } from './string'
 import { ejsRender } from './ejs'
 import { copyFilesFromTemplates, removeFiles } from './files'
-import { createGithubRepo, replaceGithubRepositoryTopics, createGiteeRepo, getAuthorWebsiteFromGithubAPI, getLtsNodeVersionByHtml, getLtsNodeVersionByIndexJson, getFastUrl, createOrUpdateARepositorySecret } from './api'
+import { getAuthorWebsiteFromGithubAPI, getLtsNodeVersionByHtml, getLtsNodeVersionByIndexJson, getFastUrl } from './api'
 import { asyncExec } from './exec'
 import { readPackageJson, updatePackageJson } from './package-json'
-import { InitAnswers, IPackage, ProjectInfo, TemplateCliConfig } from '@/types/interfaces'
+import { loadTemplateCliConfig } from './config'
+import { InitAnswers, IPackage, ProjectInfo } from '@/types/interfaces'
 import { sortKey } from '@/pure/common'
 import { buildPackageJsonPatch, buildProjectInfo } from '@/core/project-info'
+import { initRemoteGitRepo } from '@/core/git'
+import { initGithubWorkflows, initDependabot } from '@/core/ci'
+import { initDocker } from '@/core/docker'
 
 // 获取返回值类型并去除Promise的包裹
-/**
- * 载入配置，优先寻找当前目录下的 .ctrc 文件，其次寻找 HOME 路径下的 .ctrc。
- * github 和 gitee 的 token 各自独立寻找，不为空即为找到
- *
- * @author CaoMeiYouRen
- * @date 2023-09-17
- */
-export async function loadTemplateCliConfig(): Promise<TemplateCliConfig> {
-    const paths = [process.cwd(), os.homedir()].map((e) => path.join(e, '.ctrc'))
-    const [local, home]: TemplateCliConfig[] = (await Promise.all(paths.map(async (p) => {
-        try {
-            if (await fs.pathExists(p)) {
-                return fs.readJSON(p)
-            }
-            return null
-        } catch (error) {
-            console.error(error)
-            return null
-        }
-    }))).filter(Boolean)
-    return mergeWith(home, local, (objValue, srcValue) => {
-        if (typeof objValue === 'string' && srcValue === '') {
-            return objValue
-        }
-        if (typeof srcValue !== 'undefined' && srcValue !== null) {
-            return srcValue
-        }
-        return objValue
-    })
-}
-
 /**
  * 下载 git 库。repository例子如下：
 GitHub - github:owner/name or simply owner/name
@@ -276,131 +247,6 @@ export async function sleep(time: number) {
     return new Promise((resolve) => setTimeout(resolve, time))
 }
 
-async function initRemoteGitRepo(projectPath: string, answers: InitAnswers) {
-    const loading = ora('正在初始化远程 Git 仓库……').start()
-    try {
-        const { name, description, gitRemoteUrl, isOpenSource, isInitRemoteRepo, keywords, template, isPublishToNpm } = answers
-        const templateMeta = getTemplateMeta(template)
-
-        if (!gitRemoteUrl) {
-            loading.fail('未找到远程 Git 仓库地址，请自行初始化！')
-            return
-        }
-
-        await asyncExec(`git remote add origin ${gitRemoteUrl}`, {
-            cwd: projectPath,
-        })
-
-        if (!isInitRemoteRepo) {
-            loading.stop()
-            console.info(colors.green(`请自行在远程 Git 仓库初始化 ${gitRemoteUrl}`))
-            return
-        }
-
-        // 判断 remote 类型
-        let type = ''
-        if (/github\.com/.test(gitRemoteUrl)) {
-            type = 'github'
-        } else if (/gitee\.com/.test(gitRemoteUrl)) {
-            type = 'gitee'
-        }
-
-        const config = await loadTemplateCliConfig()
-
-        switch (type) {
-            case 'github': {
-                const authToken = config?.GITHUB_TOKEN
-                if (!authToken) {
-                    console.error(colors.red(`未找到 ${type} token ！跳过初始化！`))
-                    break
-                }
-                const resp = await createGithubRepo(authToken, {
-                    name,
-                    description,
-                    private: !isOpenSource,
-                })
-                if (resp?.status >= 200) {
-                    loading.succeed('远程 Git 仓库初始化成功！')
-                    console.info(colors.green(`远程 Git 仓库地址 ${resp.data?.html_url}`))
-                    const owner = resp.data?.owner?.login
-                    const repo = resp.data?.name
-                    if (owner && repo) {
-                        console.info(colors.green('正在初始化仓库 topics ！'))
-                        if (isPublishToNpm) {
-                            keywords.push('npm-package')
-                        }
-                        if (templateMeta.docker) {
-                            keywords.push('docker')
-                        }
-                        if (templateMeta?.runtime) {
-                            keywords.push(templateMeta?.runtime)
-                        }
-                        if (templateMeta?.language) {
-                            keywords.push(templateMeta?.language)
-                        }
-                        await replaceGithubRepositoryTopics(authToken, {
-                            owner,
-                            repo,
-                            topics: uniq(keywords).map((e) => kebabCase(e)),
-                        })
-                        console.info(colors.green('仓库 topics 初始化成功！'))
-
-                        console.info(colors.green('正在初始化仓库 action secret ！'))
-
-                        const { DOCKER_USERNAME, DOCKER_PASSWORD } = config
-                        if (templateMeta.docker && DOCKER_USERNAME && DOCKER_PASSWORD) {
-                            await createOrUpdateARepositorySecret(authToken, {
-                                owner,
-                                repo,
-                                secret_name: 'DOCKER_USERNAME',
-                                secret_value: DOCKER_USERNAME,
-                            })
-                            await createOrUpdateARepositorySecret(authToken, {
-                                owner,
-                                repo,
-                                secret_name: 'DOCKER_PASSWORD',
-                                secret_value: DOCKER_PASSWORD,
-                            })
-                        }
-                        console.info(colors.green('仓库 action secret 初始化成功！'))
-                        return
-                    }
-                    loading.fail('远程 Git 仓库初始化失败！')
-                    return
-                }
-                return
-            }
-            case 'gitee': {
-                const access_token = config?.GITEE_TOKEN
-                if (!access_token) {
-                    console.error(colors.red(`未找到 ${type} token ！跳过初始化！`))
-                    break
-                }
-                const resp = await createGiteeRepo({
-                    access_token,
-                    name,
-                    description,
-                    private: true,
-                })
-                if (resp?.status >= 200) {
-                    loading.succeed('远程 Git 仓库初始化成功！')
-                    console.info(colors.green(`远程 Git 仓库地址 ${resp.data?.html_url}`))
-                } else {
-                    loading.fail('远程 Git 仓库初始化失败！')
-                }
-                return
-            }
-            default: {
-                loading.stop()
-                console.info(colors.green(`请在远程 Git 仓库初始化 ${gitRemoteUrl}`))
-
-            }
-        }
-    } catch (error) {
-        loading.fail('远程 Git 仓库初始化失败！')
-        console.error(error)
-    }
-}
 
 async function installNpmPackages(projectPath: string) {
     const loading = ora('正在安装依赖……').start()
@@ -460,93 +306,6 @@ async function initCommonDependencies(projectPath: string, answers: InitAnswers)
     }
 }
 
-interface Schedule {
-    interval: string
-    time: string
-    timezone: string
-}
-interface Ignore {
-    'dependency-name': string
-    versions?: string[]
-}
-interface Update {
-    'package-ecosystem': string
-    directory: string
-    'open-pull-requests-limit': number
-    schedule: Schedule
-    ignore?: Ignore[]
-}
-interface Dependabot {
-    version: number
-    updates: Update[]
-}
-
-async function initDependabot(projectPath: string, answers: InitAnswers) {
-    try {
-        const { isOpenSource, isRemoveDependabot } = answers
-        const files = ['.github/dependabot.yml', '.github/mergify.yml']
-        if (!isOpenSource || isRemoveDependabot) { // 闭源 或者 直接指定移除
-            await removeFiles(projectPath, files) // 如果存在 dependabot.yml/mergify.yml
-        } else {
-            const pkg: IPackage = await readPackageJson(projectPath)
-            const dependabotPath = path.join(projectPath, '.github/dependabot.yml')
-            if (await fs.pathExists(dependabotPath)) { // 如果存在 dependabot
-                const dependabot: Dependabot = yaml.parse(await fs.readFile(dependabotPath, 'utf-8'))
-                if (dependabot?.updates?.[0]['package-ecosystem'] === 'npm') { // 如果为 npm
-                    if (dependabot.updates[0].schedule.interval !== 'monthly') {
-                        dependabot.updates[0].schedule.interval = 'monthly' // 修改为每月更新一次
-                    }
-                    if (dependabot.updates[0].schedule.time !== '04:00') {
-                        dependabot.updates[0].schedule.time = '04:00' // 修改为 04:00 更新
-                    }
-                    if (dependabot.updates[0].schedule.timezone !== 'Asia/Shanghai') {
-                        dependabot.updates[0].schedule.timezone = 'Asia/Shanghai'// 修改为 上海时区
-                    }
-                    const dependencies = []
-                    if (pkg?.dependencies?.['art-template']) { // 如果有 art-template 依赖
-                        // 高版本涉嫌危险代码，参考 https://github.com/yoimiya-kokomi/Miao-Yunzai/pull/515
-                        dependencies.push({
-                            'dependency-name': 'art-template',
-                            versions: ['>= 4.13.3'],
-                        })
-                    }
-                    if (dependencies.length) {
-                        dependabot.updates[0].ignore = uniqBy([
-                            ...dependabot?.updates?.[0].ignore || [],
-                            ...dependencies,
-                        ], (e) => e['dependency-name'])
-                    } else {
-                        dependabot.updates[0].ignore = undefined // 没有就删除 ignore
-                    }
-
-                }
-                if (dependabot?.updates?.every((e) => e['package-ecosystem'] !== 'github-actions')) { // 如果不存在 github-actions
-                    // 增加 github-actions 版本自动更新
-                    dependabot.updates.push({
-                        'package-ecosystem': 'github-actions',
-                        directory: '/',
-                        'open-pull-requests-limit': 20,
-                        schedule: {
-                            interval: 'monthly',
-                            time: '04:00',
-                            timezone: 'Asia/Shanghai',
-                        },
-                        // ignore: [],
-                    })
-                }
-                fs.writeFile(dependabotPath, yaml.stringify(dependabot, {
-                    defaultStringType: 'QUOTE_DOUBLE', // 默认使用双引号
-                    defaultKeyType: 'PLAIN', // key 使用普通字符串
-                    singleQuote: false, // 禁用单引号
-                    doubleQuotedAsJSON: true, // 使用JSON兼容的双引号语法
-                }))
-            }
-
-        }
-    } catch (error) {
-        console.error(error)
-    }
-}
 
 async function initYarn(projectPath: string, answers: InitAnswers) {
     try {
@@ -938,32 +697,6 @@ async function initIssueTemplate(projectPath: string, projectInfos: ProjectInfo)
  * @param projectPath
  * @param answers
  */
-async function initGithubWorkflows(projectPath: string, answers: InitAnswers) {
-    const loading = ora('正在初始化 Github Workflows ……').start()
-    try {
-        const { isInitSemanticRelease } = answers
-        const files = ['.github/workflows/test.yml', '.github/workflows/todo.yml']
-        const dir = path.join(projectPath, '.github/workflows')
-        if (!await fs.pathExists(dir)) {
-            await fs.mkdirp(dir)
-        }
-        const releaseYml = '.github/workflows/release.yml'
-        if (isInitSemanticRelease) { // 如果初始化 semantic-release 则说明需要自动 release
-            files.push(releaseYml)
-        } else { // 否则就移除 release.yml
-            await removeFiles(projectPath, [releaseYml])
-        }
-
-        await removeFiles(projectPath, ['.github/workflows/auto-merge.yml', '.github/release.yml'])
-
-        await copyFilesFromTemplates(projectPath, files)
-
-        loading.succeed('Github Workflows 初始化成功！')
-    } catch (error) {
-        loading.fail('Github Workflows 初始化失败！')
-        console.error(error)
-    }
-}
 
 async function initSemanticRelease(projectPath: string) {
     const loading = ora('正在初始化 semantic-release ……').start()
@@ -1230,84 +963,6 @@ async function initCommitizen(projectPath: string) {
     }
 }
 
-async function initDocker(projectPath: string, answers: InitAnswers) {
-    const loading = ora('正在初始化 Docker ……').start()
-    try {
-        const { name } = answers
-        // hono 的逻辑需要单独处理
-        if (answers.template === 'hono-template') {
-            const dockerComposePath = path.join(projectPath, 'docker-compose.yml')
-            if (await fs.pathExists(dockerComposePath)) {
-                // 替换 hono-template 为项目名称
-                let dockerCompose = await fs.readFile(dockerComposePath, 'utf-8')
-                dockerCompose = dockerCompose.replaceAll('hono-template', name)
-                await fs.writeFile(dockerComposePath, dockerCompose)
-            }
-            const wranglerPath = path.join(projectPath, 'wrangler.toml')
-            if (await fs.pathExists(wranglerPath)) {
-                // 替换 hono-template 为项目名称
-                let wrangler = await fs.readFile(wranglerPath, 'utf-8')
-                wrangler = wrangler.replaceAll('hono-template', name)
-                await fs.writeFile(wranglerPath, wrangler)
-            }
-            loading.succeed('Docker 初始化成功！')
-            return
-        }
-
-        const templateMeta = getTemplateMeta(answers.template)
-
-        const files = ['.dockerignore', 'docker-compose.yml', '.github/workflows/docker.yml']
-        await copyFilesFromTemplates(projectPath, files)
-
-        let dockerfile = 'Dockerfile'
-        const newPath = path.join(projectPath, 'Dockerfile')
-        if (await fs.pathExists(newPath)) {
-            await fs.remove(newPath)
-        }
-        if (templateMeta?.runtime === 'java') {
-            const templatePath = path.join(__dirname, '../templates/java/Dockerfile.ejs')
-
-            await ejsRender(templatePath, { javaVersion: templateMeta?.javaVersion }, newPath)
-
-            loading.succeed('Docker 初始化成功！')
-            return
-        }
-        if (templateMeta?.runtime === 'nodejs') {
-            // 解决 nodejs 依赖过大的问题
-            if (templateMeta?.runtime === 'nodejs') {
-                const scriptsDir = path.join(projectPath, 'scripts')
-                if (!await fs.pathExists(scriptsDir)) {
-                    await fs.mkdir(scriptsDir)
-                }
-                await copyFilesFromTemplates(projectPath, ['scripts/minify-docker.cjs'])
-            }
-
-            const pkg: IPackage = await readPackageJson(projectPath)
-            const mainFile = pkg?.main
-            const templatePath = path.join(__dirname, '../templates/Dockerfile')
-            await ejsRender(templatePath, { mainFile }, newPath)
-
-            loading.succeed('Docker 初始化成功！')
-            return
-        }
-        switch (templateMeta?.runtime) {
-            case 'python':
-                dockerfile = 'python/Dockerfile'
-                break
-            case 'golang':
-                dockerfile = 'golang/Dockerfile'
-                break
-            default:
-                dockerfile = 'Dockerfile'
-                break
-        }
-        const dockerfilePath = path.join(__dirname, '../templates/', dockerfile)
-        await fs.copyFile(dockerfilePath, newPath)
-        loading.succeed('Docker 初始化成功！')
-    } catch (error) {
-        loading.fail('Docker 初始化失败！')
-    }
-}
 
 async function initTest(projectPath: string, answers: InitAnswers) {
     const loading = ora('正在初始化测试 ……').start()

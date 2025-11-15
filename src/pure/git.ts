@@ -1,5 +1,5 @@
 import { uniq } from 'lodash'
-import { TemplateMeta } from '@/types/interfaces'
+import { TemplateCliConfig, TemplateMeta } from '@/types/interfaces'
 import { kebabCase } from '@/utils/string'
 
 export type RemoteService = 'github' | 'gitee' | 'unknown'
@@ -45,4 +45,30 @@ export function buildRepositoryTopics(input: RepositoryTopicsInput): string[] {
         topics.push(...templateMeta.tags)
     }
     return uniq(topics.map((keyword) => kebabCase(keyword))).filter(Boolean)
+}
+
+export interface RepositorySecretsInput {
+    templateMeta?: TemplateMeta
+    cliConfig?: TemplateCliConfig
+}
+
+export interface RepositorySecretPlan {
+    name: string
+    value: string
+}
+
+export function buildRepositorySecretsPlan(input: RepositorySecretsInput): RepositorySecretPlan[] {
+    const { templateMeta, cliConfig } = input
+    if (!templateMeta?.docker) {
+        return []
+    }
+    const username = cliConfig?.DOCKER_USERNAME
+    const password = cliConfig?.DOCKER_PASSWORD
+    if (!username || !password) {
+        return []
+    }
+    return [
+        { name: 'DOCKER_USERNAME', value: username },
+        { name: 'DOCKER_PASSWORD', value: password },
+    ]
 }

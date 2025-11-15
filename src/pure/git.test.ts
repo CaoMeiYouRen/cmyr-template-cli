@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest'
-import { buildRepositoryTopics, detectRemoteService } from './git'
-import { TemplateMeta } from '@/types/interfaces'
+import { buildRepositorySecretsPlan, buildRepositoryTopics, detectRemoteService } from './git'
+import { TemplateCliConfig, TemplateMeta } from '@/types/interfaces'
 
 describe('detectRemoteService', () => {
     it('identifies github urls', () => {
@@ -41,5 +41,45 @@ describe('buildRepositoryTopics', () => {
             isPublishToNpm: false,
         })
         expect(topics).toEqual(expect.arrayContaining(['foo-bar', 'vue-press']))
+    })
+})
+
+describe('buildRepositorySecretsPlan', () => {
+    const templateMeta: TemplateMeta = {
+        name: 'docker-app',
+        language: 'typescript',
+        runtime: 'nodejs',
+        docker: true,
+    }
+
+    const cliConfig: TemplateCliConfig = {
+        GITHUB_TOKEN: '',
+        GITEE_TOKEN: '',
+        GITHUB_USERNAME: '',
+        GITEE_USERNAME: '',
+        AFDIAN_USERNAME: '',
+        PATREON_USERNAME: '',
+        WEIBO_USERNAME: '',
+        TWITTER_USERNAME: '',
+        NPM_USERNAME: '',
+        DOCKER_USERNAME: 'user',
+        DOCKER_PASSWORD: 'pass',
+        CONTACT_EMAIL: '',
+        NPM_TOKEN: '',
+    }
+
+    it('returns secrets when docker credentials exist', () => {
+        expect(buildRepositorySecretsPlan({ templateMeta, cliConfig })).toEqual([
+            { name: 'DOCKER_USERNAME', value: 'user' },
+            { name: 'DOCKER_PASSWORD', value: 'pass' },
+        ])
+    })
+
+    it('returns empty array when missing credentials', () => {
+        expect(buildRepositorySecretsPlan({ templateMeta, cliConfig: { ...cliConfig, DOCKER_PASSWORD: '' } })).toEqual([])
+    })
+
+    it('returns empty array for non-docker templates', () => {
+        expect(buildRepositorySecretsPlan({ templateMeta: { ...templateMeta, docker: false }, cliConfig })).toEqual([])
     })
 })
