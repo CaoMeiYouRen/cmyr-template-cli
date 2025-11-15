@@ -712,7 +712,7 @@ async function initProjectJson(projectPath: string, projectInfos: ProjectInfo) {
     }
 }
 
-const cleanText = (text: string) => text.replace(/-/g, '--').replace(/_/g, '__')
+export const cleanText = (text: string) => text.replace(/-/g, '--').replace(/_/g, '__')
 
 async function getProjectInfo(projectPath: string, answers: InitAnswers) {
     const loading = ora('正在获取项目信息 ……').start()
@@ -1714,7 +1714,7 @@ async function getNpmPackageVersion(name: string) {
     return version.trim()
 }
 
-function sortKey<T extends Record<string, unknown>>(obj: T) {
+export function sortKey<T extends Record<string, unknown>>(obj: T) {
     const keys = Object.keys(obj).sort((a, b) => a.localeCompare(b))
     const obj2: Record<string, unknown> = {}
     keys.forEach((e) => {
