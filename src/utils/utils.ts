@@ -1,5 +1,4 @@
 import path from 'path'
-import { exec, ExecOptions } from 'child_process'
 import os from 'os'
 import colors from '@colors/colors'
 import ejs from 'ejs'
@@ -19,6 +18,8 @@ import { kebabCase, lintMd } from './string'
 import { ejsRender } from './ejs'
 import { copyFilesFromTemplates, removeFiles } from './files'
 import { createGithubRepo, replaceGithubRepositoryTopics, createGiteeRepo, getAuthorWebsiteFromGithubAPI, getLtsNodeVersionByHtml, getLtsNodeVersionByIndexJson, getFastUrl, createOrUpdateARepositorySecret } from './api'
+import { asyncExec } from './exec'
+import { readPackageJson, updatePackageJson } from './package-json'
 import { InitAnswers, IPackage, ProjectInfo, TemplateCliConfig } from '@/types/interfaces'
 import { sortKey } from '@/pure/common'
 import { buildPackageJsonPatch, buildProjectInfo } from '@/core/project-info'
@@ -103,35 +104,6 @@ export async function getFastGitRepo(repository: string) {
         loading.fail('选择镜像源失败！')
         process.exit(1) // 选择镜像源失败直接退出
     }
-}
-
-/**
- * 执行命令行
- *
- * @author CaoMeiYouRen
- * @date 2020-12-05
- * @export
- * @param {string} cmd
- * @returns
- */
-export async function asyncExec(cmd: string, options?: ExecOptions) {
-    return new Promise((resolve, reject) => {
-        const ls = exec(cmd, options, (err, stdout: string, stderr: string) => {
-            if (err) {
-                return reject(err)
-            }
-            if (stderr) {
-                return resolve(stderr)
-            }
-            resolve(stdout)
-        })
-        ls.stdout.on('data', (data) => {
-            console.log(data)
-        })
-        ls.stderr.on('data', (data) => {
-            console.log(colors.red(data))
-        })
-    })
 }
 
 export async function initProject(answers: InitAnswers) {
@@ -222,7 +194,7 @@ async function init(projectPath: string, answers: InitAnswers) {
                 cwd: projectPath,
             })
 
-            const pkg = await getProjectJson(projectPath)
+            const pkg = await readPackageJson(projectPath)
             if (pkg?.scripts?.lint) {
                 await asyncExec(`${PACKAGE_MANAGER} run lint`, {
                     cwd: projectPath,
@@ -450,7 +422,7 @@ async function initCommonDependencies(projectPath: string, answers: InitAnswers)
     const loading = ora('正在初始化 常见依赖……').start()
     try {
         const { commonDependencies = [] } = answers
-        const pkg: IPackage = await getProjectJson(projectPath)
+        const pkg: IPackage = await readPackageJson(projectPath)
         const dependencies: Record<string, string> = Object.fromEntries(
             await Promise.all(
                 commonDependencies.map(async (name) => [
@@ -480,7 +452,7 @@ async function initCommonDependencies(projectPath: string, answers: InitAnswers)
                 ...pkg?.devDependencies,
             },
         }
-        await saveProjectJson(projectPath, newPkg)
+        await updatePackageJson(projectPath, newPkg)
         loading.succeed('常见依赖初始化成功！')
     } catch (error) {
         console.error(error)
@@ -516,7 +488,7 @@ async function initDependabot(projectPath: string, answers: InitAnswers) {
         if (!isOpenSource || isRemoveDependabot) { // 闭源 或者 直接指定移除
             await removeFiles(projectPath, files) // 如果存在 dependabot.yml/mergify.yml
         } else {
-            const pkg: IPackage = await getProjectJson(projectPath)
+            const pkg: IPackage = await readPackageJson(projectPath)
             const dependabotPath = path.join(projectPath, '.github/dependabot.yml')
             if (await fs.pathExists(dependabotPath)) { // 如果存在 dependabot
                 const dependabot: Dependabot = yaml.parse(await fs.readFile(dependabotPath, 'utf-8'))
@@ -596,7 +568,7 @@ async function initTsconfig(projectPath: string, answers: InitAnswers) {
             const tsconfigStr = await fs.readFile(tsconfigPath, 'utf8')
             const tsconfig = JSON5.parse(tsconfigStr)
             if (tsconfig?.compilerOptions?.importHelpers) {
-                const pkg: IPackage = await getProjectJson(projectPath)
+                const pkg: IPackage = await readPackageJson(projectPath)
                 const pkgData: IPackage = {
                     dependencies: {
                         tslib: `^${await getNpmPackageVersion('tslib')}`,
@@ -604,7 +576,7 @@ async function initTsconfig(projectPath: string, answers: InitAnswers) {
                     },
                 }
                 const newPkg = Object.assign({}, pkg, pkgData)
-                await saveProjectJson(projectPath, newPkg)
+                await updatePackageJson(projectPath, newPkg)
             }
 
             if (tsconfig?.compilerOptions) {
@@ -658,12 +630,12 @@ async function initTsconfig(projectPath: string, answers: InitAnswers) {
 async function initProjectJson(projectPath: string, projectInfos: ProjectInfo) {
     const loading = ora('正在初始化 package.json ……').start()
     try {
-        const pkg: IPackage = await getProjectJson(projectPath)
+        const pkg: IPackage = await readPackageJson(projectPath)
         const newPkg = buildPackageJsonPatch({
             packageInfo: projectInfos,
             basePackageJson: pkg,
         })
-        await saveProjectJson(projectPath, newPkg)
+        await updatePackageJson(projectPath, newPkg)
 
         loading.succeed('package.json 初始化成功！')
         return newPkg
@@ -680,7 +652,7 @@ async function getProjectInfo(projectPath: string, answers: InitAnswers) {
         const templateMeta = getTemplateMeta(template)
         const packageManager = 'npm'
         const config = await loadTemplateCliConfig()
-        const pkg: IPackage = await getProjectJson(projectPath)
+        const pkg: IPackage = await readPackageJson(projectPath)
 
         const nodeVersion = await getLtsNodeVersion() || '20'
         const githubUsername = config?.GITHUB_USERNAME || author
@@ -913,7 +885,7 @@ async function initEditorconfig(projectPath: string) {
 async function initCommitlint(projectPath: string) {
     const loading = ora('正在初始化 commitlint ……').start()
     try {
-        const pkg: IPackage = await getProjectJson(projectPath)
+        const pkg: IPackage = await readPackageJson(projectPath)
         const devDependencies = {
             commitlint: `^${await getNpmPackageVersion('commitlint')}`,
             '@commitlint/cli': undefined,
@@ -925,7 +897,7 @@ async function initCommitlint(projectPath: string) {
                 ...devDependencies,
             },
         }
-        await saveProjectJson(projectPath, pkgData)
+        await updatePackageJson(projectPath, pkgData)
 
         await removeFiles(projectPath, ['commitlint.config.cjs', 'commitlint.config.js'])
         const files = ['commitlint.config.ts']
@@ -996,7 +968,7 @@ async function initGithubWorkflows(projectPath: string, answers: InitAnswers) {
 async function initSemanticRelease(projectPath: string) {
     const loading = ora('正在初始化 semantic-release ……').start()
     try {
-        const pkg: IPackage = await getProjectJson(projectPath)
+        const pkg: IPackage = await readPackageJson(projectPath)
 
         const files = ['.releaserc.js', '.releaserc.cjs']
         await removeFiles(projectPath, files)
@@ -1025,7 +997,7 @@ async function initSemanticRelease(projectPath: string) {
             },
         }
 
-        await saveProjectJson(projectPath, pkgData)
+        await updatePackageJson(projectPath, pkgData)
 
         loading.succeed('semantic-release 初始化成功！')
     } catch (error) {
@@ -1050,7 +1022,7 @@ async function initHusky(projectPath: string) {
         await copyFilesFromTemplates(projectPath, files)
 
         const extnames = ['js', 'ts']
-        const pkg: IPackage = await getProjectJson(projectPath)
+        const pkg: IPackage = await readPackageJson(projectPath)
         if (pkg?.dependencies?.vue) {
             extnames.push('vue')
         }
@@ -1080,7 +1052,7 @@ async function initHusky(projectPath: string) {
             },
         }
 
-        await saveProjectJson(projectPath, pkgData)
+        await updatePackageJson(projectPath, pkgData)
 
         loading.succeed('husky 初始化成功！')
     } catch (error) {
@@ -1097,7 +1069,7 @@ async function initEslint(projectPath: string, answers: InitAnswers) {
     const loading = ora('正在初始化 eslint ……').start()
     try {
         const templateMeta = getTemplateMeta(answers.template)
-        const pkg: IPackage = await getProjectJson(projectPath)
+        const pkg: IPackage = await readPackageJson(projectPath)
 
         const devDependencies: Record<string, string> = {
             'cross-env': '^10.0.0',
@@ -1135,7 +1107,7 @@ async function initEslint(projectPath: string, answers: InitAnswers) {
             },
         }
 
-        await saveProjectJson(projectPath, pkgData)
+        await updatePackageJson(projectPath, pkgData)
 
         const files = ['.eslintignore', '.eslintrc.cjs', '.eslintrc.js']
         await removeFiles(projectPath, files)
@@ -1166,7 +1138,7 @@ export default defineConfig([cmyr])
 async function initStylelint(projectPath: string) {
     const loading = ora('正在初始化 stylelint ……').start()
     try {
-        const pkg: IPackage = await getProjectJson(projectPath)
+        const pkg: IPackage = await readPackageJson(projectPath)
 
         const extnames = ['html', 'css', 'scss', 'sass']
         if (pkg?.dependencies?.vue) {
@@ -1213,7 +1185,7 @@ async function initStylelint(projectPath: string) {
             },
         }
 
-        await saveProjectJson(projectPath, pkgData)
+        await updatePackageJson(projectPath, pkgData)
 
         loading.succeed('stylelint 初始化成功！')
     } catch (error) {
@@ -1229,7 +1201,7 @@ async function initStylelint(projectPath: string) {
 async function initCommitizen(projectPath: string) {
     const loading = ora('正在初始化 commitizen ……').start()
     try {
-        const pkg: IPackage = await getProjectJson(projectPath)
+        const pkg: IPackage = await readPackageJson(projectPath)
         const devDependencies = {
             commitizen: `^${await getNpmPackageVersion('commitizen')}`,
             'cz-conventional-changelog-cmyr': `^${await getNpmPackageVersion('cz-conventional-changelog-cmyr')}`,
@@ -1248,7 +1220,7 @@ async function initCommitizen(projectPath: string) {
                 commitizen: undefined, // 移除旧的 commitizen 配置
             },
         }
-        await saveProjectJson(projectPath, pkgData)
+        await updatePackageJson(projectPath, pkgData)
         const files = ['.czrc']
         await copyFilesFromTemplates(projectPath, files, true)
         loading.succeed('commitizen 初始化成功！')
@@ -1310,7 +1282,7 @@ async function initDocker(projectPath: string, answers: InitAnswers) {
                 await copyFilesFromTemplates(projectPath, ['scripts/minify-docker.cjs'])
             }
 
-            const pkg: IPackage = await getProjectJson(projectPath)
+            const pkg: IPackage = await readPackageJson(projectPath)
             const mainFile = pkg?.main
             const templatePath = path.join(__dirname, '../templates/Dockerfile')
             await ejsRender(templatePath, { mainFile }, newPath)
@@ -1344,7 +1316,7 @@ async function initTest(projectPath: string, answers: InitAnswers) {
             const files = ['vitest.config.ts']
             await copyFilesFromTemplates(projectPath, files)
 
-            const pkg: IPackage = await getProjectJson(projectPath)
+            const pkg: IPackage = await readPackageJson(projectPath)
             const devDependencies: Record<string, string> = {
                 vitest: '^3.2.4',
             }
@@ -1364,7 +1336,7 @@ async function initTest(projectPath: string, answers: InitAnswers) {
                     ...pkg?.devDependencies,
                 },
             })
-            await saveProjectJson(projectPath, newPkg)
+            await updatePackageJson(projectPath, newPkg)
             loading.succeed('Vitest 初始化成功！')
             return
         }
@@ -1372,7 +1344,7 @@ async function initTest(projectPath: string, answers: InitAnswers) {
             const files = ['jest.config.ts']
             await copyFilesFromTemplates(projectPath, files)
 
-            const pkg: IPackage = await getProjectJson(projectPath)
+            const pkg: IPackage = await readPackageJson(projectPath)
 
             const devDependencies = {
                 '@types/jest': '^29.5.12',
@@ -1392,7 +1364,7 @@ async function initTest(projectPath: string, answers: InitAnswers) {
                 },
             })
             newPkg.jest = undefined
-            await saveProjectJson(projectPath, newPkg)
+            await updatePackageJson(projectPath, newPkg)
             loading.succeed('Jest 初始化成功！')
             return
         }
@@ -1428,7 +1400,7 @@ async function jsFileExtRename(projectPath: string) {
     try {
         // 所有 .js 后缀的文件
         const jsFiles = (await fs.readdir(projectPath)).filter((file) => /\.js$/.test(file)).map((file) => path.join(projectPath, file))
-        const pkg: IPackage = await getProjectJson(projectPath)
+        const pkg: IPackage = await readPackageJson(projectPath)
         if (pkg.type === 'module') {
             // 判断 js 的模块类型，如果是 cjs ，则改后缀为 .cjs
             for await (const filepath of jsFiles) {
@@ -1527,12 +1499,12 @@ function getJsModuleType(fileContent: string) {
 
 async function sortProjectJson(projectPath: string) {
     try {
-        const pkg: IPackage = await getProjectJson(projectPath)
+        const pkg: IPackage = await readPackageJson(projectPath)
         const pkgData: IPackage = {
             dependencies: sortKey(pkg?.dependencies || {}),
             devDependencies: sortKey(pkg?.devDependencies || {}),
         }
-        await saveProjectJson(projectPath, pkgData)
+        await updatePackageJson(projectPath, pkgData)
     } catch (error) {
         console.error(error)
     }
@@ -1565,18 +1537,5 @@ async function getLtsNodeVersion(): Promise<string> {
 async function getNpmPackageVersion(name: string) {
     const version = (await asyncExec(`${PACKAGE_MANAGER} view ${name} version`)) as string || ''
     return version.trim()
-}
-
-async function getProjectJson(projectPath: string) {
-    const pkgPath = path.join(projectPath, 'package.json')
-    const pkg: IPackage = await fs.readJSON(pkgPath)
-    return pkg
-}
-
-async function saveProjectJson(projectPath: string, pkgData: IPackage) {
-    const pkgPath = path.join(projectPath, 'package.json')
-    const pkg: IPackage = await getProjectJson(projectPath)
-    const newPkg = Object.assign({}, pkg, pkgData)
-    await fs.writeFile(pkgPath, JSON.stringify(newPkg, null, 2))
 }
 
