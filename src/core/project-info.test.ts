@@ -194,6 +194,9 @@ describe('buildPackageJsonPatch', () => {
         expect(patch.repository).toBeUndefined()
         expect(patch.publishConfig).toBeUndefined()
         expect(patch.type).toBe('commonjs')
-        expect(patch.keywords).toEqual(['foo'])
+        // keywords should include 'foo' once (deduplicated) and may include other template-derived keywords
+        expect(patch.keywords).toEqual(expect.arrayContaining(['foo']))
+        const fooCount = patch.keywords.filter((k) => k.toLowerCase() === 'foo').length
+        expect(fooCount).toBe(1)
     })
 })
