@@ -12,8 +12,4 @@ export default defineConfig({
         },
     },
     root: path.resolve('./'),
-    coverage: {
-        clean: true,
-        reportsDirectory: path.resolve('./coverage'),
-    },
 })
