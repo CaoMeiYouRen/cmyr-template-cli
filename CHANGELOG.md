@@ -1,5 +1,12 @@
 # cmyr-template-cli
 
+## [1.42.2](https://github.com/CaoMeiYouRen/cmyr-template-cli/compare/v1.42.1...v1.42.2) (2025-12-10)
+
+
+### 🐛 Bug 修复
+
+* 移除 vitest 配置中的覆盖率设置 ([b90acb2](https://github.com/CaoMeiYouRen/cmyr-template-cli/commit/b90acb2))
+
 ## [1.42.1](https://github.com/CaoMeiYouRen/cmyr-template-cli/compare/v1.42.0...v1.42.1) (2025-12-10)
 
 
