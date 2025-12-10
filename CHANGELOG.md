@@ -1,5 +1,12 @@
 # cmyr-template-cli
 
+## [1.42.1](https://github.com/CaoMeiYouRen/cmyr-template-cli/compare/v1.42.0...v1.42.1) (2025-12-10)
+
+
+### 🐛 Bug 修复
+
+* 更新模板元数据，启用 Docker 支持并注释掉 webpack 模板配置 ([0ffdf09](https://github.com/CaoMeiYouRen/cmyr-template-cli/commit/0ffdf09))
+
 # [1.42.0](https://github.com/CaoMeiYouRen/cmyr-template-cli/compare/v1.41.8...v1.42.0) (2025-11-15)
 
 
