@@ -1,7 +1,7 @@
 import axios from 'axios'
 import sodium from 'libsodium-wrappers'
 import { GITEE_API_URL, GITHUB_API_URL, NODE_INDEX_URL } from './constants'
-import { CreateOrUpdateARepositorySecretRequest, GetARepositoryPublicKeyRequest, GiteeRepo, GithubRepo, GithubTopics, NodeIndexJson } from '@/types/interfaces'
+import { CreateGithubRepoRulesRequest, CreateOrUpdateARepositorySecretRequest, GetARepositoryPublicKeyRequest, GiteeRepo, GithubRepo, GithubTopics, NodeIndexJson } from '@/types/interfaces'
 
 axios.defaults.timeout = 15 * 1000
 
@@ -78,6 +78,35 @@ export async function replaceGithubRepositoryTopics(authToken: string, data: Git
             data: {
                 names: topics,
             },
+        })
+        return resp.data
+    } catch (error) {
+        console.error(error)
+        return null
+    }
+}
+
+/**
+ * 创建 Github 项目的分支保护规则
+ *
+ * @author CaoMeiYouRen
+ * @date 2025-01-18
+ * @export
+ * @param authToken
+ * @param data
+ */
+export async function createGithubRepoRules(authToken: string, data: CreateGithubRepoRulesRequest) {
+    try {
+        const { owner, repo, ...body } = data
+        const resp = await axios({
+            url: `/repos/${owner}/${repo}/rulesets`,
+            baseURL: GITHUB_API_URL,
+            method: 'POST',
+            headers: {
+                Authorization: `Bearer ${authToken}`,
+                Accept: 'application/vnd.github+json',
+            },
+            data: body,
         })
         return resp.data
     } catch (error) {

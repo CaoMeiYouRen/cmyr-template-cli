@@ -303,3 +303,15 @@ export type CreateOrUpdateARepositorySecretRequest = {
     secret_name: string
     secret_value: string
 }
+
+export type CreateGithubRepoRulesRequest = {
+    owner: string
+    repo: string
+    name: string
+    target: string
+    enforcement: string
+    source_type?: string
+    conditions?: any
+    rules?: any[]
+    bypass_actors?: any[]
+}

@@ -4,7 +4,7 @@ import { InitAnswers, TemplateCliConfig, TemplateMeta } from '@/types/interfaces
 import { asyncExec } from '@/utils/exec'
 import { getTemplateMeta } from '@/utils/template'
 import { loadTemplateCliConfig } from '@/utils/config'
-import { createGithubRepo, createGiteeRepo, replaceGithubRepositoryTopics, createOrUpdateARepositorySecret } from '@/utils/api'
+import { createGithubRepo, createGiteeRepo, replaceGithubRepositoryTopics, createOrUpdateARepositorySecret, createGithubRepoRules } from '@/utils/api'
 import { buildRepositoryTopics, detectRemoteService, buildRepositorySecretsPlan } from '@/pure/git'
 
 export async function initRemoteGitRepo(projectPath: string, answers: InitAnswers) {
@@ -111,6 +111,34 @@ async function handleGithubRepo({ loading, templateMeta, cliConfig, repository }
                 }
                 console.info(colors.green('仓库 action secret 初始化成功！'))
             }
+
+            console.info(colors.green('正在初始化仓库分支保护规则！'))
+            await createGithubRepoRules(authToken, {
+                owner,
+                repo,
+                enforcement: 'active',
+                name: '保护分支规则集',
+                target: 'branch',
+                source_type: 'Repository',
+                conditions: {
+                    ref_name: {
+                        exclude: [],
+                        include: [
+                            '~DEFAULT_BRANCH', // 包含默认分支
+                        ],
+                    },
+                },
+                rules: [
+                    {
+                        type: 'deletion', // 禁止删除分支
+                    },
+                    {
+                        type: 'non_fast_forward', // 禁止强制推送
+                    },
+                ],
+                bypass_actors: [],
+            })
+            console.info(colors.green('仓库分支保护规则初始化成功！'))
             return
         }
         loading.fail('远程 Git 仓库初始化失败！')
