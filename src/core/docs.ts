@@ -167,7 +167,7 @@ export async function initFunding(projectPath: string, projectInfos: ProjectInfo
         const newPath = path.join(projectPath, '.github/FUNDING.yml')
         await ejsRender(templatePath, { afdianUsername: projectInfos.afdianUsername }, newPath)
         loading.succeed('Funding 初始化成功！')
-    } catch (error) {
+    } catch {
         loading.fail('Funding 初始化失败！')
     }
 }

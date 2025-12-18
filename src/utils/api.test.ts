@@ -52,7 +52,7 @@ import type { CreateOrUpdateARepositorySecretRequest, GiteeRepo, GithubRepo, Git
 
 const axiosMock = axios as unknown as AxiosMock
 const sodiumMock = sodium as unknown as SodiumMock
-const consoleErrorSpy = vi.spyOn(console, 'error').mockImplementation(() => {})
+const consoleErrorSpy = vi.spyOn(console, 'error').mockImplementation(() => { /* empty */ })
 
 afterAll(() => {
     consoleErrorSpy.mockRestore()

@@ -1,3 +1,4 @@
+/* eslint-disable max-lines */
 import path from 'path'
 import ora from 'ora'
 import fs from 'fs-extra'
@@ -529,7 +530,7 @@ export async function initTest(projectPath: string, answers: InitAnswers) {
             return
         }
         loading.succeed('未选择测试框架，跳过测试初始化')
-    } catch (error) {
+    } catch {
         loading.fail('测试初始化失败！')
     }
 }

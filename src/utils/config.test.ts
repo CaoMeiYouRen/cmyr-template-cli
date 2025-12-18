@@ -59,7 +59,7 @@ describe('loadTemplateCliConfig', () => {
     })
 
     it('falls back to home config when local config fails to load', async () => {
-        const consoleErrorSpy = vi.spyOn(console, 'error').mockImplementation(() => {})
+        const consoleErrorSpy = vi.spyOn(console, 'error').mockImplementation(() => { /* empty */ })
         fsMock.pathExists.mockResolvedValueOnce(true)
         fsMock.readJSON.mockRejectedValueOnce(new Error('boom'))
         fsMock.pathExists.mockResolvedValueOnce(true)
