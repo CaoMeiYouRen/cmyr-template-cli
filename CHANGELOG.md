@@ -1,5 +1,17 @@
 # cmyr-template-cli
 
+# [1.43.0](https://github.com/CaoMeiYouRen/cmyr-template-cli/compare/v1.42.2...v1.43.0) (2025-12-18)
+
+
+### ✨ 新功能
+
+* 添加创建 GitHub 仓库分支保护规则的功能 ([f97f029](https://github.com/CaoMeiYouRen/cmyr-template-cli/commit/f97f029))
+
+
+### 🐛 Bug 修复
+
+* 移除 catch 块中的错误参数以简化错误处理 ([e7955ab](https://github.com/CaoMeiYouRen/cmyr-template-cli/commit/e7955ab))
+
 ## [1.42.2](https://github.com/CaoMeiYouRen/cmyr-template-cli/compare/v1.42.1...v1.42.2) (2025-12-10)
 
 
