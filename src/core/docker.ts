@@ -38,7 +38,7 @@ export async function initDocker(projectPath: string, answers: InitAnswers) {
                     if (!await fs.pathExists(scriptsDir)) {
                         await fs.mkdir(scriptsDir)
                     }
-                    await copyFilesFromTemplates(projectPath, ['scripts/minify-docker.cjs'])
+                    await copyFilesFromTemplates(projectPath, ['scripts/minify-docker.mjs'])
                 }
                 break
             default:
