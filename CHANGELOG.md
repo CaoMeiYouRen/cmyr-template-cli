@@ -1,5 +1,12 @@
 # cmyr-template-cli
 
+## [1.43.1](https://github.com/CaoMeiYouRen/cmyr-template-cli/compare/v1.43.0...v1.43.1) (2025-12-25)
+
+
+### 🐛 Bug 修复
+
+* 重构 minify-docker 脚本为 esm 格式以优化 Docker 文件处理 ([21f7853](https://github.com/CaoMeiYouRen/cmyr-template-cli/commit/21f7853))
+
 # [1.43.0](https://github.com/CaoMeiYouRen/cmyr-template-cli/compare/v1.42.2...v1.43.0) (2025-12-18)
 
 
