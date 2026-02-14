@@ -201,7 +201,7 @@ async function init(projectPath: string, answers: InitAnswers) {
             cwd: projectPath,
         })
 
-        await asyncExec('git commit -m "chore: init" --no-gpg', {
+        await asyncExec('git commit -m "chore: init" --no-gpg --no-verify', {
             cwd: projectPath,
         })
 
