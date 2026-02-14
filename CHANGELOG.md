@@ -1,5 +1,13 @@
 # cmyr-template-cli
 
+## [1.43.2](https://github.com/CaoMeiYouRen/cmyr-template-cli/compare/v1.43.1...v1.43.2) (2026-02-14)
+
+
+### 🐛 Bug 修复
+
+* 在 git 提交中添加 --no-verify 选项以跳过钩子检查 ([d736acb](https://github.com/CaoMeiYouRen/cmyr-template-cli/commit/d736acb))
+* 将 libsodium-wrappers 版本从 ^0.7.15 修改为 0.7.15 以确保一致性 ([cf47a75](https://github.com/CaoMeiYouRen/cmyr-template-cli/commit/cf47a75))
+
 ## [1.43.1](https://github.com/CaoMeiYouRen/cmyr-template-cli/compare/v1.43.0...v1.43.1) (2025-12-25)
 
 
