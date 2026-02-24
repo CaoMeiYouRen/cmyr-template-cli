@@ -1,5 +1,12 @@
 # cmyr-template-cli
 
+# [1.44.0](https://github.com/CaoMeiYouRen/cmyr-template-cli/compare/v1.43.3...v1.44.0) (2026-02-24)
+
+
+### ✨ 新功能
+
+* 添加 TypeCheck 初始化功能以支持 TypeScript 项目 ([ef3bf89](https://github.com/CaoMeiYouRen/cmyr-template-cli/commit/ef3bf89))
+
 ## [1.43.3](https://github.com/CaoMeiYouRen/cmyr-template-cli/compare/v1.43.2...v1.43.3) (2026-02-24)
 
 
