@@ -133,11 +133,12 @@ async function init(projectPath: string, answers: InitAnswers) {
             })
 
             const pkg = await readPackageJson(projectPath)
-            if (pkg?.scripts?.lint) {
-                await asyncExec(`${PACKAGE_MANAGER} run lint`, {
-                    cwd: projectPath,
-                })
-            }
+            // 由于 eslint-config-cmyr 版本更新导致目前必须处理 typescript 文件路径错误，暂时注释掉 lint 命令
+            // if (pkg?.scripts?.lint) {
+            //     await asyncExec(`${PACKAGE_MANAGER} run lint`, {
+            //         cwd: projectPath,
+            //     })
+            // }
         } else if (templateMeta?.runtime === 'java') {
             await asyncExec('java -version', {
                 cwd: projectPath,
