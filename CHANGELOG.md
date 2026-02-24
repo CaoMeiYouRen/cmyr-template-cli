@@ -1,5 +1,12 @@
 # cmyr-template-cli
 
+## [1.43.3](https://github.com/CaoMeiYouRen/cmyr-template-cli/compare/v1.43.2...v1.43.3) (2026-02-24)
+
+
+### 🐛 Bug 修复
+
+* 暂时注释掉 lint 命令以处理 eslint-config-cmyr 版本更新导致的路径错误 ([b38ec60](https://github.com/CaoMeiYouRen/cmyr-template-cli/commit/b38ec60))
+
 ## [1.43.2](https://github.com/CaoMeiYouRen/cmyr-template-cli/compare/v1.43.1...v1.43.2) (2026-02-14)
 
 
