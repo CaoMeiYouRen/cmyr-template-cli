@@ -4,7 +4,7 @@ import fs from 'fs-extra'
 import JSON5 from 'json5'
 import acorn from 'acorn'
 import walk from 'acorn-walk'
-import { cloneDeep } from 'lodash'
+import { cloneDeep, merge } from 'lodash'
 import { PACKAGE_MANAGER } from '@/config/env'
 import { COMMON_DEPENDENCIES, NODE_DEPENDENCIES } from '@/utils/dependencies'
 import { copyFilesFromTemplates, removeFiles } from '@/utils/files'
@@ -311,6 +311,39 @@ function getJsModuleType(fileContent: string) {
     } catch (error) {
         console.error(error)
         return 'Unknown'
+    }
+}
+
+export async function initTypeCheck(projectPath: string, answers: InitAnswers) {
+    const loading = ora('正在初始化 TypeCheck ……').start()
+    try {
+        const { template } = answers
+        const templateMeta = getTemplateMeta(template)
+        const pkg: IPackage = await readPackageJson(projectPath)
+        const isTypeScript = pkg?.devDependencies?.typescript || pkg?.dependencies?.typescript
+        if (!isTypeScript) {
+            loading.succeed('非 TypeScript 项目，跳过 TypeCheck 初始化')
+            return
+        }
+
+        let typecheckScript = 'tsc --noEmit'
+        if (templateMeta?.tags?.includes('nuxt')) {
+            typecheckScript = 'nuxt typecheck'
+        } else if (templateMeta?.language === 'vue' || (templateMeta?.vueVersion && templateMeta?.vueVersion > 0)) {
+            typecheckScript = 'vue-tsc --noEmit'
+        }
+
+        const newPkg = merge({}, pkg, {
+            scripts: {
+                typecheck: typecheckScript,
+                ...pkg?.scripts,
+            },
+        })
+        await updatePackageJson(projectPath, newPkg)
+        loading.succeed('TypeCheck 初始化成功！')
+    } catch (error) {
+        console.error(error)
+        loading.fail('TypeCheck 初始化失败！')
     }
 }
 

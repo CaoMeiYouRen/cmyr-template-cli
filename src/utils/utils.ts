@@ -13,7 +13,7 @@ import { initRemoteGitRepo } from '@/core/git'
 import { initGithubWorkflows, initDependabot } from '@/core/ci'
 import { initDocker } from '@/core/docker'
 import { initReadme, initContributing, initCodeOfConduct, initSecurity, initPullRequestTemplate, initLicense, initIssueTemplate, initFunding } from '@/core/docs'
-import { installNpmPackages, initCommonDependencies, initYarn, initTsconfig, initProjectJson, getProjectInfo, jsFileExtRename, sortProjectJson } from '@/core/project'
+import { installNpmPackages, initCommonDependencies, initYarn, initTsconfig, initProjectJson, getProjectInfo, jsFileExtRename, sortProjectJson, initTypeCheck } from '@/core/project'
 import { initEditorconfig, initCommitlint, initCommitizen, initSemanticRelease, initHusky, initEslint, initStylelint } from '@/core/tooling'
 import { initTest } from '@/core/testing'
 
@@ -112,6 +112,7 @@ async function init(projectPath: string, answers: InitAnswers) {
             await initTsconfig(projectPath, answers)
             await initEslint(projectPath, answers)
             await initStylelint(projectPath)
+            await initTypeCheck(projectPath, answers)
 
             if (isInitTest) {
                 await initTest(projectPath, answers)
