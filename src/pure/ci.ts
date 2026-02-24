@@ -78,8 +78,13 @@ export function adjustDependabotConfig(params: DependabotAdjustParams): Dependab
         npmUpdate.ignore = needsArtTemplateIgnore ? currentIgnores : undefined
     }
 
-    const hasGithubActionsUpdate = next.updates?.some((update) => update['package-ecosystem'] === 'github-actions')
-    if (!hasGithubActionsUpdate) {
+    const githubActionsUpdate = next.updates?.find((update) => update['package-ecosystem'] === 'github-actions')
+    if (githubActionsUpdate) {
+        githubActionsUpdate.schedule ??= { interval: 'monthly', time: '04:00', timezone: 'Asia/Shanghai' }
+        githubActionsUpdate.schedule.interval = 'monthly'
+        githubActionsUpdate.schedule.time = '04:00'
+        githubActionsUpdate.schedule.timezone = 'Asia/Shanghai'
+    } else {
         next.updates.push({
             'package-ecosystem': 'github-actions',
             directory: '/',
