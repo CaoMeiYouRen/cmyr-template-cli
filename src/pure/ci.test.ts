@@ -90,6 +90,6 @@ describe('adjustDependabotConfig', () => {
         const result = adjustDependabotConfig({ dependabot: config, pkg })
         const actionsUpdates = result.updates.filter((update) => update['package-ecosystem'] === 'github-actions')
         expect(actionsUpdates).toHaveLength(1)
-        expect(actionsUpdates[0].schedule).toEqual({ interval: 'weekly', time: '05:00', timezone: 'UTC' })
+        expect(actionsUpdates[0].schedule).toEqual({ interval: 'monthly', time: '04:00', timezone: 'Asia/Shanghai' })
     })
 })
