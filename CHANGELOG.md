@@ -1,5 +1,12 @@
 # cmyr-template-cli
 
+## [1.44.1](https://github.com/CaoMeiYouRen/cmyr-template-cli/compare/v1.44.0...v1.44.1) (2026-02-24)
+
+
+### 🐛 Bug 修复
+
+* 更新 GitHub Actions 配置以设置调度时间和时区 ([6f776e5](https://github.com/CaoMeiYouRen/cmyr-template-cli/commit/6f776e5))
+
 # [1.44.0](https://github.com/CaoMeiYouRen/cmyr-template-cli/compare/v1.43.3...v1.44.0) (2026-02-24)
 
 
