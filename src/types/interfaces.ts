@@ -136,6 +136,39 @@ export interface InitAnswers {
      */
     scopeName: string
 
+    /**
+     * 是否初始化 AI 开发配置
+     */
+    isInitAI: boolean
+    /**
+     * 要初始化的 AI 工具列表
+     */
+    aiTools: ('claude' | 'copilot' | 'cursor' | 'windsurf')[]
+    /**
+     * 是否启用 AI 引导模式
+     */
+    isAIAssisted: boolean
+    /**
+     * AI 引导的用户输入（项目功能描述）
+     */
+    aiUserInput?: string
+    /**
+     * AI 生成的候选名称列表
+     */
+    aiGeneratedNames?: string[]
+    /**
+     * AI 生成的项目描述
+     */
+    aiGeneratedDescription?: string
+    /**
+     * AI 生成的关键词
+     */
+    aiGeneratedKeywords?: string[]
+    /**
+     * AI 推荐的模板
+     */
+    aiRecommendedTemplate?: string
+
     [k: string]: unknown
 }
 
@@ -212,6 +245,18 @@ export type TemplateCliConfig = {
      * @deprecated 由于 npm 的安全机制修改，所以不再需要设置 NPM_TOKEN 了
      */
     NPM_TOKEN: string
+    /**
+     * AI API 基础地址，兼容 OpenAI Chat Completions 格式
+     */
+    AI_API_BASE?: string
+    /**
+     * AI API 密钥
+     */
+    AI_API_KEY?: string
+    /**
+     * AI 模型名称
+     */
+    AI_MODEL?: string
 }
 
 export type ProjectPrerequisite = {
@@ -314,4 +359,25 @@ export type CreateGithubRepoRulesRequest = {
     conditions?: any
     rules?: any[]
     bypass_actors?: any[]
+}
+
+/**
+ * AI 项目建议
+ */
+export interface AIProjectSuggestion {
+    names: string[]
+    description: string
+    keywords: string[]
+    template: string
+}
+
+/**
+ * AI 完成请求
+ */
+export interface AICompletionRequest {
+    prompt: string
+    apiKey?: string
+    apiBase?: string
+    model?: string
+    temperature?: number
 }

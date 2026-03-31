@@ -109,6 +109,38 @@ module.exports = function (plop: NodePlopAPI) {
                         return ['nodejs', 'browser'].includes(templateMeta?.runtime)
                     },
                 },
+                // ===== AI 配置相关 =====
+                {
+                    type: 'confirm',
+                    name: 'isInitAI',
+                    message: '是否初始化 AI 开发配置？',
+                    default: true,
+                    when(answers: InitAnswers) {
+                        const templateMeta = getTemplateMeta(answers.template)
+                        return ['nodejs', 'browser'].includes(templateMeta?.runtime)
+                    },
+                },
+                {
+                    type: 'checkbox',
+                    name: 'aiTools',
+                    message: '请选择要初始化的 AI 工具配置',
+                    choices: [
+                        { name: 'Claude Code / Codex / Gemini CLI / OpenCode (AGENTS.md + .claude/)', value: 'claude', checked: true },
+                        { name: 'GitHub Copilot (.github/copilot-instructions.md → AGENTS.md)', value: 'copilot', checked: true },
+                        { name: 'Cursor (.cursorrules)', value: 'cursor', checked: false },
+                        { name: 'Windsurf (.windsurfrules)', value: 'windsurf', checked: false },
+                    ],
+                    default: ['claude', 'copilot'],
+                    when(answers: InitAnswers) {
+                        return (answers as any).isInitAI
+                    },
+                },
+                {
+                    type: 'confirm',
+                    name: 'isAIAssisted',
+                    message: '是否启用 AI 引导模式？（通过 AI 帮助生成项目信息）',
+                    default: false,
+                },
                 {
                     type: 'confirm',
                     name: 'isInitDocker',

@@ -7,7 +7,7 @@ import { REMOTES } from './constants'
 import { getFastUrl } from './api'
 import { getTemplateMeta } from './template'
 import { asyncExec } from './exec'
-import { readPackageJson } from './package-json'
+// readPackageJson is used only in commented-out code below, keeping the import for future reference
 import { InitAnswers } from '@/types/interfaces'
 import { initRemoteGitRepo } from '@/core/git'
 import { initGithubWorkflows, initDependabot } from '@/core/ci'
@@ -16,6 +16,7 @@ import { initReadme, initContributing, initCodeOfConduct, initSecurity, initPull
 import { installNpmPackages, initCommonDependencies, initYarn, initTsconfig, initProjectJson, getProjectInfo, jsFileExtRename, sortProjectJson, initTypeCheck } from '@/core/project'
 import { initEditorconfig, initCommitlint, initCommitizen, initSemanticRelease, initHusky, initEslint, initStylelint } from '@/core/tooling'
 import { initTest } from '@/core/testing'
+import { initAIScaffolding } from '@/core/ai'
 
 export async function downloadGitRepo(repository: string, destination: string, options: any = {}) {
     const fastRepo = await getFastGitRepo(repository)
@@ -59,7 +60,7 @@ export async function initProject(answers: InitAnswers) {
 }
 
 async function init(projectPath: string, answers: InitAnswers) {
-    const { template, isOpenSource, isInitReadme, isInitContributing, isInitHusky, isInitSemanticRelease, isInitDocker, isInitTest } = answers
+    const { template, isOpenSource, isInitReadme, isInitContributing, isInitHusky, isInitSemanticRelease, isInitDocker, isInitTest, isInitAI } = answers
     try {
         const templateMeta = getTemplateMeta(template)
         await asyncExec('git --version', {
@@ -99,6 +100,11 @@ async function init(projectPath: string, answers: InitAnswers) {
                 await initGithubWorkflows(projectPath, answers)
             }
             await initEditorconfig(projectPath)
+            if (isInitAI) {
+                if (info) {
+                    await initAIScaffolding(projectPath, info)
+                }
+            }
             await initCommitlint(projectPath)
             await initCommitizen(projectPath)
             if (isInitSemanticRelease) {
@@ -133,8 +139,8 @@ async function init(projectPath: string, answers: InitAnswers) {
                 cwd: projectPath,
             })
 
-            const pkg = await readPackageJson(projectPath)
             // 由于 eslint-config-cmyr 版本更新导致目前必须处理 typescript 文件路径错误，暂时注释掉 lint 命令
+            // const pkg = await readPackageJson(projectPath)
             // if (pkg?.scripts?.lint) {
             //     await asyncExec(`${PACKAGE_MANAGER} run lint`, {
             //         cwd: projectPath,

@@ -55,6 +55,36 @@ ct
 ct create
 ```
 
+## AI 功能
+
+### AI 脚手架初始化
+
+在项目初始化时，可以选择生成 AI 开发配置文件，为 AI 辅助编程提供项目上下文。
+
+生成的文件包括：
+
+| 工具 | 配置文件 | 说明 |
+|------|---------|------|
+| Claude Code / Codex / Gemini CLI / OpenCode | `AGENTS.md` + `.claude/` | 默认启用，单一信息源 |
+| GitHub Copilot | `.github/copilot-instructions.md` | 默认启用，引用 AGENTS.md |
+| Cursor | `.cursorrules` | 可选 |
+| Windsurf | `.windsurfrules` | 可选 |
+
+- `AGENTS.md` - AI Agent 配置的单一信息源，包含项目结构、技术栈、开发规范等信息
+- `.claude/` - Claude Code 的设置、技能和代理目录
+- `.github/copilot-instructions.md` - GitHub Copilot 指令文件，引用 AGENTS.md
+- `.cursorrules` - Cursor 编辑器配置（可选）
+- `.windsurfrules` - Windsurf 编辑器配置（可选）
+
+### AI 引导模式
+
+支持 AI 引导的项目创建模式。在初始化时，您可以用自然语言描述您的项目需求，AI 将自动：
+
+- 生成合适的项目名称
+- 编写项目描述
+- 提取关键词
+- 推荐最适合的项目模板
+
 ## 配置
 
 在当前目录下或 `HOME` 路径下创建 `.ctrc` 文件即可，格式为 `json`
@@ -73,7 +103,10 @@ ct create
     "DOCKER_USERNAME": "",
     "DOCKER_PASSWORD": "",
     "CONTACT_EMAIL": "",
-    "NPM_TOKEN": ""
+    "NPM_TOKEN": "",
+    "AI_API_BASE": "https://api.openai.com/v1",
+    "AI_API_KEY": "",
+    "AI_MODEL": "gpt-4o-mini"
 }
 ```
 
@@ -102,6 +135,12 @@ DOCKER_PASSWORD：Docker Hub 密码，可空，默认值为空。如果填写，
 CONTACT_EMAIL：联系邮箱，可空，默认值为空
 
 NPM_TOKEN：Npm 令牌，可空，默认值为空。如果填写，会自动初始化对应的仓库 action secret
+
+AI_API_BASE：AI API 基础地址，兼容 OpenAI Chat Completions 格式。可空，默认值为 `https://api.openai.com/v1`。支持 Ollama 本地模型（`http://localhost:11434/v1`）
+
+AI_API_KEY：AI API 密钥。可空，默认值为空。仅在启用 AI 引导模式时需要
+
+AI_MODEL：AI 模型名称。可空，默认值为 `gpt-4o-mini`
 
 **如果不使用自动初始化远程仓库功能，可以跳过该配置**
 

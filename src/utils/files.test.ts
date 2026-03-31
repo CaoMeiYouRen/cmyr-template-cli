@@ -3,7 +3,7 @@ import { describe, expect, it, vi, beforeEach } from 'vitest'
 
 vi.mock('fs-extra', () => ({
     default: {
-        pathExists: vi.fn(),
+        pathExists: vi.fn().mockResolvedValue(false) as any,
         remove: vi.fn(),
         copyFile: vi.fn(),
     },
@@ -20,7 +20,7 @@ vi.mock('ora', () => ({
 import fs from 'fs-extra'
 import { copyFilesFromTemplates, removeFiles } from './files'
 
-const fsMock = vi.mocked(fs)
+const fsMock = vi.mocked(fs as unknown as { pathExists: ReturnType<typeof vi.fn>, remove: ReturnType<typeof vi.fn>, copyFile: ReturnType<typeof vi.fn> }, true)
 
 describe('copyFilesFromTemplates', () => {
     const projectPath = '/project'

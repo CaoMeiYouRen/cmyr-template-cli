@@ -1,0 +1,45 @@
+# AGENTS.md
+
+## 项目概述
+<%= projectDescription %>
+
+## 技术栈
+- 主要语言: <%= language %>
+- 运行时: <%= runtime %>
+<% if (vueVersion === 3) { %>- 框架: Vue 3<% } %>
+<% if (vueVersion === 2) { %>- 框架: Vue 2<% } %>
+- 包管理器: <%= packageManager %>
+
+## 项目结构
+```
+src/           # 源代码
+<% if (isInitTest !== 'none') { %>tests/         # 测试文件<% } %>
+```
+
+## 开发命令
+- 安装依赖: `<%= packageManager %> install`
+<% if (devCommand) { %>- 启动开发服务器: `<%= devCommand %>`<% } %>
+<% if (testCommand) { %>- 运行测试: `<%= testCommand %>`<% } %>
+<% if (buildCommand) { %>- 构建项目: `<%= buildCommand %>`<% } %>
+<% if (lintCommand) { %>- 代码检查: `<%= lintCommand %>`<% } %>
+
+## 编码约定
+- 使用 TypeScript 严格模式
+- 遵循 ESLint 配置规则
+- 提交信息遵循 Conventional Commits 规范
+
+## 测试要求
+<% if (isInitTest === 'vitest') { %>
+- 测试框架: Vitest
+- 覆盖率要求: >= 80%
+<% } else if (isInitTest === 'jest') { %>
+- 测试框架: Jest
+- 覆盖率要求: >= 80%
+<% } else { %>
+- 未配置测试框架
+<% } %>
+
+## 避免事项
+- 不要使用 var 声明变量，使用 const/let
+- 不要跳过 TypeScript 类型检查
+- 不要直接修改 generated/ 目录下的文件

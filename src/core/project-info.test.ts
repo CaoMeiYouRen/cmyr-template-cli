@@ -27,6 +27,9 @@ const baseAnswers: InitAnswers = {
     commonDependencies: [],
     isPrivateScopePackage: false,
     scopeName: '',
+    isInitAI: true,
+    aiTools: ['claude', 'copilot'],
+    isAIAssisted: false,
 }
 
 const templateMeta: TemplateMeta = {
@@ -196,7 +199,7 @@ describe('buildPackageJsonPatch', () => {
         expect(patch.type).toBe('commonjs')
         // keywords should include 'foo' once (deduplicated) and may include other template-derived keywords
         expect(patch.keywords).toEqual(expect.arrayContaining(['foo']))
-        const fooCount = patch.keywords.filter((k) => k.toLowerCase() === 'foo').length
+        const fooCount = (patch.keywords as string[]).filter((k) => k.toLowerCase() === 'foo').length
         expect(fooCount).toBe(1)
     })
 })
