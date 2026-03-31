@@ -15,6 +15,7 @@
         "allowSyntheticDefaultImports": true,
         "experimentalDecorators": true, //开启装饰器
         "removeComments": false,
+        "skipLibCheck": true, //跳过库文件的类型检查
         "paths": {
             "@/*": [
                 "./src/*"
