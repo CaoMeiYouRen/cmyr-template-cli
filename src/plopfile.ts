@@ -19,6 +19,22 @@ module.exports = function (plop: NodePlopAPI) {
         async prompts(inquirer) {
             const config = await loadTemplateCliConfig()
             const questions: QuestionCollection<InitAnswers> = [
+                // ===== AI 引导模式（必须最先询问） =====
+                {
+                    type: 'confirm',
+                    name: 'isAIAssisted',
+                    message: '是否启用 AI 引导模式？（通过 AI 帮助生成项目信息）',
+                    default: false,
+                },
+                {
+                    type: 'input',
+                    name: 'aiUserInput',
+                    message: '请描述您的项目功能：',
+                    default: '',
+                    when(answers: InitAnswers) {
+                        return answers.isAIAssisted
+                    },
+                },
                 {
                     type: 'input',
                     name: 'name',
@@ -134,12 +150,6 @@ module.exports = function (plop: NodePlopAPI) {
                     when(answers: InitAnswers) {
                         return (answers as any).isInitAI
                     },
-                },
-                {
-                    type: 'confirm',
-                    name: 'isAIAssisted',
-                    message: '是否启用 AI 引导模式？（通过 AI 帮助生成项目信息）',
-                    default: false,
                 },
                 {
                     type: 'confirm',
