@@ -135,7 +135,7 @@ src/           # 源代码
 |------|------|
 | 默认 | 生成 AGENTS.md + Copilot 引用配置 |
 | `isInitAI = false` | 跳过全部 AI 脚手架初始化 |
-| 非 Node.js/Browser 项目 | 仅生成基础 AGENTS.md（不依赖技术栈细节） |
+| 非 Node.js/Browser 项目 | 跳过 AI 脚手架初始化（AI 配置仅适用于 Node.js/Browser 项目） |
 | 文件已存在 | 跳过该文件，不覆盖用户已有配置 |
 
 #### 2.1.5 与现有流程的集成点
@@ -208,13 +208,14 @@ await initCommitlint(projectPath)
 
 #### 2.2.3 AI 调用方式
 
-AI 引导功能通过用户配置的 AI API 端点实现，支持以下提供商：
+AI 引导功能通过用户配置的 AI API 端点实现，当前版本仅支持 OpenAI Chat Completions 兼容格式：
 
 | 提供商 | API 格式 | 端点 |
 |--------|---------|------|
 | OpenAI 兼容（默认） | Chat Completions | `${AI_API_BASE}/chat/completions` |
-| Anthropic | Messages | `https://api.anthropic.com/v1/messages` |
 | Ollama 本地 | Chat Completions | `http://localhost:11434/v1/chat/completions` |
+
+> **注意**：当前版本仅支持 OpenAI Chat Completions 兼容格式（包括 OpenAI、Ollama 本地等）。Anthropic Messages API 支持将在后续版本中添加。
 
 配置存储在 `.ctrc` 文件中：
 
@@ -273,13 +274,41 @@ AI 引导功能通过用户配置的 AI API 端点实现，支持以下提供商
 
 在 `src/plopfile.ts` 的 questions 数组中添加以下问题：
 
+> **问题顺序说明**：`isAIAssisted` 必须在最前面询问，因为 AI 引导模式需要影响后续 `name`/`description`/`keywords`/`template` 问题的默认值。`isInitAI`/`aiTools` 依赖 `template` 的运行时类型，因此放在 `template` 之后。
+
 ```typescript
-// ===== AI 配置相关 =====
+// ===== AI 引导模式（必须最先询问，以便 AI 建议影响后续问题的默认值） =====
+{
+    type: 'confirm',
+    name: 'isAIAssisted',
+    message: '是否启用 AI 引导模式？（通过 AI 帮助生成项目信息）',
+    default: false,
+},
+{
+    type: 'input',
+    name: 'aiUserInput',
+    message: '请描述您的项目功能：',
+    default: '',
+    when(answers: InitAnswers) {
+        return answers.isAIAssisted
+    },
+},
+// 隐藏的 AI 调用触发器（不显示给用户，仅用于异步调用 AI API）
+// 此处通过 when 返回 false 来隐藏问题，但在 when 中异步调用 AI API
+// AI 建议通过闭包变量传递给后续问题的 default/message 函数
+
+// ===== 项目基本信息（AI 引导模式下使用 AI 建议作为默认值） =====
+// name, description, author, keywords, template...
+
+// ===== JS 模块和依赖 =====
+// jsModuleType, commonDependencies...
+
+// ===== AI 配置相关（依赖 template 的运行时类型） =====
 {
     type: 'confirm',
     name: 'isInitAI',
     message: '是否初始化 AI 开发配置？',
-    default: true,  // 默认开启
+    default: true,
     when(answers: InitAnswers) {
         const templateMeta = getTemplateMeta(answers.template)
         return ['nodejs', 'browser'].includes(templateMeta?.runtime)
@@ -298,12 +327,6 @@ AI 引导功能通过用户配置的 AI API 端点实现，支持以下提供商
     when(answers: InitAnswers) {
         return answers.isInitAI
     },
-},
-{
-    type: 'confirm',
-    name: 'isAIAssisted',
-    message: '是否启用 AI 引导模式？（通过 AI 帮助生成项目信息）',
-    default: false,
 },
 ```
 

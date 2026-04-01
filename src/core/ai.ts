@@ -20,7 +20,7 @@ export async function initAIScaffolding(
 ): Promise<void> {
     const loading = ora('正在初始化 AI 开发配置……').start()
     try {
-        const aiTools = (projectInfo as any).aiTools || ['claude', 'copilot']
+        const aiTools = projectInfo.aiTools ?? ['claude', 'copilot']
 
         // Claude Code / Codex / Gemini CLI / OpenCode 使用 AGENTS.md
         if (aiTools.includes('claude')) {
@@ -87,7 +87,7 @@ export async function initAgentsMd(
             runtime: projectInfo.templateMeta?.runtime || 'nodejs',
             vueVersion: projectInfo.templateMeta?.vueVersion || 0,
             packageManager: projectInfo.packageManager || 'npm',
-            isInitTest: (projectInfo as any).isInitTest || 'none',
+            isInitTest: projectInfo.isInitTest || 'none',
             devCommand: projectInfo.devCommand,
             testCommand: projectInfo.testCommand,
             buildCommand: projectInfo.buildCommand,
@@ -98,7 +98,7 @@ export async function initAgentsMd(
         loading.succeed('AGENTS.md 生成成功！')
     } catch (error) {
         loading.fail('AGENTS.md 生成失败！')
-        console.error(error)
+        throw error
     }
 }
 
@@ -139,7 +139,7 @@ export async function initCopilotInstructions(
         loading.succeed('.github/copilot-instructions.md 生成成功！')
     } catch (error) {
         loading.fail('.github/copilot-instructions.md 生成失败！')
-        console.error(error)
+        throw error
     }
 }
 
@@ -173,7 +173,7 @@ export async function initCursorRules(
         loading.succeed('.cursorrules 生成成功！')
     } catch (error) {
         loading.fail('.cursorrules 生成失败！')
-        console.error(error)
+        throw error
     }
 }
 
@@ -207,7 +207,7 @@ export async function initWindsurfRules(
         loading.succeed('.windsurfrules 生成成功！')
     } catch (error) {
         loading.fail('.windsurfrules 生成失败！')
-        console.error(error)
+        throw error
     }
 }
 
@@ -243,7 +243,7 @@ export async function initClaudeDirectory(projectPath: string): Promise<void> {
         loading.succeed('.claude/ 目录初始化成功！')
     } catch (error) {
         loading.fail('.claude/ 目录初始化失败！')
-        console.error(error)
+        throw error
     }
 }
 
@@ -274,6 +274,6 @@ export async function initCursorDirectory(projectPath: string): Promise<void> {
         loading.succeed('.cursor/ 目录初始化成功！')
     } catch (error) {
         loading.fail('.cursor/ 目录初始化失败！')
-        console.error(error)
+        throw error
     }
 }

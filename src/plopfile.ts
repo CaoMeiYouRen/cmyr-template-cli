@@ -195,7 +195,7 @@ module.exports = function (plop: NodePlopAPI) {
                     ],
                     default: ['claude', 'copilot'],
                     when(answers: InitAnswers) {
-                        return (answers as any).isInitAI
+                        return answers.isInitAI
                     },
                 },
                 {
@@ -400,6 +400,8 @@ module.exports = function (plop: NodePlopAPI) {
                 answers.aiGeneratedKeywords = aiSuggestion.keywords
                 answers.aiRecommendedTemplate = aiSuggestion.template
             }
+            // 清理隐藏触发器字段，避免泄漏到 answers 中
+            delete (answers as any)._aiTrigger
             return answers
         },
         actions() {

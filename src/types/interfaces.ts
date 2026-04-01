@@ -143,7 +143,7 @@ export interface InitAnswers {
     /**
      * 要初始化的 AI 工具列表
      */
-    aiTools: ('claude' | 'copilot' | 'cursor' | 'windsurf')[]
+    aiTools: ('claude' | 'copilot' | 'cursor' | 'windsurf' | 'codex' | 'gemini-cli' | 'opencode')[]
     /**
      * 是否启用 AI 引导模式
      */

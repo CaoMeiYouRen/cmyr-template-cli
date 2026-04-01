@@ -290,9 +290,9 @@ describe('initAgentsMd', () => {
         fsMock.pathExists.mockResolvedValue(false)
         ejsRenderMock.mockRejectedValue(new Error('Render failed'))
 
-        await initAgentsMd(projectPath, projectInfo)
+        // initAgentsMd 不再内部捕获错误，错误会冒泡到调用者
+        await expect(initAgentsMd(projectPath, projectInfo)).rejects.toThrow('Render failed')
 
-        expect(consoleErrorSpy).toHaveBeenCalled()
         consoleErrorSpy.mockRestore()
     })
 })
