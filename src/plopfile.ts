@@ -2,8 +2,9 @@ import path from 'path'
 import { NodePlopAPI, ActionType } from 'plop'
 import { QuestionCollection } from 'inquirer'
 import fs from 'fs-extra'
+import ora from 'ora'
 import { __DEV__ } from './config/env'
-import { InitAnswers } from './types/interfaces'
+import { InitAnswers, AIProjectSuggestion } from './types/interfaces'
 import { initProject } from './utils/utils'
 import { loadTemplateCliConfig } from './utils/config'
 import { TEMPLATES_META_LIST } from './core/constants'
@@ -11,6 +12,7 @@ import { COMMON_DEPENDENCIES, NODE_DEPENDENCIES, WEB_DEPENDENCIES, VUE2_DEPENDEN
 import { getGitUserName } from './utils/git'
 import { getTemplateMeta } from './utils/template'
 import { kebabCase, lintMd } from './utils/string'
+import { getAIProjectSuggestion } from './utils/ai-api'
 
 module.exports = function (plop: NodePlopAPI) {
     plop.setActionType('initProject', initProject)
@@ -18,6 +20,8 @@ module.exports = function (plop: NodePlopAPI) {
         description: '草梅项目创建器',
         async prompts(inquirer) {
             const config = await loadTemplateCliConfig()
+            // AI 建议结果，在隐藏的触发问题中异步设置
+            let aiSuggestion: AIProjectSuggestion | null = null
             const questions: QuestionCollection<InitAnswers> = [
                 // ===== AI 引导模式（必须最先询问） =====
                 {
@@ -35,21 +39,57 @@ module.exports = function (plop: NodePlopAPI) {
                         return answers.isAIAssisted
                     },
                 },
+                // 隐藏的 AI 调用触发器（不显示给用户，仅用于异步调用 AI API）
+                {
+                    type: 'input',
+                    name: '_aiTrigger',
+                    message: '',
+                    async when(answers: InitAnswers) {
+                        if (answers.isAIAssisted && answers.aiUserInput) {
+                            const spinner = ora('AI 正在生成项目建议...').start()
+                            try {
+                                aiSuggestion = await getAIProjectSuggestion(answers.aiUserInput, config)
+                                spinner.succeed('AI 已生成项目建议')
+                                console.log('')
+                                console.log('AI 为您生成了以下方案：')
+                                console.log(`  推荐项目名称: ${aiSuggestion.names.join(', ')}`)
+                                console.log(`  项目描述: ${aiSuggestion.description}`)
+                                console.log(`  关键词: ${aiSuggestion.keywords.join(', ')}`)
+                                console.log(`  推荐模板: ${aiSuggestion.template}`)
+                                console.log('')
+                            } catch (error) {
+                                spinner.fail(`AI 引导失败: ${error instanceof Error ? error.message : String(error)}`)
+                                console.log('回退到标准问答流程\n')
+                            }
+                        }
+                        return false // 永远不显示此问题
+                    },
+                },
+                // ===== 项目基本信息（AI 引导模式下使用 AI 建议作为默认值） =====
                 {
                     type: 'input',
                     name: 'name',
-                    message: '请输入项目名称',
+                    message() {
+                        if (aiSuggestion?.names?.length) {
+                            return `请选择/输入项目名称 (AI 建议: ${aiSuggestion.names.join(', ')}):`
+                        }
+                        return '请输入项目名称'
+                    },
                     validate(input: string) {
                         return input.trim().length !== 0
                     },
-                    default: __DEV__ ? 'temp' : '',
+                    default() {
+                        return aiSuggestion?.names?.[0] || (__DEV__ ? 'temp' : '')
+                    },
                     filter: (e: string) => kebabCase(e.trim()),
                 },
                 {
                     type: 'input',
                     name: 'description',
                     message: '请输入项目简介',
-                    default: __DEV__ ? '' : '',
+                    default() {
+                        return aiSuggestion?.description || ''
+                    },
                     filter: (e: string) => lintMd(e.trim()),
                 },
                 {
@@ -66,7 +106,9 @@ module.exports = function (plop: NodePlopAPI) {
                     type: 'input',
                     name: 'keywords',
                     message: '请输入项目关键词(用,分割)',
-                    default: '',
+                    default() {
+                        return aiSuggestion?.keywords?.join(',') || ''
+                    },
                     filter: (e: string) => e.trim().split(',').map((f) => f.trim()).filter(Boolean),
                 },
                 {
@@ -76,7 +118,12 @@ module.exports = function (plop: NodePlopAPI) {
                     choices() {
                         return TEMPLATES_META_LIST.map((e) => e.name)
                     },
-                    default: __DEV__ ? 'ts-template' : '',
+                    default() {
+                        if (aiSuggestion?.template) {
+                            return aiSuggestion.template
+                        }
+                        return __DEV__ ? 'ts-template' : ''
+                    },
                 },
                 {
                     type: 'list',
@@ -345,7 +392,15 @@ module.exports = function (plop: NodePlopAPI) {
                     },
                 },
             ]
-            return inquirer.prompt(questions as any)
+            const answers = await inquirer.prompt(questions as any) as InitAnswers
+            // 保存 AI 建议到 answers 中
+            if (aiSuggestion) {
+                answers.aiGeneratedNames = aiSuggestion.names
+                answers.aiGeneratedDescription = aiSuggestion.description
+                answers.aiGeneratedKeywords = aiSuggestion.keywords
+                answers.aiRecommendedTemplate = aiSuggestion.template
+            }
+            return answers
         },
         actions() {
             const actions: ActionType[] = []
