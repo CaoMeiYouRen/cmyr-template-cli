@@ -1,5 +1,19 @@
 # cmyr-template-cli
 
+# [1.45.0](https://github.com/CaoMeiYouRen/cmyr-template-cli/compare/v1.44.1...v1.45.0) (2026-04-01)
+
+
+### ✨ 新功能
+
+* **ai:** 添加 AI 开发配置和相关功能 ([f318506](https://github.com/CaoMeiYouRen/cmyr-template-cli/commit/f318506))
+* **plopfile:** 实现 AI 引导模式对后续流程的影响 ([04ea81b](https://github.com/CaoMeiYouRen/cmyr-template-cli/commit/04ea81b))
+
+
+### 🐛 Bug 修复
+
+* **ai:** 修复 code review 发现的 10 个问题 ([b43f891](https://github.com/CaoMeiYouRen/cmyr-template-cli/commit/b43f891))
+* **plopfile:** 修复 AI 引导模式的选项顺序 ([21b2492](https://github.com/CaoMeiYouRen/cmyr-template-cli/commit/21b2492))
+
 ## [1.44.1](https://github.com/CaoMeiYouRen/cmyr-template-cli/compare/v1.44.0...v1.44.1) (2026-02-24)
 
 
