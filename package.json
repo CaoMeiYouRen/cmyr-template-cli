@@ -78,7 +78,7 @@
     "ejs": "^5.0.1",
     "fs-extra": "^11.0.0",
     "json5": "^2.2.1",
-    "libsodium-wrappers": "0.8.2",
+    "libsodium-wrappers": "0.8.4",
     "lodash": "^4.17.20",
     "minimist": "^1.2.5",
     "ora": "^5.4.1",
