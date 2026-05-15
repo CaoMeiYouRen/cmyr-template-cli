@@ -355,7 +355,7 @@ export async function initEslint(projectPath: string, answers: InitAnswers) {
         const templateMeta = getTemplateMeta(answers.template)
         const pkg: IPackage = await readPackageJson(projectPath)
 
-        const devDependencies: Record<string, string> = {
+        const devDependencies: Record<string, string | undefined> = {
             'cross-env': '^10.0.0',
             eslint: '^9.34.0',
             '@typescript-eslint/eslint-plugin': undefined,

@@ -20,5 +20,5 @@ export function lintMd(markdown: string) {
         'no-empty-inlinecode': 0,
     } as const
     const fixed = fix(markdown, rules)
-    return fixed
+    return fixed ?? markdown
 }

@@ -51,11 +51,12 @@ export async function getFastGitRepo(repository: string) {
     }
 }
 
-export async function initProject(answers: InitAnswers) {
-    const { name, template } = answers
+export async function initProject(answers: unknown) {
+    const typedAnswers = answers as InitAnswers
+    const { name, template } = typedAnswers
     const projectPath = path.join(process.cwd(), name)
     await downloadGitRepo(`CaoMeiYouRen/${template}`, projectPath)
-    await init(projectPath, answers)
+    await init(projectPath, typedAnswers)
     return '- 下载项目模板成功！'
 }
 
@@ -214,7 +215,7 @@ async function init(projectPath: string, answers: InitAnswers) {
         })
 
     } catch (error) {
-        console.error(colors.red(error))
+        console.error(colors.red(error instanceof Error ? error.message : String(error)))
     }
 }
 

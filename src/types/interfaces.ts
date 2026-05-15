@@ -12,8 +12,8 @@ export interface Package {
     bin?: Record<string, string>
     files: string[]
     scripts: Record<string, string>
-    devDependencies: Record<string, string>
-    dependencies: Record<string, string>
+    devDependencies: Record<string, string | undefined>
+    dependencies: Record<string, string | undefined>
     engines: Record<string, string>
     homepage: string
     bugs: Record<string, string>

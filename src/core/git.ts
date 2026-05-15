@@ -79,7 +79,7 @@ async function handleGithubRepo({ loading, templateMeta, cliConfig, repository }
         description: repository.description,
         private: !repository.isOpenSource,
     })
-    if (resp?.status >= 200) {
+    if (resp && typeof resp.status === 'number' && resp.status >= 200) {
         loading.succeed('远程 Git 仓库初始化成功！')
         console.info(colors.green(`远程 Git 仓库地址 ${resp.data?.html_url}`))
         const owner = resp.data?.owner?.login
@@ -88,7 +88,7 @@ async function handleGithubRepo({ loading, templateMeta, cliConfig, repository }
             const topics = buildRepositoryTopics({
                 baseKeywords: repository.keywords,
                 templateMeta,
-                isPublishToNpm: repository.isPublishToNpm,
+                isPublishToNpm: Boolean(repository.isPublishToNpm),
             })
             console.info(colors.green('正在初始化仓库 topics ！'))
             await replaceGithubRepositoryTopics(authToken, {
@@ -165,7 +165,7 @@ async function handleGiteeRepo({ loading, repository, cliConfig }: GiteeRepoCont
         description: repository.description,
         private: true,
     })
-    if (resp?.status >= 200) {
+    if (resp && typeof resp.status === 'number' && resp.status >= 200) {
         loading.succeed('远程 Git 仓库初始化成功！')
         console.info(colors.green(`远程 Git 仓库地址 ${resp.data?.html_url}`))
         return

@@ -29,6 +29,9 @@ export async function initDocker(projectPath: string, answers: InitAnswers) {
 
         switch (plan.mode) {
             case 'java-ejs':
+                if (!plan.templateRelativePath) {
+                    throw new Error('缺少 Java Dockerfile 模板路径')
+                }
                 await renderDockerfile(path.join(__dirname, '../templates/', plan.templateRelativePath), dockerfilePath, { javaVersion: templateMeta?.javaVersion })
                 break
             case 'node-ejs':

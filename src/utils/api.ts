@@ -136,9 +136,9 @@ export async function getAuthorWebsiteFromGithubAPI(githubUsername: string): Pro
  * @date 2025-01-18
  * @export
  */
-export async function getLtsNodeVersionByIndexJson() {
+export async function getLtsNodeVersionByIndexJson(): Promise<string> {
     const resp = await axios.get<NodeIndexJson>(NODE_INDEX_URL)
-    return resp.data?.find((e) => e.lts)?.version?.replace('v', '')
+    return resp.data?.find((e) => e.lts)?.version?.replace('v', '') ?? ''
 }
 /**
  * 获取 Node.js LTS 版本
@@ -147,9 +147,9 @@ export async function getLtsNodeVersionByIndexJson() {
  * @date 2025-01-18
  * @export
  */
-export async function getLtsNodeVersionByHtml(url: string) {
+export async function getLtsNodeVersionByHtml(url: string): Promise<string> {
     const html = (await axios.get(url)).data as string
-    return html.match(/<strong>(.*)<\/strong>/)?.[1]?.trim()
+    return html.match(/<strong>(.*)<\/strong>/)?.[1]?.trim() ?? ''
 }
 
 /**
@@ -159,7 +159,7 @@ export async function getLtsNodeVersionByHtml(url: string) {
  * @date 2022-11-10
  * @param urls
  */
-export async function getFastUrl(urls: string[]) {
+export async function getFastUrl(urls: string[]): Promise<string> {
     const fast = await Promise.any(urls.map((url) => axios({
         url,
         method: 'HEAD',
@@ -168,7 +168,7 @@ export async function getFastUrl(urls: string[]) {
             'Accept-Encoding': '',
         },
     })))
-    return fast?.config?.url
+    return fast?.config?.url ?? urls[0] ?? ''
 }
 
 /**

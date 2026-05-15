@@ -394,11 +394,12 @@ module.exports = function (plop: NodePlopAPI) {
             ]
             const answers = await inquirer.prompt(questions as any) as InitAnswers
             // 保存 AI 建议到 answers 中
-            if (aiSuggestion) {
-                answers.aiGeneratedNames = aiSuggestion.names
-                answers.aiGeneratedDescription = aiSuggestion.description
-                answers.aiGeneratedKeywords = aiSuggestion.keywords
-                answers.aiRecommendedTemplate = aiSuggestion.template
+            const suggestion = aiSuggestion as AIProjectSuggestion | null
+            if (suggestion) {
+                answers.aiGeneratedNames = suggestion.names
+                answers.aiGeneratedDescription = suggestion.description
+                answers.aiGeneratedKeywords = suggestion.keywords
+                answers.aiRecommendedTemplate = suggestion.template
             }
             // 清理隐藏触发器字段，避免泄漏到 answers 中
             delete (answers as any)._aiTrigger

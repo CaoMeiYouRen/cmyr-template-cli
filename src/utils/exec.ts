@@ -11,18 +11,20 @@ import colors from '@colors/colors'
  * @returns
  */
 export async function asyncExec(cmd: string, options?: ExecOptions) {
-    return new Promise((resolve, reject) => {
-        const ls = exec(cmd, options, (err, stdout: string, stderr: string) => {
+    return new Promise<string>((resolve, reject) => {
+        const ls = exec(cmd, options ?? {}, (err, stdout, stderr) => {
             if (err) {
                 return reject(err)
             }
-            const combinedOutput = [stdout, stderr].filter(Boolean).join('').trimEnd()
-            resolve(combinedOutput || stdout || stderr)
+            const stdoutText = typeof stdout === 'string' ? stdout : stdout.toString()
+            const stderrText = typeof stderr === 'string' ? stderr : stderr.toString()
+            const combinedOutput = [stdoutText, stderrText].filter(Boolean).join('').trimEnd()
+            resolve(combinedOutput || stdoutText || stderrText)
         })
-        ls.stdout.on('data', (data) => {
+        ls.stdout?.on('data', (data) => {
             console.log(data)
         })
-        ls.stderr.on('data', (data) => {
+        ls.stderr?.on('data', (data) => {
             console.log(colors.red(data))
         })
     })

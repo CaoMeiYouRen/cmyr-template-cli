@@ -43,7 +43,7 @@ async function renderMarkdownTemplate({
         )
         await removeFiles(projectPath, [targetRelativePath])
         await fs.mkdirp(path.dirname(targetPath))
-        await fs.writeFile(targetPath, lintMd(unescape(renderedContent)))
+        await fs.writeFile(targetPath, lintMd(unescape(String(renderedContent))))
         loading.succeed(successText)
     } catch (error) {
         loading.fail(failText)
