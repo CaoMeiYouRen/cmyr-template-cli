@@ -87,11 +87,17 @@ export async function initAgentsMd(
             runtime: projectInfo.templateMeta?.runtime || 'nodejs',
             vueVersion: projectInfo.templateMeta?.vueVersion || 0,
             packageManager: projectInfo.packageManager || 'npm',
+            repositoryUrl: projectInfo.repositoryUrl || '',
+            documentationUrl: projectInfo.documentationUrl || '',
+            issuesUrl: projectInfo.issuesUrl || '',
+            contributingUrl: projectInfo.contributingUrl || '',
             isInitTest: projectInfo.isInitTest || 'none',
             devCommand: projectInfo.devCommand,
             testCommand: projectInfo.testCommand,
             buildCommand: projectInfo.buildCommand,
             lintCommand: projectInfo.lintCommand,
+            startCommand: projectInfo.startCommand,
+            commitCommand: projectInfo.commitCommand,
         }
 
         await ejsRender(templatePath, templateData, outputPath)

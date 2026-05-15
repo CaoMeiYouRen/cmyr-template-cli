@@ -15,11 +15,12 @@
 <% if (vueVersion === 2) { %>- 框架: Vue 2<% } %>
 - 包管理器: <%= packageManager %>
 
-## 仓库信息
+<% if (repositoryUrl || documentationUrl || issuesUrl || contributingUrl) { %>## 仓库信息
 <% if (repositoryUrl) { %>- 仓库地址: <%= repositoryUrl %><% } %>
 <% if (documentationUrl) { %>- 项目文档: <%= documentationUrl %><% } %>
 <% if (issuesUrl) { %>- Issue 地址: <%= issuesUrl %><% } %>
 <% if (contributingUrl) { %>- 贡献指南: <%= contributingUrl %><% } %>
+<% } %>
 
 ## 项目结构
 > 以下目录为模板默认结构；具体项目可在生成后按实际情况增删。
