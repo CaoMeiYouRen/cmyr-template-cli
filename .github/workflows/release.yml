@@ -34,10 +34,8 @@ jobs:
         with:
           node-version: "lts/*"
           registry-url: "https://registry.npmjs.org"
-      # Ensure npm 11.5.1 or later is installed
-      - name: Update npm
-        run: npm install -g npm@latest
       - run: pnpm i --fix-lockfile
+      - run: pnpm run typecheck
       - run: pnpm run lint
       - run: pnpm run build
       - run: pnpm run test

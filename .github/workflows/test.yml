@@ -19,6 +19,7 @@ jobs:
         with:
           node-version: "lts/*"
       - run: pnpm i --fix-lockfile
+      - run: pnpm run typecheck
       - run: pnpm run lint
       - run: pnpm run build
       - run: pnpm run test
