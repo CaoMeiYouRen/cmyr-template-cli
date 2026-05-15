@@ -38,9 +38,9 @@ describe('lintMd', () => {
         expect(lintMarkdownMock).toHaveBeenCalledWith(markdown, expect.any(Object), true)
     })
 
-    it('propagates undefined when the formatter has no fixed result', () => {
+    it('returns original markdown when the formatter has no fixed result', () => {
         lintMarkdownMock.mockImplementationOnce(() => ({}) as any)
-        expect(lintMd('# 空结果')).toBeUndefined()
+        expect(lintMd('# 空结果')).toBe('# 空结果')
     })
 
     it('throws when the markdown argument is invalid', () => {

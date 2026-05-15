@@ -9,12 +9,12 @@ describe('getTemplateMeta', () => {
         expect(meta?.language).toBe('typescript')
     })
 
-    it('returns undefined for unknown template names', () => {
-        expect(getTemplateMeta('non-existent-template')).toBeUndefined()
+    it('throws for unknown template names', () => {
+        expect(() => getTemplateMeta('non-existent-template')).toThrow('Unknown template: non-existent-template')
     })
 
-    it('treats invalid input values as missing templates', () => {
-        expect(getTemplateMeta(null as unknown as string)).toBeUndefined()
-        expect(getTemplateMeta('' as string)).toBeUndefined()
+    it('throws for invalid input values', () => {
+        expect(() => getTemplateMeta(null as unknown as string)).toThrow('Unknown template: null')
+        expect(() => getTemplateMeta('' as string)).toThrow('Unknown template: ')
     })
 })

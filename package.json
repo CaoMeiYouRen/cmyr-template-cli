@@ -64,6 +64,7 @@
     "tsup": "^8.5.1",
     "tsx": "^4.22.0",
     "typescript": "^6.0.3",
+    "typescript-eslint": "^8.59.3",
     "vitest": "^4.1.6"
   },
   "dependencies": {
@@ -106,6 +107,19 @@
     "overrides": {
       "@semantic-release/github": "^12.0.0",
       "@semantic-release/npm": "^13.1.0"
-    }
+    },
+    "onlyBuiltDependencies": [
+      "-",
+      "3",
+      "b",
+      "e",
+      "esbuild",
+      "i",
+      "l",
+      "q",
+      "r",
+      "s",
+      "t"
+    ]
   }
 }
