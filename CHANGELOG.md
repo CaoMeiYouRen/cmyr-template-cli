@@ -1,5 +1,14 @@
 # cmyr-template-cli
 
+## [1.45.1](https://github.com/CaoMeiYouRen/cmyr-template-cli/compare/v1.45.0...v1.45.1) (2026-05-15)
+
+
+### 🐛 Bug 修复
+
+* **agents:** 增加项目元数据支持 ([fa78f3d](https://github.com/CaoMeiYouRen/cmyr-template-cli/commit/fa78f3d))
+* **core:** 增强类型安全与错误处理 ([8dfa578](https://github.com/CaoMeiYouRen/cmyr-template-cli/commit/8dfa578))
+* **eslint:** 更新 ESLint 配置以支持 TypeScript 和忽略特定文件 ([cb8f94e](https://github.com/CaoMeiYouRen/cmyr-template-cli/commit/cb8f94e))
+
 # [1.45.0](https://github.com/CaoMeiYouRen/cmyr-template-cli/compare/v1.44.1...v1.45.0) (2026-04-01)
 
 
