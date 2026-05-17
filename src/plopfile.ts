@@ -28,7 +28,7 @@ module.exports = function (plop: NodePlopAPI) {
                     type: 'confirm',
                     name: 'isAIAssisted',
                     message: '是否启用 AI 引导模式？（通过 AI 帮助生成项目信息）',
-                    default: false,
+                    default: true,
                 },
                 {
                     type: 'input',
