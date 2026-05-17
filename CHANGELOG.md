@@ -1,5 +1,12 @@
 # cmyr-template-cli
 
+## [1.45.2](https://github.com/CaoMeiYouRen/cmyr-template-cli/compare/v1.45.1...v1.45.2) (2026-05-17)
+
+
+### 🐛 Bug 修复
+
+* **plopfile:** 修改 AI 引导模式默认值为启用 ([bfaa6a0](https://github.com/CaoMeiYouRen/cmyr-template-cli/commit/bfaa6a0))
+
 ## [1.45.1](https://github.com/CaoMeiYouRen/cmyr-template-cli/compare/v1.45.0...v1.45.1) (2026-05-15)
 
 
