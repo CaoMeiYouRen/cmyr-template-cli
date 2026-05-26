@@ -1,5 +1,12 @@
 # cmyr-template-cli
 
+## [1.45.3](https://github.com/CaoMeiYouRen/cmyr-template-cli/compare/v1.45.2...v1.45.3) (2026-05-26)
+
+
+### 🐛 Bug 修复
+
+* **deps:** 修复传递依赖安全漏洞，添加 pnpm overrides 强制安全版本 ([820fbca](https://github.com/CaoMeiYouRen/cmyr-template-cli/commit/820fbca))
+
 ## [1.45.2](https://github.com/CaoMeiYouRen/cmyr-template-cli/compare/v1.45.1...v1.45.2) (2026-05-17)
 
 
