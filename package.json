@@ -109,17 +109,7 @@
       "@semantic-release/npm": "^13.1.0"
     },
     "onlyBuiltDependencies": [
-      "-",
-      "3",
-      "b",
-      "e",
-      "esbuild",
-      "i",
-      "l",
-      "q",
-      "r",
-      "s",
-      "t"
+      "esbuild"
     ]
   }
 }
