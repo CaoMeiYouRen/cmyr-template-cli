@@ -48,7 +48,7 @@
     "@types/node": "^26.0.1",
     "@vitest/coverage-v8": "^4.1.6",
     "commitizen": "^4.3.1",
-    "commitlint-config-cmyr": "1.0.0",
+    "commitlint-config-cmyr": "1.0.1",
     "conventional-changelog-cmyr-config": "^3.0.0",
     "conventional-changelog-writer": "^9.1.0",
     "cross-env": "^10.1.0",
