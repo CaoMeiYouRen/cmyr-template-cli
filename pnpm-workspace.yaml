@@ -15,6 +15,7 @@ overrides:
   lodash: ^4.17.24
   micromatch: ^4.0.8
   tmp: ^0.2.4
+  esbuild: ^0.28.1
 allowBuilds:
   core-js-pure: false
   esbuild: true
