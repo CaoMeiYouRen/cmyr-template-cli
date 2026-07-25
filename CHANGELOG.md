@@ -1,5 +1,12 @@
 # cmyr-template-cli
 
+## [1.45.5](https://github.com/CaoMeiYouRen/cmyr-template-cli/compare/v1.45.4...v1.45.5) (2026-07-25)
+
+
+### 🐛 Bug 修复
+
+* **deps:** 替换 download-git-repo 为 axios + adm-zip 修复安全漏洞 ([6d47b91](https://github.com/CaoMeiYouRen/cmyr-template-cli/commit/6d47b91))
+
 ## [1.45.4](https://github.com/CaoMeiYouRen/cmyr-template-cli/compare/v1.45.3...v1.45.4) (2026-07-25)
 
 
