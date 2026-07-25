@@ -1,7 +1,9 @@
 import path from 'path'
 import colors from '@colors/colors'
-import download from 'download-git-repo'
 import ora from 'ora'
+import axios from 'axios'
+import AdmZip from 'adm-zip'
+import fs from 'fs-extra'
 import { PACKAGE_MANAGER } from '../config/env'
 import { REMOTES } from './constants'
 import { getFastUrl } from './api'
@@ -18,23 +20,52 @@ import { initEditorconfig, initCommitlint, initCommitizen, initSemanticRelease, 
 import { initTest } from '@/core/testing'
 import { initAIScaffolding } from '@/core/ai'
 
-export async function downloadGitRepo(repository: string, destination: string, options: any = {}) {
+export async function downloadGitRepo(repository: string, destination: string) {
     const fastRepo = await getFastGitRepo(repository)
     const loading = ora(`正在下载模板 - ${repository}`)
     loading.start()
     return Promise.any([
-        new Promise((resolve) => {
-            download(fastRepo, destination, options, (err: any) => {
-                if (err) {
-                    loading.fail('下载模板失败！')
-                    process.exit(1)
-                }
-                loading.succeed(`成功下载模板 - ${repository}`)
-                resolve(true)
-            })
-        }),
+        downloadAndExtractZip(fastRepo, destination, loading, repository),
         new Promise((_resolve, reject) => setTimeout(reject, 60 * 1000)),
     ])
+}
+
+async function downloadAndExtractZip(url: string, destination: string, loading: ora.Ora, repository: string) {
+    try {
+        const response = await axios.get(url, { responseType: 'arraybuffer' })
+        const buffer = Buffer.from(response.data)
+        const zip = new AdmZip(buffer)
+        const entries = zip.getEntries()
+        const topDir = entries[0]?.entryName.split('/')[0]
+        if (!topDir) {
+            throw new Error('无效的 zip 文件')
+        }
+        await fs.ensureDir(destination)
+        for (const entry of entries) {
+            if (entry.entryName.startsWith(`${topDir}/`)) {
+                const relativePath = entry.entryName.slice(topDir.length + 1)
+                if (!relativePath) {
+                    continue
+                }
+                const targetPath = path.join(destination, relativePath)
+                const resolvedPath = path.resolve(targetPath)
+                if (!resolvedPath.startsWith(path.resolve(destination))) {
+                    throw new Error(`路径遍历攻击检测: ${relativePath}`)
+                }
+                if (entry.isDirectory) {
+                    await fs.ensureDir(targetPath)
+                } else {
+                    await fs.ensureDir(path.dirname(targetPath))
+                    await fs.writeFile(targetPath, entry.getData())
+                }
+            }
+        }
+        loading.succeed(`成功下载模板 - ${repository}`)
+        return true
+    } catch {
+        loading.fail('下载模板失败！')
+        process.exit(1)
+    }
 }
 
 export async function getFastGitRepo(repository: string) {
@@ -43,7 +74,7 @@ export async function getFastGitRepo(repository: string) {
     try {
         const fastUrl = await getFastUrl(REMOTES.map((remote) => `${remote}/${repository}/archive/refs/heads/master.zip`))
         loading.succeed(`成功选择了镜像源 - ${fastUrl}`)
-        return `direct:${fastUrl}`
+        return fastUrl
     } catch (error) {
         console.error(error)
         loading.fail('选择镜像源失败！')
