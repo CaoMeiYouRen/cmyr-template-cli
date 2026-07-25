@@ -1,5 +1,12 @@
 # cmyr-template-cli
 
+## [1.45.4](https://github.com/CaoMeiYouRen/cmyr-template-cli/compare/v1.45.3...v1.45.4) (2026-07-25)
+
+
+### 🐛 Bug 修复
+
+* 修复 postcss 和 brace-expansion 传递依赖安全告警 ([6d8effb](https://github.com/CaoMeiYouRen/cmyr-template-cli/commit/6d8effb))
+
 ## [1.45.3](https://github.com/CaoMeiYouRen/cmyr-template-cli/compare/v1.45.2...v1.45.3) (2026-05-26)
 
 
