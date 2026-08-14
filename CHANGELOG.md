@@ -1,5 +1,20 @@
 # cmyr-template-cli
 
+# [1.46.0](https://github.com/CaoMeiYouRen/cmyr-template-cli/compare/v1.45.5...v1.46.0) (2026-08-14)
+
+
+### ✨ 新功能
+
+* **ai:** AI 基建快照植入与跨 agent 链接 ([4586e9b](https://github.com/CaoMeiYouRen/cmyr-template-cli/commit/4586e9b))
+* **ai:** AI 角色扩展为创作性内容生成器 ([c0bb7a0](https://github.com/CaoMeiYouRen/cmyr-template-cli/commit/c0bb7a0))
+* **ai:** 新增 ai-update 命令更新 AI 基建快照 ([5909929](https://github.com/CaoMeiYouRen/cmyr-template-cli/commit/5909929))
+
+
+### 🐛 Bug 修复
+
+* **ai:** junction 目标路径使用 path.win32 语义 ([3850cc3](https://github.com/CaoMeiYouRen/cmyr-template-cli/commit/3850cc3))
+* **ci:** eslint 排除 scripts 目录 ([3f3ea53](https://github.com/CaoMeiYouRen/cmyr-template-cli/commit/3f3ea53))
+
 ## [1.45.5](https://github.com/CaoMeiYouRen/cmyr-template-cli/compare/v1.45.4...v1.45.5) (2026-07-25)
 
 
