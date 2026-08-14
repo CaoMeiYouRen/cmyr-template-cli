@@ -257,6 +257,14 @@ export type TemplateCliConfig = {
      * AI 模型名称
      */
     AI_MODEL?: string
+    /**
+     * AI 技能资产仓库（快照模式下载源），默认 CaoMeiYouRen/cmyr-skills-agents
+     */
+    AI_SKILLS_REPOSITORY?: string
+    /**
+     * AI 技能资产本地路径（配置后优先使用本地路径，跳过下载）
+     */
+    AI_SKILLS_LOCAL_PATH?: string
 }
 
 export type ProjectPrerequisite = {
@@ -380,4 +388,81 @@ export interface AICompletionRequest {
     apiBase?: string
     model?: string
     temperature?: number
+}
+
+/**
+ * AI 技能资产源配置
+ */
+export interface AiSourceConfig {
+    /**
+     * 源类型：github=远程仓库，local=本地路径
+     */
+    type: 'github' | 'local'
+    /**
+     * GitHub 仓库名（如 CaoMeiYouRen/cmyr-skills-agents）
+     */
+    repository?: string
+    /**
+     * 本地路径（type 为 local 时必填）
+     */
+    localPath?: string
+}
+
+/**
+ * AI 基建 L0 精选清单（对应资产仓库 manifest.json 的 l0Selection）
+ */
+export interface AiL0Selection {
+    files: string[]
+    skills: string[]
+    agents: string[]
+}
+
+/**
+ * AI 基建链接记录
+ */
+export interface AiScaffoldingLink {
+    /**
+     * 链接相对路径（如 .claude/skills）
+     */
+    linkRelPath: string
+    /**
+     * 目标相对路径（如 .github/skills）
+     */
+    targetRelPath: string
+    /**
+     * 实际使用的链接方式
+     */
+    method: 'symlink' | 'junction' | 'copy'
+}
+
+/**
+ * AI 基建植入清单（写入目标项目 .ai/manifest.json）
+ */
+export interface AiScaffoldingManifest {
+    version: number
+    /**
+     * 植入时间
+     */
+    generatedAt: string
+    /**
+     * 资产来源
+     */
+    source: AiSourceConfig & {
+        /**
+         * 来源 commit，github 源时可能为 null（获取失败）
+         */
+        commit?: string | null
+    }
+    /**
+     * L0 精选清单
+     */
+    l0Selection: AiL0Selection
+    /**
+     * 跨 agent 链接记录
+     */
+    links: AiScaffoldingLink[]
+    /**
+     * 快照文件哈希（相对项目根路径 -> sha256）
+     */
+    hashes: Record<string, string>
 }

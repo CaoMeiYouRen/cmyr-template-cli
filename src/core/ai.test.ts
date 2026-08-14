@@ -2,7 +2,7 @@ import path from 'path'
 import { beforeEach, describe, expect, it, vi } from 'vitest'
 import fs from 'fs-extra'
 import ora from 'ora'
-import { initAIScaffolding, initAgentsMd, initCopilotInstructions, initCursorRules, initWindsurfRules, initClaudeDirectory, initCursorDirectory } from '@/core/ai'
+import { initAIScaffolding, initAgentsMd, initAgentLinkDirs } from '@/core/ai'
 import type { ProjectInfo } from '@/types/interfaces'
 
 type FsMock = {
@@ -10,6 +10,7 @@ type FsMock = {
     mkdirp: ReturnType<typeof vi.fn>
     readFile: ReturnType<typeof vi.fn>
     writeFile: ReturnType<typeof vi.fn>
+    appendFile: ReturnType<typeof vi.fn>
 }
 
 vi.mock('fs-extra', () => ({
@@ -18,6 +19,7 @@ vi.mock('fs-extra', () => ({
         mkdirp: vi.fn(),
         readFile: vi.fn(),
         writeFile: vi.fn(),
+        appendFile: vi.fn(),
     },
 }))
 
@@ -38,13 +40,49 @@ vi.mock('@/utils/files', () => ({
     copyFilesFromTemplates: vi.fn(),
 }))
 
+vi.mock('@/utils/symlink', () => ({
+    createDirSymlink: vi.fn(),
+    createFileSymlink: vi.fn(),
+}))
+
+vi.mock('@/utils/ai-scaffolding', () => ({
+    getAiSourceConfig: vi.fn(() => ({ type: 'local', localPath: '/assets' })),
+    prepareAgentsSource: vi.fn(async () => ({
+        sourceDir: '/assets',
+        source: { type: 'local', localPath: '/assets' },
+        cleanup: vi.fn(),
+    })),
+    readL0Selection: vi.fn(async () => ({
+        files: ['global/AGENTS.template.md'],
+        skills: ['code-reviewer'],
+        agents: ['full-stack-master'],
+    })),
+    readAgentsTemplate: vi.fn(async () => '# AGENTS.md 模板\n\n<!-- TODO: 一句话描述项目目的 -->'),
+    copyL0Selection: vi.fn(async () => ({
+        '.github/skills/code-reviewer/SKILL.md': 'hash1',
+    })),
+    writeAiManifest: vi.fn(),
+}))
+
+vi.mock('@/pure/agents-md', () => ({
+    replaceAgentsTemplateTodos: vi.fn((content) => content),
+    buildAgentsMdL1Section: vi.fn(() => '## L1 Section'),
+}))
+
 import { ejsRender } from '@/utils/ejs'
 import { copyFilesFromTemplates } from '@/utils/files'
+import { createDirSymlink, createFileSymlink } from '@/utils/symlink'
+import { prepareAgentsSource, readAgentsTemplate, writeAiManifest } from '@/utils/ai-scaffolding'
 
 const fsMock = fs as unknown as FsMock
 const oraMock = vi.mocked(ora)
 const ejsRenderMock = vi.mocked(ejsRender)
 const copyFilesFromTemplatesMock = vi.mocked(copyFilesFromTemplates)
+const createDirSymlinkMock = vi.mocked(createDirSymlink)
+const createFileSymlinkMock = vi.mocked(createFileSymlink)
+const prepareAgentsSourceMock = vi.mocked(prepareAgentsSource)
+const readAgentsTemplateMock = vi.mocked(readAgentsTemplate)
+const writeAiManifestMock = vi.mocked(writeAiManifest)
 
 const createOraSpinner = () => ({
     start: vi.fn().mockReturnThis(),
@@ -126,19 +164,31 @@ describe('initAIScaffolding', () => {
         vi.clearAllMocks()
         // Setup ora mock
         oraMock.mockReturnValue(createOraSpinner() as any)
+        fsMock.pathExists.mockResolvedValue(false)
+        ejsRenderMock.mockResolvedValue(undefined)
+        copyFilesFromTemplatesMock.mockResolvedValue(true)
+        createDirSymlinkMock.mockResolvedValue({
+            linkPath: '/test/.claude/skills',
+            targetPath: '/test/.github/skills',
+            method: 'symlink',
+            status: 'created',
+        })
+        createFileSymlinkMock.mockResolvedValue({
+            linkPath: '/test/CLAUDE.md',
+            targetPath: '/test/AGENTS.md',
+            method: 'symlink',
+            status: 'created',
+        })
     })
 
     it('should initialize Claude and Copilot when aiTools includes both', async () => {
         const projectPath = '/test/project'
         const projectInfo = createMockProjectInfo({ aiTools: ['claude', 'copilot'] })
 
-        fsMock.pathExists.mockResolvedValue(false)
-        ejsRenderMock.mockResolvedValue(undefined)
-        copyFilesFromTemplatesMock.mockResolvedValue(true)
-
         await initAIScaffolding(projectPath, projectInfo)
 
-        expect(ejsRenderMock).toHaveBeenCalled()
+        expect(prepareAgentsSourceMock).toHaveBeenCalled()
+        expect(writeAiManifestMock).toHaveBeenCalled()
         expect(copyFilesFromTemplatesMock).toHaveBeenCalled()
     })
 
@@ -146,14 +196,10 @@ describe('initAIScaffolding', () => {
         const projectPath = '/test/project'
         const projectInfo = createMockProjectInfo({ aiTools: ['claude'] })
 
-        fsMock.pathExists.mockResolvedValue(false)
-        ejsRenderMock.mockResolvedValue(undefined)
-        copyFilesFromTemplatesMock.mockResolvedValue(true)
-
         await initAIScaffolding(projectPath, projectInfo)
 
-        // Should init AGENTS.md and .claude directory
-        expect(ejsRenderMock).toHaveBeenCalled()
+        expect(prepareAgentsSourceMock).toHaveBeenCalled()
+        expect(writeAiManifestMock).toHaveBeenCalled()
         expect(copyFilesFromTemplatesMock).toHaveBeenCalled()
     })
 
@@ -161,26 +207,21 @@ describe('initAIScaffolding', () => {
         const projectPath = '/test/project'
         const projectInfo = createMockProjectInfo({ aiTools: ['cursor'] })
 
-        fsMock.pathExists.mockResolvedValue(false)
-        ejsRenderMock.mockResolvedValue(undefined)
-        fsMock.mkdirp.mockResolvedValue(undefined)
-
         await initAIScaffolding(projectPath, projectInfo)
 
         expect(ejsRenderMock).toHaveBeenCalled()
         expect(fsMock.mkdirp).toHaveBeenCalled()
+        expect(prepareAgentsSourceMock).not.toHaveBeenCalled()
     })
 
     it('should initialize Windsurf when aiTools includes windsurf', async () => {
         const projectPath = '/test/project'
         const projectInfo = createMockProjectInfo({ aiTools: ['windsurf'] })
 
-        fsMock.pathExists.mockResolvedValue(false)
-        ejsRenderMock.mockResolvedValue(undefined)
-
         await initAIScaffolding(projectPath, projectInfo)
 
         expect(ejsRenderMock).toHaveBeenCalled()
+        expect(prepareAgentsSourceMock).not.toHaveBeenCalled()
     })
 
     it('should use default aiTools when not specified', async () => {
@@ -189,14 +230,9 @@ describe('initAIScaffolding', () => {
         // Remove aiTools to test default behavior
         delete (projectInfo as any).aiTools
 
-        fsMock.pathExists.mockResolvedValue(false)
-        ejsRenderMock.mockResolvedValue(undefined)
-        copyFilesFromTemplatesMock.mockResolvedValue(true)
-
         await initAIScaffolding(projectPath, projectInfo)
 
-        // Should still initialize with default ['claude', 'copilot']
-        expect(ejsRenderMock).toHaveBeenCalled()
+        expect(prepareAgentsSourceMock).toHaveBeenCalled()
     })
 
     it('should handle errors and log to console', async () => {
@@ -204,12 +240,27 @@ describe('initAIScaffolding', () => {
         const projectInfo = createMockProjectInfo()
         const consoleErrorSpy = vi.spyOn(console, 'error').mockImplementation(() => { /* noop */ })
 
-        ejsRenderMock.mockRejectedValue(new Error('Test error'))
+        prepareAgentsSourceMock.mockRejectedValueOnce(new Error('Test error'))
 
         await initAIScaffolding(projectPath, projectInfo)
 
         expect(consoleErrorSpy).toHaveBeenCalled()
         consoleErrorSpy.mockRestore()
+    })
+
+    it('should cleanup prepared source after initialization', async () => {
+        const projectPath = '/test/project'
+        const projectInfo = createMockProjectInfo({ aiTools: ['claude'] })
+        const cleanupMock = vi.fn()
+        prepareAgentsSourceMock.mockResolvedValueOnce({
+            sourceDir: '/assets',
+            source: { type: 'github', repository: 'repo', commit: 'abc' },
+            cleanup: cleanupMock,
+        })
+
+        await initAIScaffolding(projectPath, projectInfo)
+
+        expect(cleanupMock).toHaveBeenCalled()
     })
 })
 
@@ -217,9 +268,10 @@ describe('initAgentsMd', () => {
     beforeEach(() => {
         vi.clearAllMocks()
         oraMock.mockReturnValue(createOraSpinner() as any)
+        fsMock.pathExists.mockResolvedValue(false)
     })
 
-    it('should render AGENTS.md with project info', async () => {
+    it('should write AGENTS.md from asset template with L1 section', async () => {
         const projectPath = '/test/project'
         const projectInfo = createMockProjectInfo({
             projectDescription: 'My awesome project',
@@ -229,25 +281,21 @@ describe('initAgentsMd', () => {
             lintCommand: 'npm run lint',
         })
 
-        fsMock.pathExists.mockResolvedValue(false)
-        ejsRenderMock.mockResolvedValue(undefined)
+        fsMock.readFile.mockResolvedValue('# AGENTS.md 模板\n\n<!-- TODO: 一句话描述项目目的 -->')
 
-        await initAgentsMd(projectPath, projectInfo)
+        await initAgentsMd(projectPath, projectInfo, '/assets', {
+            files: ['global/AGENTS.template.md'],
+            skills: ['code-reviewer'],
+            agents: ['full-stack-master'],
+        })
 
-        expect(ejsRenderMock).toHaveBeenCalledWith(
-            path.join(__dirname, '../templates/AGENTS.md.ejs'),
-            expect.objectContaining({
-                projectDescription: 'My awesome project',
-                language: 'typescript',
-                runtime: 'nodejs',
-                packageManager: 'npm',
-                isInitTest: 'vitest',
-                devCommand: 'npm run dev',
-                testCommand: 'npm test',
-                buildCommand: 'npm run build',
-                lintCommand: 'npm run lint',
-            }),
+        expect(fsMock.writeFile).toHaveBeenCalledWith(
             path.join(projectPath, 'AGENTS.md'),
+            expect.stringContaining('# AGENTS.md 模板'),
+        )
+        expect(fsMock.writeFile).toHaveBeenCalledWith(
+            expect.any(String),
+            expect.stringContaining('## L1 Section'),
         )
     })
 
@@ -257,29 +305,33 @@ describe('initAgentsMd', () => {
 
         fsMock.pathExists.mockResolvedValue(true)
 
-        await initAgentsMd(projectPath, projectInfo)
+        await initAgentsMd(projectPath, projectInfo, '/assets', {
+            files: [],
+            skills: [],
+            agents: [],
+        })
 
-        expect(ejsRenderMock).not.toHaveBeenCalled()
+        expect(fsMock.writeFile).not.toHaveBeenCalled()
     })
 
-    it('should use default values when templateMeta is missing', async () => {
+    it('should throw when sourceDir is missing', async () => {
         const projectPath = '/test/project'
         const projectInfo = createMockProjectInfo()
-        projectInfo.templateMeta = undefined as any
 
-        fsMock.pathExists.mockResolvedValue(false)
-        ejsRenderMock.mockResolvedValue(undefined)
+        await expect(initAgentsMd(projectPath, projectInfo)).rejects.toThrow('未提供 AI 技能资产源')
+    })
 
-        await initAgentsMd(projectPath, projectInfo)
+    it('should throw when template is missing in asset repository', async () => {
+        const projectPath = '/test/project'
+        const projectInfo = createMockProjectInfo()
 
-        expect(ejsRenderMock).toHaveBeenCalledWith(
-            expect.any(String),
-            expect.objectContaining({
-                language: 'typescript',
-                runtime: 'nodejs',
-            }),
-            expect.any(String),
-        )
+        readAgentsTemplateMock.mockResolvedValueOnce(null)
+
+        await expect(initAgentsMd(projectPath, projectInfo, '/assets', {
+            files: [],
+            skills: [],
+            agents: [],
+        })).rejects.toThrow('缺少 global/AGENTS.template.md')
     })
 
     it('should handle errors gracefully', async () => {
@@ -287,183 +339,90 @@ describe('initAgentsMd', () => {
         const projectInfo = createMockProjectInfo()
         const consoleErrorSpy = vi.spyOn(console, 'error').mockImplementation(() => { /* noop */ })
 
-        fsMock.pathExists.mockResolvedValue(false)
-        ejsRenderMock.mockRejectedValue(new Error('Render failed'))
+        fsMock.writeFile.mockRejectedValue(new Error('Write failed'))
 
-        // initAgentsMd 不再内部捕获错误，错误会冒泡到调用者
-        await expect(initAgentsMd(projectPath, projectInfo)).rejects.toThrow('Render failed')
+        await expect(initAgentsMd(projectPath, projectInfo, '/assets', {
+            files: [],
+            skills: [],
+            agents: [],
+        })).rejects.toThrow('Write failed')
 
         consoleErrorSpy.mockRestore()
     })
 })
 
-describe('initCopilotInstructions', () => {
+describe('initAgentLinkDirs', () => {
     beforeEach(() => {
         vi.clearAllMocks()
         oraMock.mockReturnValue(createOraSpinner() as any)
     })
 
-    it('should create .github directory and render copilot-instructions.md', async () => {
+    it('should create dir links and CLAUDE.md link for claude tool', async () => {
         const projectPath = '/test/project'
+        const projectInfo = createMockProjectInfo({ aiTools: ['claude'] })
 
-        fsMock.pathExists.mockResolvedValue(false)
-        fsMock.mkdirp.mockResolvedValue(undefined)
-        ejsRenderMock.mockResolvedValue(undefined)
+        createDirSymlinkMock.mockResolvedValue({
+            linkPath: '',
+            targetPath: '',
+            method: 'symlink',
+            status: 'created',
+        })
+        createFileSymlinkMock.mockResolvedValue({
+            linkPath: '',
+            targetPath: '',
+            method: 'symlink',
+            status: 'created',
+        })
 
-        await initCopilotInstructions(projectPath)
+        const links = await initAgentLinkDirs(projectPath, projectInfo)
 
-        expect(fsMock.mkdirp).toHaveBeenCalledWith(path.join(projectPath, '.github'))
-        expect(ejsRenderMock).toHaveBeenCalledWith(
-            path.join(__dirname, '../templates/.github/copilot-instructions.md.ejs'),
-            {},
-            path.join(projectPath, '.github/copilot-instructions.md'),
-        )
+        // 6 个目录链接 + 1 个 CLAUDE.md 文件链接
+        expect(createDirSymlinkMock).toHaveBeenCalledTimes(6)
+        expect(createFileSymlinkMock).toHaveBeenCalledTimes(1)
+        expect(links).toHaveLength(7)
+        expect(links.some((l) => l.linkRelPath === 'CLAUDE.md')).toBe(true)
     })
 
-    it('should skip when .github directory already exists', async () => {
+    it('should not create CLAUDE.md link when claude not selected', async () => {
         const projectPath = '/test/project'
+        const projectInfo = createMockProjectInfo({ aiTools: ['copilot'] })
 
-        fsMock.pathExists.mockResolvedValue(true)
-        fsMock.mkdirp.mockResolvedValue(undefined)
+        createDirSymlinkMock.mockResolvedValue({
+            linkPath: '',
+            targetPath: '',
+            method: 'symlink',
+            status: 'created',
+        })
 
-        await initCopilotInstructions(projectPath)
+        const links = await initAgentLinkDirs(projectPath, projectInfo)
 
-        expect(fsMock.mkdirp).not.toHaveBeenCalled()
-        expect(ejsRenderMock).not.toHaveBeenCalled()
+        expect(createDirSymlinkMock).toHaveBeenCalledTimes(6)
+        expect(createFileSymlinkMock).not.toHaveBeenCalled()
+        expect(links).toHaveLength(6)
     })
 
-    it('should skip when copilot-instructions.md already exists', async () => {
+    it('should record junction method when degraded', async () => {
         const projectPath = '/test/project'
+        const projectInfo = createMockProjectInfo({ aiTools: ['claude'] })
 
-        // The implementation checks for copilot-instructions.md file first
-        fsMock.pathExists.mockResolvedValueOnce(true)
+        createDirSymlinkMock.mockResolvedValue({
+            linkPath: '',
+            targetPath: '',
+            method: 'junction',
+            status: 'created',
+        })
+        createFileSymlinkMock.mockResolvedValue({
+            linkPath: '',
+            targetPath: '',
+            method: 'copy',
+            status: 'created',
+        })
 
-        await initCopilotInstructions(projectPath)
+        const links = await initAgentLinkDirs(projectPath, projectInfo)
 
-        expect(ejsRenderMock).not.toHaveBeenCalled()
+        expect(fsMock.appendFile).not.toHaveBeenCalled()
+        expect(links.filter((l) => l.method === 'junction')).toHaveLength(6)
+        expect(links.some((l) => l.linkRelPath === 'CLAUDE.md' && l.method === 'copy')).toBe(true)
     })
 })
 
-describe('initCursorRules', () => {
-    beforeEach(() => {
-        vi.clearAllMocks()
-        oraMock.mockReturnValue(createOraSpinner() as any)
-    })
-
-    it('should render .cursorrules file', async () => {
-        const projectPath = '/test/project'
-
-        fsMock.pathExists.mockResolvedValue(false)
-        ejsRenderMock.mockResolvedValue(undefined)
-
-        await initCursorRules(projectPath)
-
-        expect(ejsRenderMock).toHaveBeenCalledWith(
-            path.join(__dirname, '../templates/.cursorrules.ejs'),
-            {},
-            path.join(projectPath, '.cursorrules'),
-        )
-    })
-
-    it('should skip when .cursorrules already exists', async () => {
-        const projectPath = '/test/project'
-
-        fsMock.pathExists.mockResolvedValue(true)
-
-        await initCursorRules(projectPath)
-
-        expect(ejsRenderMock).not.toHaveBeenCalled()
-    })
-})
-
-describe('initWindsurfRules', () => {
-    beforeEach(() => {
-        vi.clearAllMocks()
-        oraMock.mockReturnValue(createOraSpinner() as any)
-    })
-
-    it('should render .windsurfrules file', async () => {
-        const projectPath = '/test/project'
-
-        fsMock.pathExists.mockResolvedValue(false)
-        ejsRenderMock.mockResolvedValue(undefined)
-
-        await initWindsurfRules(projectPath)
-
-        expect(ejsRenderMock).toHaveBeenCalledWith(
-            path.join(__dirname, '../templates/.windsurfrules.ejs'),
-            {},
-            path.join(projectPath, '.windsurfrules'),
-        )
-    })
-
-    it('should skip when .windsurfrules already exists', async () => {
-        const projectPath = '/test/project'
-
-        fsMock.pathExists.mockResolvedValue(true)
-
-        await initWindsurfRules(projectPath)
-
-        expect(ejsRenderMock).not.toHaveBeenCalled()
-    })
-})
-
-describe('initClaudeDirectory', () => {
-    beforeEach(() => {
-        vi.clearAllMocks()
-        oraMock.mockReturnValue(createOraSpinner() as any)
-    })
-
-    it('should create .claude directory structure with skills and agents subdirs', async () => {
-        const projectPath = '/test/project'
-
-        fsMock.pathExists.mockResolvedValue(false)
-        fsMock.mkdirp.mockResolvedValue(undefined)
-        copyFilesFromTemplatesMock.mockResolvedValue(true)
-
-        await initClaudeDirectory(projectPath)
-
-        expect(fsMock.mkdirp).toHaveBeenCalledWith(path.join(projectPath, '.claude', 'skills'))
-        expect(fsMock.mkdirp).toHaveBeenCalledWith(path.join(projectPath, '.claude', 'agents'))
-        expect(copyFilesFromTemplatesMock).toHaveBeenCalledWith(projectPath, ['.claude/settings.json'], true)
-    })
-
-    it('should skip when .claude directory already exists', async () => {
-        const projectPath = '/test/project'
-
-        fsMock.pathExists.mockResolvedValue(true)
-
-        await initClaudeDirectory(projectPath)
-
-        expect(fsMock.mkdirp).not.toHaveBeenCalled()
-        expect(copyFilesFromTemplatesMock).not.toHaveBeenCalled()
-    })
-})
-
-describe('initCursorDirectory', () => {
-    beforeEach(() => {
-        vi.clearAllMocks()
-        oraMock.mockReturnValue(createOraSpinner() as any)
-    })
-
-    it('should create .cursor/rules directory', async () => {
-        const projectPath = '/test/project'
-
-        fsMock.pathExists.mockResolvedValue(false)
-        fsMock.mkdirp.mockResolvedValue(undefined)
-
-        await initCursorDirectory(projectPath)
-
-        expect(fsMock.mkdirp).toHaveBeenCalledWith(path.join(projectPath, '.cursor', 'rules'))
-    })
-
-    it('should skip when .cursor/rules directory already exists', async () => {
-        const projectPath = '/test/project'
-
-        fsMock.pathExists.mockResolvedValue(true)
-
-        await initCursorDirectory(projectPath)
-
-        expect(fsMock.mkdirp).not.toHaveBeenCalled()
-    })
-})
