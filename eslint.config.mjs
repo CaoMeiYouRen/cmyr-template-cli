@@ -7,6 +7,7 @@ import { __WARN__, createLanguageOptions } from 'eslint-config-cmyr/utils'
 export default defineConfig([
     globalIgnores([
         'templates/**/*',
+        'scripts/**/*',
         '*.config.ts',
     ]),
     cmyr,
