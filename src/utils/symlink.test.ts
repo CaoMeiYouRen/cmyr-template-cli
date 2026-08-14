@@ -108,8 +108,8 @@ describe('createDirSymlink', () => {
             expect(result.status).toBe('created')
             expect(result.method).toBe('junction')
             expect(symlinkSpy).toHaveBeenCalledTimes(2)
-            // junction 使用绝对路径
-            expect(symlinkSpy.mock.calls[1][0]).toBe(path.resolve(targetPath))
+            // junction 使用 Windows 绝对路径（path.win32 语义）
+            expect(symlinkSpy.mock.calls[1][0]).toBe(path.win32.resolve(targetPath))
         } finally {
             symlinkSpy.mockRestore()
             Object.defineProperty(process, 'platform', { value: originalPlatform })

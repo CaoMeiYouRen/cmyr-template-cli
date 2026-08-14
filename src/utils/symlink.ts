@@ -40,7 +40,8 @@ export interface SymlinkResult {
  */
 export function toSymlinkTarget(linkPath: string, targetPath: string, method: SymlinkMethod): string {
     if (process.platform === 'win32' && method === 'junction') {
-        return path.resolve(targetPath)
+        // junction 必须为 Windows 绝对路径；使用 path.win32 保证测试与平台解耦
+        return path.win32.resolve(targetPath)
     }
     return path.relative(path.dirname(linkPath), targetPath)
 }
