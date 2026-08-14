@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest'
-import { buildProjectSuggestionPrompt, parseAIResponse, getAIFilesToGenerate } from '@/pure/ai'
+import { buildProjectSuggestionPrompt, buildProjectSummaryPrompt, parseAIResponse, parseProjectSummary, getAIFilesToGenerate } from '@/pure/ai'
 import type { TemplateMeta } from '@/types/interfaces'
 
 describe('pure/ai', () => {
@@ -108,6 +108,71 @@ describe('pure/ai', () => {
                 keywords: ['t'],
                 template: 'ts',
             })
+        })
+    })
+
+    describe('buildProjectSummaryPrompt', () => {
+        it('should build prompt with project info', () => {
+            const prompt = buildProjectSummaryPrompt({
+                name: 'my-cli',
+                description: 'A CLI tool for file management',
+                keywords: ['cli', 'file'],
+            })
+
+            expect(prompt).toContain('项目名称: my-cli')
+            expect(prompt).toContain('A CLI tool for file management')
+            expect(prompt).toContain('cli, file')
+            expect(prompt).toContain('"summary"')
+            expect(prompt).toContain('"features"')
+        })
+
+        it('should throw when description is empty', () => {
+            expect(() => buildProjectSummaryPrompt({
+                name: 'my-cli',
+                description: '  ',
+                keywords: [],
+            })).toThrow('description is required')
+        })
+    })
+
+    describe('parseProjectSummary', () => {
+        it('should parse valid JSON response', () => {
+            const summary = parseProjectSummary(JSON.stringify({
+                summary: '一个文件管理 CLI 工具',
+                features: ['批量操作', '增量同步', '可扩展'],
+            }))
+
+            expect(summary).toEqual({
+                summary: '一个文件管理 CLI 工具',
+                features: ['批量操作', '增量同步', '可扩展'],
+            })
+        })
+
+        it('should parse JSON wrapped in markdown code block', () => {
+            const summary = parseProjectSummary('```json\n{"summary": "简介", "features": ["特性"]}\n```')
+            expect(summary?.summary).toBe('简介')
+            expect(summary?.features).toEqual(['特性'])
+        })
+
+        it('should return null for invalid response', () => {
+            expect(parseProjectSummary('not json')).toBeNull()
+        })
+
+        it('should return null for missing fields', () => {
+            expect(parseProjectSummary('{"summary": ""}')).toBeNull()
+            expect(parseProjectSummary('{"features": []}')).toBeNull()
+        })
+
+        it('should filter non-string features and cap at 5', () => {
+            const summary = parseProjectSummary(JSON.stringify({
+                summary: '简介',
+                features: ['a', 123, 'b', 'c', 'd', 'e', 'f'],
+            }))
+            expect(summary?.features).toEqual(['a', 'b', 'c', 'd', 'e'])
+        })
+
+        it('should return null for non-string input', () => {
+            expect(parseProjectSummary(123 as unknown as string)).toBeNull()
         })
     })
 

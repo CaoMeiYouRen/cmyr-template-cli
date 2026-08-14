@@ -161,7 +161,7 @@ export async function initAgentsMd(
         }
 
         const l0Content = replaceAgentsTemplateTodos(templateContent, projectInfo)
-        const l1Section = buildAgentsMdL1Section(projectInfo, l0?.skills || [])
+        const l1Section = buildAgentsMdL1Section(projectInfo, l0?.skills || [], projectInfo.aiGeneratedSummary)
 
         await fs.writeFile(outputPath, `${l0Content.trimEnd()}\n\n${l1Section}`)
         loading.succeed('AGENTS.md 生成成功！')

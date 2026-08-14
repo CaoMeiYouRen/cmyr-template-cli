@@ -1,6 +1,6 @@
 import { describe, expect, it, vi, beforeEach } from 'vitest'
 import axios from 'axios'
-import { chatCompletion, getAIProjectSuggestion } from '@/utils/ai-api'
+import { chatCompletion, getAIProjectSuggestion, getAIProjectSummary } from '@/utils/ai-api'
 import { TemplateCliConfig } from '@/types/interfaces'
 
 // Mock axios
@@ -256,6 +256,87 @@ describe('utils/ai-api', () => {
             await expect(
                 getAIProjectSuggestion('Test', mockConfig),
             ).rejects.toThrow('AI recommended an invalid template')
+        })
+    })
+
+    describe('getAIProjectSummary', () => {
+        const mockConfig: TemplateCliConfig = {
+            GITHUB_TOKEN: '',
+            GITEE_TOKEN: '',
+            GITHUB_USERNAME: '',
+            GITEE_USERNAME: '',
+            AFDIAN_USERNAME: '',
+            PATREON_USERNAME: '',
+            WEIBO_USERNAME: '',
+            TWITTER_USERNAME: '',
+            NPM_USERNAME: '',
+            DOCKER_USERNAME: '',
+            DOCKER_PASSWORD: '',
+            CONTACT_EMAIL: '',
+            NPM_TOKEN: '',
+            AI_API_KEY: 'test-key',
+            AI_API_BASE: 'https://api.openai.com/v1',
+            AI_MODEL: 'gpt-4',
+        }
+
+        const mockProjectInfo = {
+            name: 'my-cli',
+            description: 'A CLI tool for file management',
+            keywords: ['cli', 'file'],
+        }
+
+        it('should return parsed AI project summary', async () => {
+            const aiResponse = JSON.stringify({
+                summary: '一个文件管理 CLI 工具',
+                features: ['批量操作', '增量同步'],
+            })
+            const mockResponse = {
+                data: {
+                    choices: [{ message: { content: aiResponse } }],
+                },
+            }
+            vi.mocked(axios.post).mockResolvedValue(mockResponse)
+
+            const summary = await getAIProjectSummary(mockProjectInfo, mockConfig)
+
+            expect(summary).toEqual({
+                summary: '一个文件管理 CLI 工具',
+                features: ['批量操作', '增量同步'],
+            })
+            expect(axios.post).toHaveBeenCalledWith(
+                'https://api.openai.com/v1/chat/completions',
+                expect.objectContaining({
+                    model: 'gpt-4',
+                    messages: [
+                        {
+                            role: 'user',
+                            content: expect.stringContaining('项目名称: my-cli'),
+                        },
+                    ],
+                }),
+                expect.anything(),
+            )
+        })
+
+        it('should throw error when AI_API_KEY is missing', async () => {
+            const configWithoutKey = { ...mockConfig, AI_API_KEY: undefined }
+
+            await expect(
+                getAIProjectSummary(mockProjectInfo, configWithoutKey),
+            ).rejects.toThrow('AI_API_KEY is not configured')
+        })
+
+        it('should throw error when AI response cannot be parsed', async () => {
+            const mockResponse = {
+                data: {
+                    choices: [{ message: { content: 'Invalid response' } }],
+                },
+            }
+            vi.mocked(axios.post).mockResolvedValue(mockResponse)
+
+            await expect(
+                getAIProjectSummary(mockProjectInfo, mockConfig),
+            ).rejects.toThrow('Failed to parse AI project summary')
         })
     })
 })

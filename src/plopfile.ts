@@ -4,7 +4,7 @@ import { QuestionCollection } from 'inquirer'
 import fs from 'fs-extra'
 import ora from 'ora'
 import { __DEV__ } from './config/env'
-import { InitAnswers, AIProjectSuggestion } from './types/interfaces'
+import { InitAnswers, AIProjectSuggestion, AIProjectSummary } from './types/interfaces'
 import { initProject } from './utils/utils'
 import { loadTemplateCliConfig } from './utils/config'
 import { TEMPLATES_META_LIST } from './core/constants'
@@ -12,7 +12,7 @@ import { COMMON_DEPENDENCIES, NODE_DEPENDENCIES, WEB_DEPENDENCIES, VUE2_DEPENDEN
 import { getGitUserName } from './utils/git'
 import { getTemplateMeta } from './utils/template'
 import { kebabCase, lintMd } from './utils/string'
-import { getAIProjectSuggestion } from './utils/ai-api'
+import { getAIProjectSuggestion, getAIProjectSummary } from './utils/ai-api'
 
 module.exports = function (plop: NodePlopAPI) {
     plop.setActionType('initProject', initProject)
@@ -22,6 +22,8 @@ module.exports = function (plop: NodePlopAPI) {
             const config = await loadTemplateCliConfig()
             // AI 建议结果，在隐藏的触发问题中异步设置
             let aiSuggestion: AIProjectSuggestion | null = null
+            // AI 生成的项目简介，在建议成功后异步设置（创作性内容，失败不阻断）
+            let aiSummary: AIProjectSummary | null = null
             const questions: QuestionCollection<InitAnswers> = [
                 // ===== AI 引导模式（必须最先询问） =====
                 {
@@ -57,6 +59,18 @@ module.exports = function (plop: NodePlopAPI) {
                                 console.log(`  关键词: ${aiSuggestion.keywords.join(', ')}`)
                                 console.log(`  推荐模板: ${aiSuggestion.template}`)
                                 console.log('')
+                                // 生成项目简介（创作性内容），失败静默降级
+                                try {
+                                    const summary = await getAIProjectSummary({
+                                        name: aiSuggestion.names[0],
+                                        description: aiSuggestion.description,
+                                        keywords: aiSuggestion.keywords,
+                                    }, config)
+                                    aiSummary = summary
+                                    spinner.succeed('AI 已生成项目简介')
+                                } catch {
+                                    // 简介生成失败不影响主流程
+                                }
                             } catch (error) {
                                 spinner.fail(`AI 引导失败: ${error instanceof Error ? error.message : String(error)}`)
                                 console.log('回退到标准问答流程\n')
@@ -400,6 +414,10 @@ module.exports = function (plop: NodePlopAPI) {
                 answers.aiGeneratedDescription = suggestion.description
                 answers.aiGeneratedKeywords = suggestion.keywords
                 answers.aiRecommendedTemplate = suggestion.template
+            }
+            // 保存 AI 生成的项目简介到 answers 中
+            if (aiSummary) {
+                answers.aiGeneratedSummary = aiSummary
             }
             // 清理隐藏触发器字段，避免泄漏到 answers 中
             delete (answers as any)._aiTrigger

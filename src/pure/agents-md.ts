@@ -30,9 +30,14 @@ export function replaceAgentsTemplateTodos(content: string, projectInfo: Project
  *
  * @param projectInfo 项目信息
  * @param l0Skills L0 精选技能列表
+ * @param projectSummary AI 生成的项目简介（可选，创作性内容；缺省时使用 projectDescription）
  * @returns L1 节 markdown 内容
  */
-export function buildAgentsMdL1Section(projectInfo: ProjectInfo, l0Skills: string[] = []): string {
+export function buildAgentsMdL1Section(
+    projectInfo: ProjectInfo,
+    l0Skills: string[] = [],
+    projectSummary?: { summary: string, features: string[] } | null,
+): string {
     const {
         language,
         runtime,
@@ -83,12 +88,24 @@ export function buildAgentsMdL1Section(projectInfo: ProjectInfo, l0Skills: strin
         ? l0Skills.map((skill) => `- ${skill}`)
         : ['- 未植入技能（L0 精选清单为空）']
 
+    const summary = projectSummary?.summary || projectInfo.projectDescription || projectInfo.description || ''
+    const featureLines = projectSummary?.features?.length
+        ? projectSummary.features.map((feature) => `- ${feature}`)
+        : []
+
+    const overviewLines = summary
+        ? [summary, ...(featureLines.length > 0 ? ['', '主要特性：', ...featureLines] : [])]
+        : ['（项目概述待补充）']
+
     return [
         '---',
         '',
         '## 项目信息（由 cmyr-template-cli 生成）',
         '',
         '> 本节内容由脚手架基于 ProjectInfo 参数注入，如需调整请直接修改。',
+        '',
+        '### 项目概述',
+        ...overviewLines,
         '',
         '### 技术栈',
         ...techStackLines,

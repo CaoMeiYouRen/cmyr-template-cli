@@ -168,6 +168,10 @@ export interface InitAnswers {
      * AI 推荐的模板
      */
     aiRecommendedTemplate?: string
+    /**
+     * AI 生成的项目简介（创作性内容）
+     */
+    aiGeneratedSummary?: AIProjectSummary
 
     [k: string]: unknown
 }
@@ -377,6 +381,20 @@ export interface AIProjectSuggestion {
     description: string
     keywords: string[]
     template: string
+}
+
+/**
+ * AI 生成的项目简介（创作性内容）
+ */
+export interface AIProjectSummary {
+    /**
+     * 项目简介（README 引言用）
+     */
+    summary: string
+    /**
+     * 主要特性列表
+     */
+    features: string[]
 }
 
 /**

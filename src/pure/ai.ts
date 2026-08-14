@@ -1,4 +1,4 @@
-import { AIProjectSuggestion, TemplateMeta } from '@/types/interfaces'
+import { AIProjectSuggestion, AIProjectSummary, TemplateMeta } from '@/types/interfaces'
 
 const MAX_USER_INPUT_LENGTH = 500
 
@@ -101,6 +101,87 @@ export function parseAIResponse(response: string): AIProjectSuggestion | null {
             description: parsed.description,
             keywords: parsed.keywords,
             template: parsed.template,
+        }
+    } catch {
+        return null
+    }
+}
+
+/**
+ * 构建项目简介生成 prompt
+ * 基于项目基本信息生成创作性内容（简介 + 特性列表）
+ *
+ * @param projectInfo - 项目基本信息
+ * @returns 构建好的 prompt 字符串
+ * @throws {Error} 当项目描述为空时
+ */
+export function buildProjectSummaryPrompt(projectInfo: {
+    name: string
+    description: string
+    keywords: string[]
+}): string {
+    if (typeof projectInfo.description !== 'string' || !projectInfo.description.trim()) {
+        throw new Error('buildProjectSummaryPrompt: projectInfo.description is required')
+    }
+    return `你是一个项目文档撰写助手。基于以下项目信息，生成 README 项目简介：
+
+项目名称: ${projectInfo.name}
+项目描述: ${projectInfo.description}
+关键词: ${projectInfo.keywords.join(', ') || '无'}
+
+要求：
+1. **summary**：一段精炼的中文项目简介（80-150 字），突出项目价值，适合 README 引言
+2. **features**：3-5 个主要特性，每条不超过 15 字
+
+请以 JSON 格式返回（不要包含 markdown 代码块标记）：
+{
+  "summary": "项目简介",
+  "features": ["特性1", "特性2"]
+}`
+}
+
+/**
+ * 解析 AI 返回的项目简介 JSON 响应
+ * 容错处理：支持 markdown code block 包裹的 JSON
+ *
+ * @param response - AI 返回的原始响应
+ * @returns 解析后的项目简介，解析失败返回 null
+ */
+export function parseProjectSummary(response: string): AIProjectSummary | null {
+    if (typeof response !== 'string') {
+        return null
+    }
+
+    try {
+        // 尝试提取 JSON 内容（支持 markdown code block 包裹）
+        let jsonStr = response.trim()
+
+        // 移除可能的 markdown code block 标记
+        const codeBlockRegex = /```(?:json)?\s*([\s\S]*?)\s*```/
+        const match = jsonStr.match(codeBlockRegex)
+        if (match && match[1]) {
+            jsonStr = match[1].trim()
+        }
+
+        const parsed = JSON.parse(jsonStr)
+
+        // 验证必需字段
+        if (
+            !parsed
+            || typeof parsed !== 'object'
+            || typeof parsed.summary !== 'string'
+            || parsed.summary.trim().length === 0
+            || !Array.isArray(parsed.features)
+            || parsed.features.length === 0
+        ) {
+            return null
+        }
+
+        return {
+            summary: parsed.summary,
+            features: parsed.features
+                .filter((feature: unknown) => typeof feature === 'string')
+                .slice(0, 5),
         }
     } catch {
         return null

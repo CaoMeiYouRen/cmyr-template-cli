@@ -1,7 +1,7 @@
 import axios, { AxiosError } from 'axios'
 import { TEMPLATES_META_LIST } from '@/core/constants'
-import { AICompletionRequest, AIProjectSuggestion, TemplateCliConfig } from '@/types/interfaces'
-import { buildProjectSuggestionPrompt, parseAIResponse } from '@/pure/ai'
+import { AICompletionRequest, AIProjectSuggestion, AIProjectSummary, TemplateCliConfig } from '@/types/interfaces'
+import { buildProjectSuggestionPrompt, buildProjectSummaryPrompt, parseAIResponse, parseProjectSummary } from '@/pure/ai'
 
 const AI_TIMEOUT = 30 * 1000 // 30 seconds
 
@@ -144,4 +144,54 @@ export async function getAIProjectSuggestion(
     }
 
     return suggestion
+}
+
+/**
+ * 调用 AI API 生成项目简介（创作性内容，不涉及基建文件）
+ * 基于项目名称、描述和关键词生成 README 引言与特性列表
+ *
+ * @param projectInfo - 项目基本信息
+ * @param config - CLI 配置，包含 AI API 相关配置
+ * @returns AI 生成的项目简介
+ * @throws 当配置缺失或 AI 调用失败时抛出错误
+ */
+export async function getAIProjectSummary(
+    projectInfo: {
+        name: string
+        description: string
+        keywords: string[]
+    },
+    config: TemplateCliConfig,
+): Promise<AIProjectSummary> {
+    const { AI_API_BASE, AI_API_KEY, AI_MODEL } = config
+
+    if (!AI_API_KEY) {
+        throw new Error(
+            'AI_API_KEY is not configured. Please add it to your .ctrc file:\n'
+            + '  "AI_API_KEY": "your-api-key-here"',
+        )
+    }
+
+    // 构建 prompt
+    const prompt = buildProjectSummaryPrompt(projectInfo)
+
+    // 调用 AI API
+    const response = await chatCompletion({
+        prompt,
+        apiKey: AI_API_KEY,
+        apiBase: AI_API_BASE,
+        model: AI_MODEL,
+        temperature: 0.7,
+    })
+
+    // 解析响应
+    const summary = parseProjectSummary(response)
+    if (!summary) {
+        throw new Error(
+            'Failed to parse AI project summary. The AI may have returned an invalid format. '
+            + 'Please try again or contact support if the issue persists.',
+        )
+    }
+
+    return summary
 }

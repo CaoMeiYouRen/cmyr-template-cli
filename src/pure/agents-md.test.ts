@@ -167,6 +167,23 @@ describe('buildAgentsMdL1Section', () => {
         expect(section).toContain('.ai/manifest.json')
     })
 
+    it('should include project overview from description when no AI summary', () => {
+        const section = buildAgentsMdL1Section(createMockProjectInfo())
+        expect(section).toContain('### 项目概述')
+        expect(section).toContain('Test description')
+    })
+
+    it('should include AI summary and features when provided', () => {
+        const section = buildAgentsMdL1Section(createMockProjectInfo(), [], {
+            summary: 'AI 生成的简介',
+            features: ['特性一', '特性二'],
+        })
+        expect(section).toContain('AI 生成的简介')
+        expect(section).toContain('主要特性：')
+        expect(section).toContain('- 特性一')
+        expect(section).toContain('- 特性二')
+    })
+
     it('should handle empty skill list', () => {
         const section = buildAgentsMdL1Section(createMockProjectInfo(), [])
         expect(section).toContain('未植入技能')

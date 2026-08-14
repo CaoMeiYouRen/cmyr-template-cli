@@ -29,6 +29,10 @@ const info = {
     buildCommand: 'pnpm run build',
     lintCommand: 'pnpm run lint',
     commitCommand: 'pnpm run commit',
+    aiGeneratedSummary: {
+        summary: 'AI 冒烟测试生成的项目简介',
+        features: ['特性一', '特性二'],
+    },
     templateMeta: { name: 'ts-template', language: 'typescript', runtime: 'nodejs', npm: true },
 } as unknown as ProjectInfo
 
@@ -57,6 +61,8 @@ async function main() {
     check('AGENTS.md 包含技能索引', agentsMd.includes('## AI 技能索引'))
     check('AGENTS.md 项目描述 TODO 已替换', agentsMd.includes('AI 基建冒烟测试项目'))
     check('AGENTS.md 覆盖率 TODO 已替换', agentsMd.includes('80%'))
+    check('AGENTS.md 包含 AI 项目概述', agentsMd.includes('AI 冒烟测试生成的项目简介'))
+    check('AGENTS.md 包含 AI 特性列表', agentsMd.includes('- 特性一'))
 
     const skillsDir = path.join(projPath, '.github/skills')
     const skillNames = await fs.readdir(skillsDir)
