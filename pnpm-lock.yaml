@@ -35,7 +35,7 @@ importers:
         version: 1.6.0
       '@lint-md/core':
         specifier: ^2.0.0
-        version: 2.1.6
+        version: 2.4.0
       acorn:
         specifier: ^8.16.0
         version: 8.17.0
@@ -602,12 +602,12 @@ packages:
   '@jridgewell/trace-mapping@0.3.31':
     resolution: {integrity: sha512-zzNR+SdQSDJzc8joaeP8QQoCQr8NuYx2dIIytl1QeBEZHJ9uW6hebsrYgbz8hJwUQao3TWCMtmfV8Nu1twOLAw==}
 
-  '@lint-md/core@2.1.6':
-    resolution: {integrity: sha512-i53bb4F75wkMgiexBH3aT088qCAzKQ0fPtUn1dYTt30qvROSmasgtqw1+wc2YemdZegyqpTmMhK/Kp0XKhxu1g==}
+  '@lint-md/core@2.4.0':
+    resolution: {integrity: sha512-Fp2drWoAd6GDdxqx64U+9rdoYOqTYbGtaQeV4NCd3zb2RL+Xi0JGamax9xT3+U9g9ktgwZnPkx9Hy8GpGpxUmA==}
     engines: {node: '>=20'}
 
-  '@lint-md/parser@0.2.0':
-    resolution: {integrity: sha512-goi4GlmfgCfpk26u5MMLwc8qi1StdXc7/VzC2zLsME4d3hprvXAJXYkRCc4b6b9QSGViM3gBb4CmSRqyPWjW9w==}
+  '@lint-md/parser@0.2.1':
+    resolution: {integrity: sha512-tgnfSiid5qxFs+i9gFeJcuQDhWmPNQnVns8G2FwIhE0PhbKglEXiuVvowE3cns+4scRBE+VWI4JXzAvBQYK69g==}
     engines: {node: '>=20'}
 
   '@napi-rs/wasm-runtime@1.1.6':
@@ -4747,11 +4747,11 @@ snapshots:
       '@jridgewell/resolve-uri': 3.1.2
       '@jridgewell/sourcemap-codec': 1.4.14
 
-  '@lint-md/core@2.1.6':
+  '@lint-md/core@2.4.0':
     dependencies:
-      '@lint-md/parser': 0.2.0
+      '@lint-md/parser': 0.2.1
 
-  '@lint-md/parser@0.2.0':
+  '@lint-md/parser@0.2.1':
     dependencies:
       '@types/mdast': 3.0.15
 
@@ -5869,7 +5869,7 @@ snapshots:
     dependencies:
       '@commitlint/load': 19.8.1(@types/node@26.0.1)(typescript@6.0.3)
       '@commitlint/types': 19.8.1
-      '@lint-md/core': 2.1.6
+      '@lint-md/core': 2.4.0
       chalk: 4.1.2
       commitizen: 4.3.2(@types/node@26.0.1)(typescript@6.0.3)
       conventional-commit-types: 3.0.0
