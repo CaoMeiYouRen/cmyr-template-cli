@@ -1,5 +1,12 @@
 # cmyr-template-cli
 
+## [1.46.1](https://github.com/CaoMeiYouRen/cmyr-template-cli/compare/v1.46.0...v1.46.1) (2026-09-11)
+
+
+### 🐛 Bug 修复
+
+* **lint:** 修复 lint 规则名称和格式问题 ([b23092c](https://github.com/CaoMeiYouRen/cmyr-template-cli/commit/b23092c))
+
 # [1.46.0](https://github.com/CaoMeiYouRen/cmyr-template-cli/compare/v1.45.5...v1.46.0) (2026-08-14)
 
 
