@@ -14,10 +14,10 @@ const fix = (markdown: string, rules?: LintMdRulesConfig) => lintMarkdown(markdo
 export function lintMd(markdown: string) {
     const rules = {
         'no-empty-code': 0,
-        'no-trailing-punctuation': 0,
+        'correct-title-trailing-punctuation': 0,
         'no-long-code': 0,
         'no-empty-code-lang': 0,
-        'no-empty-inlinecode': 0,
+        'no-empty-inline-code': 0,
     } as const
     const fixed = fix(markdown, rules)
     return fixed ?? markdown
