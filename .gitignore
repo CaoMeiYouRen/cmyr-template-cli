@@ -38,3 +38,5 @@ dist
 temp
 .ctrc
 coverage
+# dependfix
+dependfix-reports/
