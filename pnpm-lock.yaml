@@ -23,9 +23,6 @@ overrides:
   fast-uri: ^3.1.4
   js-yaml: ^4.3.2
   nanoid: ^3.3.18
-  brace-expansion@^1: ^1.1.18
-  brace-expansion@^2: ^2.1.4
-  brace-expansion@^5: ^5.0.9
   brace-expansion@1: ^1.1.21
   brace-expansion@2: ^2.1.7
   brace-expansion@5: ^5.0.12
@@ -1559,8 +1556,8 @@ packages:
   axios@1.20.0:
     resolution: {integrity: sha512-r8aOh8j9cGKpgQAqpzrUHnSIc6a59Y3Xf/cv8sy1DrHCkZHzQGEuoq1tARk6qSyDdtQGSDgpb9kFlruzPvrgwg==}
 
-  balanced-match@1.0.2:
-    resolution: {integrity: sha512-3oSeUO0TMV67hN1AmbXsK4yaqU7tjiHlbxRDZOpH0KW9+CeX4bRAaX0Anxt0tx2MrpRpWwQaPwIlISEJhYU5Pw==}
+  balanced-match@1.0.0:
+    resolution: {integrity: sha512-9Y0g0Q8rmSt+H33DfKv7FOc3v+iRI+o1lbzt8jGcIosYW37IIW/2XVYq5NPdmaD5NQ59Nk26Kl/vZbwW9Fr8vg==}
 
   balanced-match@4.0.4:
     resolution: {integrity: sha512-BLrgEcRTwX2o6gGxGOCNyMvGSp35YofuYzw9h1IMTRmKqttAZZVU67bdb9Pr2vUHA8+j3i2tJfjO6C6+4myGTA==}
@@ -5828,7 +5825,7 @@ snapshots:
       - debug
       - supports-color
 
-  balanced-match@1.0.2: {}
+  balanced-match@1.0.0: {}
 
   balanced-match@4.0.4: {}
 
@@ -5846,12 +5843,12 @@ snapshots:
 
   brace-expansion@1.1.21:
     dependencies:
-      balanced-match: 1.0.2
+      balanced-match: 1.0.0
       concat-map: 0.0.1
 
   brace-expansion@2.1.7:
     dependencies:
-      balanced-match: 1.0.2
+      balanced-match: 1.0.0
 
   brace-expansion@5.0.12:
     dependencies:
